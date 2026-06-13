@@ -1,5 +1,5 @@
 .venv/
 .kb-index/
-.claude/
+.claude/scheduled_tasks.lock
 __pycache__/
 *.pyc
