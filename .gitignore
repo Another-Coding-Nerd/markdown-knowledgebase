@@ -1,0 +1,5 @@
+.venv/
+.kb-index/
+.claude/
+__pycache__/
+*.pyc
