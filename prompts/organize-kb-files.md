@@ -5,6 +5,12 @@ For files added directly to `kb/` without going through
 copied straight in), sort them per the Projects vs. Resources convention in
 `AGENTS.md`.
 
+This is a file-placement/classification task, not a content-processing task:
+classify each file by its existing title/content/front matter and move it.
+Do not apply `prompts/process-input-files.md`'s inventory/dedup-cross-check
+process (full read, `kb_search.py` checks against the rest of the KB) to
+these files — they're already part of the KB.
+
 ## Workflow
 
 1. List the `.md` files to sort (the newly-added batch, or all of `kb/`'s
@@ -12,8 +18,9 @@ copied straight in), sort them per the Projects vs. Resources convention in
 2. For each file, apply the test from `AGENTS.md`: does it describe a
    bounded effort with a deliverable or finish line?
    - **Yes** → belongs in `kb/projects/`.
-   - **No** → resource material; leave at the top level or group into a
-     topic subdirectory if this KB organizes resources that way.
+   - **No** → resource material; move to `kb/resources/` (group into topic
+     subdirectories within `kb/resources/` if this KB organizes resources
+     that way).
 3. **Present the proposed moves** — file, destination, one-line rationale —
    and wait for confirmation before moving anything.
 4. After moves, update any `## See Also` links or index/navigation files

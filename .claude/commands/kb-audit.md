@@ -7,7 +7,7 @@ cd kb && python3 -c "
 import re, os, glob
 
 broken = []
-for fpath in sorted(glob.glob('*.md')):
+for fpath in sorted(glob.glob('**/*.md', recursive=True)):
     content = open(fpath).read()
     in_see_also = False
     for line in content.split('\n'):
@@ -31,7 +31,7 @@ if not broken:
 cd kb && python3 -c "
 import re, glob
 
-content_files = sorted(glob.glob('*.md'))
+content_files = sorted(glob.glob('**/*.md', recursive=True))
 
 inbound = {f: set() for f in content_files}
 for fpath in content_files:
@@ -64,7 +64,7 @@ If your KB has files that are intentionally link-free (e.g. a glossary), exclude
 cd kb && python3 -c "
 import glob
 
-content_files = sorted(glob.glob('*.md'))
+content_files = sorted(glob.glob('**/*.md', recursive=True))
 
 threshold = 30000
 large = [(f, len(open(f).read())) for f in content_files]

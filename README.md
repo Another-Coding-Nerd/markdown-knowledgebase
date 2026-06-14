@@ -21,10 +21,12 @@ After completing Setup below:
    level (or in topic subdirectories), organized by topic. If this KB has
    bounded-effort content (a deliverable or finish line, e.g. "build X",
    "decide on Y"), adopt the Projects/Resources split described in
-   `AGENTS.md`. This can be decided later, too — just tell Claude "let's
-   adopt the Projects/Resources split"; the instructions are already in
-   `AGENTS.md` and it'll run `prompts/organize-kb-files.md` to sort any
-   existing content. No files need editing to switch.
+   `AGENTS.md`. This can be decided later, too — just tell Claude:
+   > I want to adopt the Projects/Resources split for this kb/ — see
+   > AGENTS.md and run prompts/organize-kb-files.md to sort the existing
+   > kb/\*\*/\*.md files into kb/projects/ and kb/resources/.
+
+   No files need editing to switch.
 3. **Add content** — drop files directly into `kb/`, or stage raw source
    material in `inputs/` and have Claude run the
    `prompts/process-input-files.md` workflow to triage it.

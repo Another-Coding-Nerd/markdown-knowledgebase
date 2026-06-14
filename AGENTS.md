@@ -48,8 +48,14 @@ structure starts to feel cluttered, adopt the Projects/Resources split:
   project is done, either fold any durable findings into the relevant
   resource file(s) and delete the project file, or mark it `status: archived`
   (front matter) if it's worth keeping as a record.
-- **Everything else in `kb/`** — resource material: techniques, facts,
-  guides, lookup tables, organized by topic.
+- **`kb/resources/`** — everything else: resource material (techniques,
+  facts, guides, lookup tables), organized by topic, optionally using
+  subdirectories within `kb/resources/`.
+
+Adopting this split makes **both** `kb/projects/` and `kb/resources/` real
+directories — existing top-level files get sorted into one or the other (see
+`prompts/organize-kb-files.md`). The flat default layout described above is
+only for KBs that don't adopt this split.
 
 A finished project worth keeping as a record gets a one-line front matter
 block instead of being deleted:
@@ -60,20 +66,26 @@ status: archived
 ---
 ```
 
+There is no separate `kb/archives/` directory in this scheme — an archived
+project stays in `kb/projects/` with this front matter flag, nothing gets
+moved.
+
 Resource files carry no `status` field — absence of the field is the
 default/current state. Don't add `status: active`.
 
 Once adopted, the test for new content: does it have a deliverable or finish
-line? If yes, `kb/projects/`. If no, file it as a resource by topic — use
-`tools/kb_search.py` to find the best existing home before creating a new
-file (see Content conventions below).
+line? If yes, `kb/projects/`. If no, file it as a resource by topic in
+`kb/resources/` — use `tools/kb_search.py` to find the best existing home
+before creating a new file (see Content conventions below).
 
 When cross-checking coverage (above), a hit with `status: archived` in its
 front matter may be superseded — read it to confirm before treating it as
 current coverage.
 
 To adopt this split for an existing flat `kb/` (sorting already-present files
-into Projects vs. Resources), see `prompts/organize-kb-files.md`.
+into Projects vs. Resources), see `prompts/organize-kb-files.md`. This is a
+structural file-placement task, not the `inputs/` triage pipeline — do not
+run `prompts/process-input-files.md` against existing `kb/` files.
 
 ## Processing new input files
 
@@ -104,7 +116,7 @@ The index is **not** updated automatically. After a batch of edits to
 .venv/bin/python tools/kb_index.py --incremental
 ```
 
-`--incremental` compares each `kb/*.md` file's mtime against `.kb-index/meta.json`,
+`--incremental` compares each `kb/**/*.md` file's mtime against `.kb-index/meta.json`,
 re-chunks/embeds only new or changed files, and removes chunks for files
 deleted from `kb/`. This is much cheaper than a full rebuild on this
 CPU-only host and is the normal day-to-day command. It falls back to a full
@@ -115,7 +127,7 @@ Use a plain `tools/kb_index.py` (no flag) for a full rebuild — e.g. after
 changing `config.yaml` (chunk size, embedding model) or if the index is
 suspected to be out of sync with `kb/`.
 
-`kb_search.py` prints a `[stale index]` warning (to stderr) if any `kb/*.md`
+`kb_search.py` prints a `[stale index]` warning (to stderr) if any `kb/**/*.md`
 file has been modified more recently than the last index build — if you see
 that warning mid-session, mention it and suggest reindexing before relying
 further on search results.

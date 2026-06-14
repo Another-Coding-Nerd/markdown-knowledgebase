@@ -2,6 +2,11 @@
 
 Process new source files in `inputs/` into the knowledgebase (`kb/`).
 
+This workflow processes files in `inputs/` only. To sort existing
+`kb/**/*.md` files into `kb/projects/` vs `kb/resources/` (the
+Projects/Resources split), use `prompts/organize-kb-files.md` instead — do
+not run this inventory/dedup workflow against `kb/` content.
+
 ## Scope
 
 <!-- Define this KB's topical scope here so step 2f (off-topic detection) has
