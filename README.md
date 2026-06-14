@@ -71,6 +71,8 @@ model (~130MB, cached under `~/.cache/`).
 ```
 config.yaml       # kb_root, embedding model, chunk size/overlap, top_k
 kb/               # the markdown knowledgebase content
+  projects/       # active, bounded efforts (see AGENTS.md); everything
+                  # else in kb/ is resource material, organized by topic
 inputs/           # new source files awaiting triage
   fmt_text.sh     # reflow raw .txt files to 100 columns
   processed/      # files already absorbed into kb/

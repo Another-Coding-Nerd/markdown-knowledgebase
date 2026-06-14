@@ -42,8 +42,11 @@ strategy." -->
       note the reframing in the recommendation.
    i. Duplicate content: auto-skip, move to `inputs/processed/`, note in the
       summary.
-   j. New content: decide whether it fits as a new file or as an addition to
-      an existing file. If the source uses named-anecdote framing (e.g.
+   j. New content: first apply the Projects vs. Resources test from
+      `AGENTS.md` — does it have a deliverable or finish line? If so, it
+      belongs in `kb/projects/`; otherwise file it as a resource by topic.
+      Then decide whether it fits as a new file or as an addition to an
+      existing file. If the source uses named-anecdote framing (e.g.
       "Marcus told me...", "let's call her Anna"), absorb the underlying
       ideas into the nearest analytical section and drop the named frame.
    k. **Present the full inventory** — list every item with: status (covered
