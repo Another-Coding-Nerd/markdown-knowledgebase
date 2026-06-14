@@ -21,7 +21,7 @@ strategy." -->
       complete. The failure mode to prevent: identifying the two most
       obvious points and treating them as the full yield.
    c. Cross-check each inventory item against the existing KB via
-      `tools/kb_search.py "<point>"` — see `CLAUDE.md` for the scoring
+      `tools/kb_search.py "<point>"` — see `AGENTS.md` for the scoring
       guidance. Do not read every file in `kb/`.
    d. For each item, determine: already covered / partially covered
       (formulation worth adding) / genuinely new.
@@ -59,7 +59,7 @@ strategy." -->
    content.
 5. At the end, provide a summary of what was created, what was skipped as
    dupes, and what was moved to `inputs/off-topic/`.
-6. After a batch of edits to `kb/`, reindex per `CLAUDE.md`.
+6. After a batch of edits to `kb/`, reindex per `AGENTS.md`.
 
 ## Conventions
 

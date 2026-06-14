@@ -1,7 +1,7 @@
 # Content Style Guide (template)
 
 This file holds content-authoring conventions for `kb/` — separate from
-`CLAUDE.md`, which covers the search/reindex tooling and workflow. Edit or
+`AGENTS.md`, which covers the search/reindex tooling and workflow. Edit or
 delete sections to fit your KB's domain; nothing here is required by the
 tooling itself.
 

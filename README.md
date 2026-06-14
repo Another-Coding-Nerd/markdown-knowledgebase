@@ -21,9 +21,10 @@ After completing Setup below:
    material in `inputs/` and have Claude run the
    `prompts/process-input-files.md` workflow to triage it.
 3. **Build the index** — `.venv/bin/python tools/kb_index.py`.
-4. **Work with Claude** — `CLAUDE.md` defines the search-first workflow
-   Claude follows when checking coverage, processing new input, and
-   reindexing after edits.
+4. **Work with your AI agent** — `AGENTS.md` defines the search-first
+   workflow (Claude Code reads it via the `CLAUDE.md` import; other agents
+   that follow the AGENTS.md convention read it directly) for checking
+   coverage, processing new input, and reindexing after edits.
 
 ## Setup
 
@@ -85,5 +86,5 @@ tools/
 .kb-index/        # ChromaDB persistent store (gitignored)
 ```
 
-See `CLAUDE.md` for the workflow Claude Code should follow when maintaining
+See `AGENTS.md` for the workflow your AI agent should follow when maintaining
 this KB, and `CONTENT-STYLE.md` for content-authoring conventions.
