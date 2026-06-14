@@ -17,11 +17,19 @@ After completing Setup below:
 1. **Define the KB's scope** — edit `CONTENT-STYLE.md` for this KB's content
    conventions, and fill in the `## Scope` placeholder in
    `prompts/process-input-files.md`.
-2. **Add content** — drop files directly into `kb/`, or stage raw source
+2. **Choose a layout** — `kb/` is flat by default: every file at the top
+   level (or in topic subdirectories), organized by topic. If this KB has
+   bounded-effort content (a deliverable or finish line, e.g. "build X",
+   "decide on Y"), adopt the Projects/Resources split described in
+   `AGENTS.md`. This can be decided later, too — just tell Claude "let's
+   adopt the Projects/Resources split"; the instructions are already in
+   `AGENTS.md` and it'll run `prompts/organize-kb-files.md` to sort any
+   existing content. No files need editing to switch.
+3. **Add content** — drop files directly into `kb/`, or stage raw source
    material in `inputs/` and have Claude run the
    `prompts/process-input-files.md` workflow to triage it.
-3. **Build the index** — `.venv/bin/python tools/kb_index.py`.
-4. **Work with your AI agent** — `AGENTS.md` defines the search-first
+4. **Build the index** — `.venv/bin/python tools/kb_index.py`.
+5. **Work with your AI agent** — `AGENTS.md` defines the search-first
    workflow (Claude Code reads it via the `CLAUDE.md` import; other agents
    that follow the AGENTS.md convention read it directly) for checking
    coverage, processing new input, and reindexing after edits.
@@ -71,14 +79,15 @@ model (~130MB, cached under `~/.cache/`).
 ```
 config.yaml       # kb_root, embedding model, chunk size/overlap, top_k
 kb/               # the markdown knowledgebase content
-  projects/       # active, bounded efforts (see AGENTS.md); everything
-                  # else in kb/ is resource material, organized by topic
+  projects/       # optional Projects/Resources split (see AGENTS.md);
+                  # kb/ is flat by default if unused
 inputs/           # new source files awaiting triage
   fmt_text.sh     # reflow raw .txt files to 100 columns
   processed/      # files already absorbed into kb/
   off-topic/      # files outside this KB's scope
 prompts/
   process-input-files.md       # triage inputs/ into kb/
+  organize-kb-files.md          # sort kb/ files into Projects vs. Resources
   process-knowledgebase-files.md # periodic quality review of kb/
 tools/
   kb_index.py     # rebuild the index

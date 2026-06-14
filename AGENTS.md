@@ -35,27 +35,45 @@ coverage.** That's the pattern this tool replaces. Instead:
 3. Only `Read` the specific file(s) that scored highest — and only if the
    snippet isn't enough to decide. Do not fall back to reading the whole KB.
 
-## Organizing kb/: Projects vs. Resources
+## Organizing kb/: Projects vs. Resources (optional)
 
-Two kinds of content live in `kb/`:
+By default, `kb/` is flat: every file lives at the top level (or in topic
+subdirectories), organized by topic. No further setup is needed.
 
-- **`kb/projects/`** — active, bounded efforts with a deliverable or finish
-  line (e.g. "build X", "decide on Y", "set up Z"). When a project is done,
-  either fold any durable findings into the relevant resource file(s) and
-  delete the project file, or mark it `status: archived` (front matter) if
-  it's worth keeping as a record.
+If this KB accumulates bounded-effort content — things with a deliverable or
+finish line (e.g. "build X", "decide on Y", "set up Z") — and a flat
+structure starts to feel cluttered, adopt the Projects/Resources split:
+
+- **`kb/projects/`** — active, bounded efforts as described above. When a
+  project is done, either fold any durable findings into the relevant
+  resource file(s) and delete the project file, or mark it `status: archived`
+  (front matter) if it's worth keeping as a record.
 - **Everything else in `kb/`** — resource material: techniques, facts,
-  guides, lookup tables. Organize by topic (flat, or in topic subdirectories,
-  whichever suits this KB's scope).
+  guides, lookup tables, organized by topic.
 
-The test for new content: does it have a deliverable or finish line? If yes,
-`kb/projects/`. If no, file it as a resource by topic — use
+A finished project worth keeping as a record gets a one-line front matter
+block instead of being deleted:
+
+```yaml
+---
+status: archived
+---
+```
+
+Resource files carry no `status` field — absence of the field is the
+default/current state. Don't add `status: active`.
+
+Once adopted, the test for new content: does it have a deliverable or finish
+line? If yes, `kb/projects/`. If no, file it as a resource by topic — use
 `tools/kb_search.py` to find the best existing home before creating a new
 file (see Content conventions below).
 
 When cross-checking coverage (above), a hit with `status: archived` in its
 front matter may be superseded — read it to confirm before treating it as
 current coverage.
+
+To adopt this split for an existing flat `kb/` (sorting already-present files
+into Projects vs. Resources), see `prompts/organize-kb-files.md`.
 
 ## Processing new input files
 

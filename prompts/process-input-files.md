@@ -42,13 +42,15 @@ strategy." -->
       note the reframing in the recommendation.
    i. Duplicate content: auto-skip, move to `inputs/processed/`, note in the
       summary.
-   j. New content: first apply the Projects vs. Resources test from
-      `AGENTS.md` — does it have a deliverable or finish line? If so, it
-      belongs in `kb/projects/`; otherwise file it as a resource by topic.
-      Then decide whether it fits as a new file or as an addition to an
-      existing file. If the source uses named-anecdote framing (e.g.
-      "Marcus told me...", "let's call her Anna"), absorb the underlying
-      ideas into the nearest analytical section and drop the named frame.
+   j. New content: if this KB has adopted the Projects/Resources split (see
+      `AGENTS.md` — i.e. `kb/projects/` is in use), first apply that test:
+      does it have a deliverable or finish line? If so, it belongs in
+      `kb/projects/`; otherwise file it as a resource by topic. If this KB is
+      flat, skip this and file by topic as usual. Then decide whether it fits
+      as a new file or as an addition to an existing file. If the source uses
+      named-anecdote framing (e.g. "Marcus told me...", "let's call her
+      Anna"), absorb the underlying ideas into the nearest analytical section
+      and drop the named frame.
    k. **Present the full inventory** — list every item with: status (covered
       / partial / new), proposed target file + section, and a one-line
       rationale. Do not summarize or cherry-pick. Flag anything uncertain.

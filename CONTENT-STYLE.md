@@ -52,20 +52,6 @@ just restate surrounding prose in different words.
 `## See Also` sections link 2–4 thematically related files, each with one
 clause explaining the relationship — not just a bare link.
 
-## Status / Archiving
-
-Files in `kb/projects/` that are finished but worth keeping as a record get
-a one-line front matter block:
-
-```yaml
----
-status: archived
----
-```
-
-Resource files carry no `status` field — absence of the field is the
-default/current state. Don't add `status: active`.
-
 ## General Hygiene
 
 - No attribution lines referencing source material ("Based on transcript
