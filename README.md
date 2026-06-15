@@ -49,7 +49,7 @@ model (~130MB, cached under `~/.cache/`).
 ## Usage
 
 ```bash
-# Update the index after editing kb/*.md (run after a batch of edits)
+# Update the index after editing kb/**/*.md (run after a batch of edits)
 .venv/bin/python tools/kb_index.py --incremental
 
 # Full rebuild (e.g. after changing config.yaml's chunking/embedding settings)
@@ -73,7 +73,7 @@ model (~130MB, cached under `~/.cache/`).
   index (or a pre-incremental `meta.json`) exists. Plain `kb_index.py` always
   does a full rebuild.
 - `kb_search.py` embeds each query, returns ranked chunks (file, heading
-  path, similarity score, snippet), and warns if any `kb/*.md` file has
+  path, similarity score, snippet), and warns if any `kb/**/*.md` file has
   changed since the last index build.
 
 ## Layout
@@ -82,6 +82,7 @@ model (~130MB, cached under `~/.cache/`).
 config.yaml       # kb_root, embedding model, chunk size/overlap, top_k
 kb/               # the markdown knowledgebase content
   projects/       # optional Projects/Resources split (see AGENTS.md);
+  resources/      # both dirs are created together when adopted;
                   # kb/ is flat by default if unused
 inputs/           # new source files awaiting triage
   fmt_text.sh     # reflow raw .txt files to 100 columns
