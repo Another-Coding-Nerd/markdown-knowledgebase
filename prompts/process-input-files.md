@@ -18,6 +18,12 @@ strategy." -->
 1. Check `inputs/` for any files not already in `inputs/processed/` or
    `inputs/off-topic/`. (`inputs/fmt_text.sh` can be run first to reflow raw
    `.txt` files to 100 columns.)
+   a. If any `.html` files are present, or any `.txt` files contain pasted
+      HTML markup rather than plain text, convert them to clean text first:
+      `python3 tools/html_to_text.py --write <file>` (the script also
+      detects and cleans HTML pasted into a `.txt` file). It overwrites
+      `.txt` files in place and converts `.html` files to a `.txt` of the
+      same name, deleting the original. Then continue with step 2 as usual.
 2. For each file found:
    a. Read it fully.
    b. **Full inventory first** — work section-by-section, not the whole
