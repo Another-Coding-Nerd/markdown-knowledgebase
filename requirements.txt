@@ -1,0 +1,5 @@
+chromadb
+fastembed
+PyYAML
+requests
+beautifulsoup4

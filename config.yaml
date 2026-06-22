@@ -1,0 +1,19 @@
+# Configuration for the markdown knowledgebase semantic search tool
+
+# Root directory containing the markdown knowledge base (relative to this file)
+kb_root: ./kb
+
+# Where the ChromaDB persistent index is stored
+index_dir: ./.kb-index
+
+# Embedding model (served via fastembed, CPU/ONNX, no torch)
+embedding_model: BAAI/bge-small-en-v1.5
+
+# Chunking
+# Sections are split on H2 (##) and H3 (###) headings.
+# Any section exceeding max_tokens is further split with overlap.
+max_tokens: 450
+overlap_tokens: 50
+
+# Default number of results returned per query
+top_k: 5
