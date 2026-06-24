@@ -59,6 +59,11 @@ model (~130MB, cached under `~/.cache/`).
 .venv/bin/python tools/kb_search.py "some query" "another query" --top-k 5
 ```
 
+`tools/index` and `tools/search` are thin wrapper scripts for the two
+commands above (`tools/index --incremental`, `tools/search "query"`) —
+shorter to type, and they resolve the repo root from their own path, so
+they work from any directory.
+
 ## How it works
 
 - `kb/**/*.md` files are split into chunks at H1/H2/H3 heading boundaries.
