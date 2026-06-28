@@ -73,10 +73,22 @@ moved.
 Resource files carry no `status` field — absence of the field is the
 default/current state. Don't add `status: active`.
 
-Once adopted, the test for new content: does it have a deliverable or finish
-line? If yes, `kb/projects/`. If no, file it as a resource by topic in
-`kb/resources/` — use `tools/kb_search.py` to find the best existing home
-before creating a new file (see Content conventions below).
+Once adopted, use this two-part test for new content:
+
+1. Does it have a **specific goal** (a concrete deliverable or finish line)?
+2. Does it have an **active timeframe** (something is happening on it now or
+   soon)?
+
+If yes to both → `kb/projects/`. If no → `kb/resources/`.
+
+The common misclassification: a topic label ("large format photography",
+"home networking") looks like a Resource, but if you're actively building or
+deciding something specific within it ("build 4x5 large format kit", "set up
+home mesh network"), that's a Project. Ask what you're *doing*, not what the
+topic *is*.
+
+Use `tools/kb_search.py` to find the best existing home before creating a new
+file (see Content conventions below).
 
 When cross-checking coverage (above), a hit with `status: archived` in its
 front matter may be superseded — read it to confirm before treating it as
