@@ -59,10 +59,20 @@ model (~130MB, cached under `~/.cache/`).
 .venv/bin/python tools/kb_search.py "some query" "another query" --top-k 5
 ```
 
-`tools/index` and `tools/search` are thin wrapper scripts for the two
-commands above (`tools/index --incremental`, `tools/search "query"`) —
-shorter to type, and they resolve the repo root from their own path, so
-they work from any directory.
+`tools/index`, `tools/search`, and `tools/query` are thin wrapper scripts —
+shorter to type, and they resolve the repo root from their own path so they
+work from any directory.
+
+```bash
+# RAG: retrieve KB chunks and synthesize an answer via a local LLM
+tools/query "what do I know about X?"
+tools/query --top-k 8 --model phi4-mini "question"
+tools/query --api-url http://192.168.1.50:8080 "question"
+```
+
+Requires a running [Ollama](https://ollama.com) instance (≥ 0.1.24) or any
+OpenAI-compatible `/v1/chat/completions` endpoint. `tools/index` and
+`tools/search` have no server dependency.
 
 ## How it works
 
@@ -100,8 +110,12 @@ prompts/
 tools/
   kb_index.py     # rebuild the index
   kb_search.py    # query the index
+  kb_query.py     # RAG: retrieve + synthesize via local LLM
   chunking.py     # heading-based + token-budget chunking
   kb_common.py    # shared config/model/collection helpers
+  index           # wrapper → kb_index.py
+  search          # wrapper → kb_search.py
+  query           # wrapper → kb_query.py
 .kb-index/        # ChromaDB persistent store (gitignored)
 ```
 
