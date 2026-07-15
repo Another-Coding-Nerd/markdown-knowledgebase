@@ -1,3 +1,15 @@
+## 2026-07-15 (2)
+### Added
+- `index_notes.md`: consolidated dedup workflow notes from
+  `dedup-improvement-plan.md` — what was implemented, what was deferred
+  and why, and why `kb_pipeline.sh`'s similarity thresholds don't transfer
+  to this KB's section-granularity embeddings.
+
+### Removed
+- `dedup-improvement-plan.md`: implementation specs are now live in
+  `prompts/process-input-files.md`; durable rationale moved to
+  `index_notes.md`.
+
 ## 2026-07-15
 ### Changed
 - FLASK-APP-PLAN.md: resolved ambiguities and tightened v1 scope
