@@ -6,6 +6,7 @@ Usage:
     python tools/kb_query.py "your question here"
     python tools/kb_query.py --top-k 8 --api-url http://192.168.1.50:8080 "question"
     python tools/kb_query.py --model llama3.2:3b "question"
+    python tools/kb_query.py --max-tokens 256 "short answer please"
 """
 
 # ── Configurable defaults ────────────────────────────────────────────────
@@ -14,6 +15,7 @@ DEFAULT_MODEL = "phi4-mini"             # best reasoning/speed balance on CPU
 # DEFAULT_MODEL = "gemma2:2b"           # fastest on CPU at this quality level
 # DEFAULT_MODEL = "llama3.2:3b"         # most community support, longest context
 DEFAULT_TOP_K = 5                       # number of KB chunks to retrieve
+DEFAULT_MAX_TOKENS = 512                # max tokens in LLM answer
 # ──────────────────────────────────────────────────────────────────────────
 
 import argparse
@@ -68,7 +70,7 @@ def build_prompt(query, hits):
     return "\n\n".join(lines)
 
 
-def query_llm(api_url, model, prompt):
+def query_llm(api_url, model, prompt, max_tokens=DEFAULT_MAX_TOKENS):
     """Send prompt to an OpenAI-compatible /v1/chat/completions endpoint."""
     payload = {
         "model": model,
@@ -77,7 +79,7 @@ def query_llm(api_url, model, prompt):
             {"role": "user", "content": prompt},
         ],
         "temperature": 0.3,
-        "max_tokens": 512,
+        "max_tokens": max_tokens,
         "stream": False,
     }
     resp = requests.post(
@@ -93,6 +95,8 @@ def main():
     parser = argparse.ArgumentParser(description="RAG query over the KB")
     parser.add_argument("query", nargs="+", help="natural language question")
     parser.add_argument("--top-k", type=int, default=DEFAULT_TOP_K)
+    parser.add_argument("--max-tokens", type=int, default=DEFAULT_MAX_TOKENS,
+                        help=f"max tokens in LLM answer (default: {DEFAULT_MAX_TOKENS})")
     parser.add_argument("--api-url", default=OLLAMA_URL)
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--config", default=None)
@@ -111,7 +115,7 @@ def main():
     prompt = build_prompt(query, hits)
 
     # 3. Generate
-    answer = query_llm(args.api_url, args.model, prompt)
+    answer = query_llm(args.api_url, args.model, prompt, args.max_tokens)
 
     # 4. Output
     print(answer)

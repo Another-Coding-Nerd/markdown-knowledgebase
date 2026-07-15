@@ -66,7 +66,16 @@ Lower-priority or larger-scope efforts.
 
 ### Features
 
-- [ ] Export KB to static HTML site for sharing or offline reading
+- [ ] **Flask app (Obsidian lite)** — lightweight local web UI for browsing
+  the KB. Graph visualization (D3.js), semantic search bar, rendered
+  markdown pages, RAG question box (retrieve + synthesize via local LLM).
+  See `FLASK-APP-PLAN.md` for full spec. Config via `flask_config.yaml`
+  (shipped with defaults for port, model, graph layout, theme). Key
+  routes: `/` (graph), `/page/<file>` (rendered markdown), `/api/search`
+  (ChromaDB query), `/api/rag` (RAG synthesis), `/api/graph` (JSON for
+  D3.js). Falls back to parsing See Also sections if connections.db
+  doesn't exist. RAG requires Ollama or compatible endpoint; works
+  without it. Dependencies: Flask + markdown.
 - [ ] Tagging or metadata system beyond file/directory structure (e.g. YAML
   front matter fields that `kb_index.py` indexes and `kb_search.py` can
   filter on)

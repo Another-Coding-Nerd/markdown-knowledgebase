@@ -1,0 +1,27 @@
+# Flask app configuration for the knowledge base viewer (Obsidian lite)
+
+# Server
+host: localhost
+port: 5000
+debug: false
+
+# Search
+search_top_k: 5
+
+# RAG synthesis (requires Ollama or compatible endpoint)
+rag:
+  enabled: true
+  api_url: http://localhost:11434
+  model: phi4-mini
+  top_k: 5
+  max_tokens: 512
+
+# Graph
+graph:
+  node_min_size: 4
+  node_max_size: 20
+  charge_strength: -120
+  link_distance: 80
+
+# Theme
+theme: dark
