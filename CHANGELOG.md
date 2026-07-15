@@ -1,3 +1,10 @@
+## 2026-07-15
+### Added
+- ROADMAP.md: added "Adapt CONTENT-STYLE.md writing quality principles"
+  under Later → Docs — tracks re-evaluating and porting universal
+  principles from `fem-media/deep-style/CONTENT-STYLE-v2.md` into the
+  template's content style guide once the v2 guide is finalized.
+
 ## 2026-07-06
 ### Added
 - `tools/kb_query.py`: KB Q&A tool — retrieves top-k KB chunks via semantic

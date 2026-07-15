@@ -85,6 +85,17 @@ Lower-priority or larger-scope efforts.
 - [ ] `kb_search.py --filter` flag to narrow results by directory, file
   pattern, or front matter field
 
+### Docs
+
+- [ ] Adapt `CONTENT-STYLE.md` writing quality principles from
+  `fem-media/deep-style/CONTENT-STYLE-v2.md` — the v2 style guide is
+  nearly finalized. Once it is, re-evaluate it for what translates to a
+  generic KB template (concrete over abstract, jargon detection patterns,
+  plain English test, sentence structure). Port the universal principles as
+  a new "Language Standard" section in the template's `CONTENT-STYLE.md`.
+  Skip project-specific content: L4/L5 level system, citation placement,
+  the coffee test, video-script-specific rules, and domain examples.
+
 ### Infrastructure
 
 - [ ] Optional PostgreSQL or SQLite backend for `kb_search.py` as an
