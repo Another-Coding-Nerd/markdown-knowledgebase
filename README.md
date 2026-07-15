@@ -74,6 +74,24 @@ Requires a running [Ollama](https://ollama.com) instance (≥ 0.1.24) or any
 OpenAI-compatible `/v1/chat/completions` endpoint. `tools/index` and
 `tools/search` have no server dependency.
 
+## Design Philosophy
+
+**CLI/agent first, UI optional.** Every feature works from the terminal —
+no GUI required, no app that needs to be running on your machine.
+
+- **Agents** use the CLI tools directly (`kb_search.py`, `kb_query.py`,
+  `kb_index.py`) — no browser, no server, no wrapper.
+- **Humans** can work the same way, or optionally launch a lightweight
+  Flask app (`tools/kb_app.py`) for visual browsing, graph exploration,
+  and search in a browser.
+- **The data works without the UI.** Markdown files, the vector index,
+  and the connections graph are all usable from the command line. The
+  Flask app is one interface among several, not a requirement.
+
+This is the opposite of app-first systems (Obsidian, Notion) where the
+GUI is the primary interface and CLI access is an afterthought. Here the
+tools are the product. The UI is a convenience layer.
+
 ## How it works
 
 - `kb/**/*.md` files are split into chunks at H1/H2/H3 heading boundaries.
