@@ -45,9 +45,8 @@ tools/
 ├── kb_app.py              # Flask application
 ├── templates/
 │   ├── base.html          # Shared layout (nav, search bar, CSS)
-│   ├── graph.html         # D3.js graph visualization
-│   ├── page.html          # Individual KB page renderer
-│   └── ask.html           # KB Q&A question box + answer display
+│   ├── graph.html         # D3.js graph + KB Q&A panel (folded in)
+│   └── page.html          # Individual KB page renderer
 └── static/                # (optional, if CSS grows beyond inline)
 ```
 
@@ -65,7 +64,8 @@ tools/
 - Hover node → show tooltip with title + snippet
 - Zoom/pan/drag standard D3 interactions
 
-**Data source:** `connections.db` via `/api/graph` endpoint
+**Data source:** See Also sections parsed from `kb/**/*.md` (v1 default).
+`connections.db` is a v2 enhancement — see Feature 4.
 
 **Graph data format:**
 
@@ -168,13 +168,15 @@ of printing to stdout.
 
 **Route:** `/api/graph`
 
-**Implementation:**
-- Read from `connections.db` (SQLite)
-- If connections.db doesn't exist, fall back to parsing See Also sections
-  from `kb/**/*.md` (on-the-fly, no DB required)
-- Return JSON for D3.js consumption
+**v1 implementation:** Parse See Also sections from `kb/**/*.md` on-the-fly
+(no DB required). This is the default for v1 — `connections.db` and
+`connections.py` are v2 items not yet built.
 
-**Fallback (no connections.db):**
+**v2 (future):** Read from `connections.db` (SQLite) for richer relationship
+types and faster graph builds on large KBs. Falls back to See Also parsing
+if DB is absent.
+
+**See Also fallback:**
 
 ```python
 def build_graph_from_see_also():
@@ -221,9 +223,14 @@ Used by the graph (node list) and could power a file browser view.
 **Route:** `/api/connections/<filename>`
 
 **Implementation:**
-- Query connections.db for all edges involving this file
-- Return incoming + outgoing connections with relationship types
-- Used by the page viewer sidebar
+- v1: Parse the target file's See Also section and return those links as
+  outgoing edges. Incoming edges (backlinks) require scanning all other KB
+  files for references to this filename — do on-the-fly, cache per request.
+  Return empty list for incoming if the scan would be too slow (acceptable
+  v1 limitation).
+- v2: Query connections.db for all edges involving this file, return full
+  incoming + outgoing with relationship types.
+- Used by the page viewer sidebar.
 
 ## Feature 7: KB Q&A (Retrieve & Synthesize)
 
@@ -264,29 +271,28 @@ POST /api/ask
 Extracted into shared helpers or imported directly.
 
 **UI integration:**
-- "Ask a Question" box on the graph page (or a dedicated `/ask` page)
-- Text input + submit button
-- Results displayed as: synthesized answer (rendered markdown) + source list
-- Source links clickable → navigate to `/page/<file>`
-- Loading indicator while LLM generates
+- Q&A panel folded into the graph page (`/`) as a collapsible section below
+  the graph — no separate `/ask` route or `ask.html` template needed.
+- Text input + submit button; results replace panel content in place.
+- Results: synthesized answer (rendered markdown) + numbered source list.
+- Source links clickable → navigate to `/page/<file>`.
+- Loading indicator while LLM generates.
 - **Not a chat interface** — each question is a fresh, independent request.
   No conversation history, no follow-up threading.
 
-**Template layout (addition to graph page or dedicated /ask page):**
+**Panel layout (bottom of graph page):**
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  [🔍 Search]  [📊 Graph]  [❓ Ask]                      │
+│  [📊 Graph]  [🔍 Search bar ___________]                │
 ├─────────────────────────────────────────────────────────┤
-│  Ask your KB:                                            │
+│  (D3.js force graph)                                     │
+├─────────────────────────────────────────────────────────┤
+│  ▼ Ask your KB                                           │
 │  [________________________________] [Ask]                │
-├─────────────────────────────────────────────────────────┤
-│  Answer:                                                 │
-│  Based on the knowledge base, the key findings are...    │
 │                                                          │
-│  Sources:                                                │
-│  1. topic-a.md > Section Title (0.89)                    │
-│  2. topic-b.md > Another Section (0.84)                  │
+│  Based on the knowledge base, the key findings are...    │
+│  Sources: 1. topic-a.md > Section (0.89)                 │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -420,12 +426,12 @@ if __name__ == '__main__':
 ```
 flask
 markdown
+pygments
 ```
 
-Both are lightweight, well-maintained Python packages. `markdown` has
-syntax highlighting support via `codehilite` extension if needed later.
-`requests` is already in `requirements.txt` (used by `kb_query.py` for
-LLM API calls).
+`pygments` is required by `markdown`'s `codehilite` extension for syntax
+highlighting in rendered code blocks. `requests` is already in
+`requirements.txt` (used by `kb_query.py` for LLM API calls).
 
 ## UI/UX Details
 
@@ -455,37 +461,47 @@ LLM API calls).
 ## Styling
 
 **Foundation 6.9.0** via CDN for layout (XY Grid) and components (top-bar,
-buttons, callouts, forms). **Tailwind CSS color palette** via CDN for
-light/dark theming — no Tailwind utility classes, just the color tokens as
-CSS custom properties.
+buttons, callouts, forms). Color palette extracted statically from Tailwind
+v3 — no Tailwind CDN needed, just CSS custom properties hardcoded in
+`base.html`.
 
 ```html
 <!-- Foundation -->
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/foundation-sites@6.9.0/dist/css/foundation.min.css">
 <script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.9.0/dist/js/foundation.min.js"></script>
-
-<!-- Tailwind CSS (color palette only, used via CSS custom properties) -->
-<script src="https://cdn.tailwindcss.com"></script>
 ```
 
-**Theme color mapping** (Tailwind palette → CSS custom properties):
+**CSS custom properties (inline in `base.html`):**
 
-| Role | Light mode | Dark mode |
-|------|-----------|-----------|
-| Background | `white` | `slate-900` |
-| Surface (cards, sidebar) | `slate-50` | `slate-800` |
-| Text primary | `slate-900` | `slate-50` |
-| Text muted | `slate-500` | `slate-400` |
-| Border | `slate-200` | `slate-700` |
-| Primary action | `blue-600` | `blue-500` |
-| Primary hover | `blue-700` | `blue-400` |
-| Success | `green-600` | `green-500` |
-| Error | `red-600` | `red-500` |
-| Code background | `slate-100` | `slate-800` |
+```css
+:root {
+  --bg:        #ffffff;   /* white */
+  --surface:   #f8fafc;   /* slate-50 */
+  --text:      #0f172a;   /* slate-900 */
+  --text-muted:#64748b;   /* slate-500 */
+  --border:    #e2e8f0;   /* slate-200 */
+  --primary:   #2563eb;   /* blue-600 */
+  --primary-h: #1d4ed8;   /* blue-700 */
+  --success:   #16a34a;   /* green-600 */
+  --error:     #dc2626;   /* red-600 */
+  --code-bg:   #f1f5f9;   /* slate-100 */
+}
+.dark {
+  --bg:        #0f172a;   /* slate-900 */
+  --surface:   #1e293b;   /* slate-800 */
+  --text:      #f8fafc;   /* slate-50 */
+  --text-muted:#94a3b8;   /* slate-400 */
+  --border:    #334155;   /* slate-700 */
+  --primary:   #3b82f6;   /* blue-500 */
+  --primary-h: #60a5fa;   /* blue-400 */
+  --success:   #22c55e;   /* green-500 */
+  --error:     #ef4444;   /* red-500 */
+  --code-bg:   #1e293b;   /* slate-800 */
+}
+```
 
-Theme toggle via `<body class="dark">` or config default. CSS custom
-properties on `:root` / `.dark` selector map to Tailwind palette values.
+Theme toggle via `<body class="dark">` or config default.
 
 ## File Structure (final)
 
@@ -493,10 +509,9 @@ properties on `:root` / `.dark` selector map to Tailwind palette values.
 tools/
 ├── kb_app.py              # Main Flask application
 ├── templates/
-│   ├── base.html          # Shared layout
-│   ├── graph.html         # Graph visualization page
-│   ├── page.html          # KB page viewer
-│   └── ask.html           # KB Q&A question box
+│   ├── base.html          # Shared layout + CSS custom properties
+│   ├── graph.html         # Graph visualization + KB Q&A panel
+│   └── page.html          # KB page viewer
 
 flask_config.yaml          # Flask app configuration (shipped with defaults)
 ```
@@ -509,23 +524,18 @@ No `static/` directory needed — all CSS/JS inline or loaded from CDN.
 # 1. Build the vector index (if not already done)
 .venv/bin/python tools/kb_index.py
 
-# 2. (Optional) Build connections DB for richer graph
-.venv/bin/python tools/connections.py init
-
-# 3. (Optional, for KB Q&A) Start Ollama with a model
+# 2. (Optional, for KB Q&A) Start Ollama with a model
 ollama serve  # in a separate terminal
 ollama pull phi4-mini  # or your preferred model
 
-# 4. Start the Flask app
+# 3. Start the Flask app
 .venv/bin/python tools/kb_app.py
 # → Running on http://localhost:5000
 ```
 
-If connections.db doesn't exist, the graph falls back to parsing See Also
-sections from markdown files. The app works without running step 2.
-
-If Ollama isn't running, the KB Q&A feature returns an error message. The
-rest of the app (graph, search, page viewer) works without step 3.
+The graph builds from See Also sections in `kb/**/*.md` — no separate DB
+needed. If Ollama isn't running, the KB Q&A panel returns an error; the
+rest of the app (graph, search, page viewer) works without it.
 
 ## What this replaces
 
@@ -540,6 +550,8 @@ rest of the app (graph, search, page viewer) works without step 3.
 
 ## Not in scope (v1)
 
+- `connections.db` / `connections.py` — richer graph relationships; v1 uses
+  See Also section parsing only
 - Multi-user / collaboration
 - Write/edit KB from the web UI
 - Authentication

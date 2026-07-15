@@ -1,13 +1,22 @@
 ## 2026-07-15
+### Changed
+- FLASK-APP-PLAN.md: resolved ambiguities and tightened v1 scope
+  - v1 is explicitly See-Also-only; `connections.db`/`connections.py`
+    moved to v2 (not yet built) and added to "Not in scope (v1)"
+  - KB Q&A panel folded into graph page — `ask.html` removed, no
+    separate `/ask` route needed
+  - `/api/connections` fallback behavior specified for when connections.db
+    is absent (outgoing from See Also, incoming via file scan)
+  - `pygments` added to dependencies (required by markdown's codehilite)
+  - Tailwind CDN replaced with static CSS custom properties block —
+    hex values extracted from Tailwind v3 palette, inlined in base.html
+  - Startup flow simplified: `connections.py init` step removed
+
 ### Added
 - ROADMAP.md: added "Adapt CONTENT-STYLE.md writing quality principles"
   under Later → Docs — tracks re-evaluating and porting universal
   principles from `fem-media/deep-style/CONTENT-STYLE-v2.md` into the
   template's content style guide once the v2 guide is finalized.
-- FLASK-APP-PLAN.md: added Tailwind CSS color palette for light/dark
-  theming alongside Foundation 6.9.0 layout — CSS custom properties
-  mapped to Tailwind palette values (slate/blue/green/red), toggled via
-  `.dark` class on `<body>`.
 
 ## 2026-07-06
 ### Added
