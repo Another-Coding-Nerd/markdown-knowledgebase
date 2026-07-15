@@ -398,8 +398,9 @@ if __name__ == '__main__':
 - Top-bar for navigation (Graph, Pages, Search, Ask)
 - Search bar in the top-bar
 - Foundation components: buttons, cards, callouts
-- Minimal custom CSS overrides on top of Foundation
-- No framework — plain HTML/CSS/JS beyond Foundation
+- CSS custom properties (`--bg`, `--surface`, `--text`, etc.) mapped to
+  Tailwind palette values, toggled via `:root` / `.dark` on `<body>`
+- No additional CSS framework beyond Foundation + Tailwind color tokens
 
 **graph.html:**
 - D3.js force-directed graph
@@ -453,20 +454,38 @@ LLM API calls).
 
 ## Styling
 
-Foundation for Sites 6.9.0 loaded from CDN. Clean, responsive, no build
-step:
+**Foundation 6.9.0** via CDN for layout (XY Grid) and components (top-bar,
+buttons, callouts, forms). **Tailwind CSS color palette** via CDN for
+light/dark theming — no Tailwind utility classes, just the color tokens as
+CSS custom properties.
 
 ```html
+<!-- Foundation -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/foundation-sites@6.9.0/dist/css/foundation.min.css"
-  crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.9.0/dist/js/foundation.min.js"
-  crossorigin="anonymous"></script>
+  href="https://cdn.jsdelivr.net/npm/foundation-sites@6.9.0/dist/css/foundation.min.css">
+<script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.9.0/dist/js/foundation.min.js"></script>
+
+<!-- Tailwind CSS (color palette only, used via CSS custom properties) -->
+<script src="https://cdn.tailwindcss.com"></script>
 ```
 
-Foundation's XY Grid for layout, built-in components for buttons/forms/
-cards/top-bar. Dark theme via Foundation's `dark` class on `<body>` or
-custom CSS overrides on top of Foundation defaults.
+**Theme color mapping** (Tailwind palette → CSS custom properties):
+
+| Role | Light mode | Dark mode |
+|------|-----------|-----------|
+| Background | `white` | `slate-900` |
+| Surface (cards, sidebar) | `slate-50` | `slate-800` |
+| Text primary | `slate-900` | `slate-50` |
+| Text muted | `slate-500` | `slate-400` |
+| Border | `slate-200` | `slate-700` |
+| Primary action | `blue-600` | `blue-500` |
+| Primary hover | `blue-700` | `blue-400` |
+| Success | `green-600` | `green-500` |
+| Error | `red-600` | `red-500` |
+| Code background | `slate-100` | `slate-800` |
+
+Theme toggle via `<body class="dark">` or config default. CSS custom
+properties on `:root` / `.dark` selector map to Tailwind palette values.
 
 ## File Structure (final)
 

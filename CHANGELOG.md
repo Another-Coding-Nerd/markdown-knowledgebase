@@ -4,6 +4,10 @@
   under Later → Docs — tracks re-evaluating and porting universal
   principles from `fem-media/deep-style/CONTENT-STYLE-v2.md` into the
   template's content style guide once the v2 guide is finalized.
+- FLASK-APP-PLAN.md: added Tailwind CSS color palette for light/dark
+  theming alongside Foundation 6.9.0 layout — CSS custom properties
+  mapped to Tailwind palette values (slate/blue/green/red), toggled via
+  `.dark` class on `<body>`.
 
 ## 2026-07-06
 ### Added
