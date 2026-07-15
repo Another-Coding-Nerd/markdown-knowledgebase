@@ -8,8 +8,8 @@ debug: false
 # Search
 search_top_k: 5
 
-# RAG synthesis (requires Ollama or compatible endpoint)
-rag:
+# KB Q&A settings (requires Ollama or compatible endpoint)
+kb_qa:
   enabled: true
   api_url: http://localhost:11434
   model: phi4-mini

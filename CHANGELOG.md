@@ -1,6 +1,6 @@
 ## 2026-07-06
 ### Added
-- `tools/kb_query.py`: RAG query tool — retrieves top-k KB chunks via semantic
+- `tools/kb_query.py`: KB Q&A tool — retrieves top-k KB chunks via semantic
   search and synthesizes an answer using any OpenAI-compatible LLM endpoint
   (Ollama ≥ 0.1.24 by default). Default model `phi4-mini` (best reasoning/speed
   on CPU); `gemma2:2b` and `llama3.2:3b` included as commented-out alternatives.

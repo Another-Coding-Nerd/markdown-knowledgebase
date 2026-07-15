@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""RAG query: retrieve KB chunks via semantic search, then synthesize an answer
+"""KB Q&A: retrieve KB chunks via semantic search, then synthesize an answer
 via a local LLM (Ollama / llama.cpp / OpenAI-compatible API).
 
 Usage:
@@ -92,7 +92,7 @@ def query_llm(api_url, model, prompt, max_tokens=DEFAULT_MAX_TOKENS):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="RAG query over the KB")
+    parser = argparse.ArgumentParser(description="KB Q&A over the KB")
     parser.add_argument("query", nargs="+", help="natural language question")
     parser.add_argument("--top-k", type=int, default=DEFAULT_TOP_K)
     parser.add_argument("--max-tokens", type=int, default=DEFAULT_MAX_TOKENS,

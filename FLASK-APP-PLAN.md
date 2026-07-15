@@ -8,9 +8,8 @@ need for Obsidian or any external tool.
 
 The Flask app serves as a local web interface for the KB. It leverages
 existing infrastructure (ChromaDB index, markdown files, connections DB)
-and adds a browsable UI on top. Includes a RAG (Retrieval Augmented
-Generation) question box that synthesizes answers from KB content using
-a local LLM.
+and adds a browsable UI on top. Includes a KB Q&A (Retrieve & Synthesize)
+question box that synthesizes answers from KB content using a local LLM.
 
 **Dependencies:** Flask + markdown + existing chromadb/fastembed (no new
 packages beyond Flask and markdown).
@@ -24,7 +23,7 @@ packages beyond Flask and markdown).
 ```
 
 **Configuration:** `flask_config.yaml` (shipped with defaults). See the
-file for all options: server host/port, search top-k, RAG settings
+file for all options: server host/port, search top-k, KB Q&A settings
 (model, API URL, max tokens), graph layout, and theme.
 
 ## Routes
@@ -35,7 +34,7 @@ file for all options: server host/port, search top-k, RAG settings
 | `/page/<path:filename>` | GET | Rendered markdown for a specific KB file |
 | `/api/graph` | GET | JSON graph data (nodes + edges) for D3.js |
 | `/api/search?q=<query>&top_k=<n>` | GET | Semantic search via ChromaDB |
-| `/api/rag` | POST | RAG synthesis: retrieve + LLM answer |
+| `/api/ask` | POST | KB Q&A: retrieve + LLM answer |
 | `/api/files` | GET | List all KB files with metadata |
 | `/api/connections/<filename>` | GET | Get connections for a specific file |
 
@@ -48,7 +47,7 @@ tools/
 │   ├── base.html          # Shared layout (nav, search bar, CSS)
 │   ├── graph.html         # D3.js graph visualization
 │   ├── page.html          # Individual KB page renderer
-│   └── ask.html           # RAG question box + answer display
+│   └── ask.html           # KB Q&A question box + answer display
 └── static/                # (optional, if CSS grows beyond inline)
 ```
 
@@ -226,9 +225,9 @@ Used by the graph (node list) and could power a file browser view.
 - Return incoming + outgoing connections with relationship types
 - Used by the page viewer sidebar
 
-## Feature 7: RAG Synthesis (Ask a Question)
+## Feature 7: KB Q&A (Retrieve & Synthesize)
 
-**Route:** `/api/rag`
+**Route:** `/api/ask`
 
 **Implementation:**
 - Accept a single natural language question
@@ -241,7 +240,7 @@ Used by the graph (node list) and could power a file browser view.
 **Request:**
 
 ```json
-POST /api/rag
+POST /api/ask
 {
   "question": "What are the key findings about X?",
   "top_k": 5
@@ -299,7 +298,7 @@ OpenAI-compatible `/v1/chat/completions` endpoint. Default model:
 CPU-only inference is too slow for practical use. The search/retrieval part
 works fine on CPU (fastembed is CPU-only by design).
 
-**Graceful degradation:** If no LLM endpoint is available, the `/api/rag`
+**Graceful degradation:** If no LLM endpoint is available, the `/api/ask`
 route returns an error message explaining the requirement. The rest of the
 app (graph, search, page viewer) works without it.
 
@@ -322,7 +321,7 @@ app = Flask(__name__)
 def load_flask_config(path="flask_config.yaml"):
     """Load Flask app config, falling back to defaults."""
     defaults = {"host": "localhost", "port": 5000, "debug": False,
-                "search_top_k": 5, "rag": {"enabled": True, "api_url": "...",
+                "search_top_k": 5, "kb_qa": {"enabled": True, "api_url": "...",
                 "model": "phi4-mini", "top_k": 5, "max_tokens": 512}}
     if Path(path).exists():
         with open(path) as f:
@@ -358,12 +357,12 @@ def api_search():
     results = search_kb(query, top_k)
     return jsonify(results)
 
-@app.route('/api/rag', methods=['POST'])
-def api_rag():
+@app.route('/api/ask', methods=['POST'])
+def api_ask():
     data = request.get_json()
     question = data.get('question', '')
-    top_k = data.get('top_k', flask_cfg["rag"]["top_k"])
-    max_tokens = data.get('max_tokens', flask_cfg["rag"]["max_tokens"])
+    top_k = data.get('top_k', flask_cfg["kb_qa"]["top_k"])
+    max_tokens = data.get('max_tokens', flask_cfg["kb_qa"]["max_tokens"])
     answer, sources = rag_query(question, top_k, max_tokens)
     return jsonify({"answer": answer, "sources": sources})
 
@@ -478,7 +477,7 @@ tools/
 │   ├── base.html          # Shared layout
 │   ├── graph.html         # Graph visualization page
 │   ├── page.html          # KB page viewer
-│   └── ask.html           # RAG question box
+│   └── ask.html           # KB Q&A question box
 
 flask_config.yaml          # Flask app configuration (shipped with defaults)
 ```
@@ -494,7 +493,7 @@ No `static/` directory needed — all CSS/JS inline or loaded from CDN.
 # 2. (Optional) Build connections DB for richer graph
 .venv/bin/python tools/connections.py init
 
-# 3. (Optional, for RAG) Start Ollama with a model
+# 3. (Optional, for KB Q&A) Start Ollama with a model
 ollama serve  # in a separate terminal
 ollama pull phi4-mini  # or your preferred model
 
@@ -506,7 +505,7 @@ ollama pull phi4-mini  # or your preferred model
 If connections.db doesn't exist, the graph falls back to parsing See Also
 sections from markdown files. The app works without running step 2.
 
-If Ollama isn't running, the RAG feature returns an error message. The
+If Ollama isn't running, the KB Q&A feature returns an error message. The
 rest of the app (graph, search, page viewer) works without step 3.
 
 ## What this replaces
@@ -514,7 +513,7 @@ rest of the app (graph, search, page viewer) works without step 3.
 | Before | After |
 |---|---|
 | `kb_search.py` CLI for search | Web UI search bar |
-| `kb_query.py` CLI for one-shot RAG | Web UI question box |
+| `kb_query.py` CLI for one-shot KB Q&A | Web UI question box |
 | Reading .md files manually | Rendered markdown in browser |
 | No visualization | Interactive graph |
 | No navigation | Sidebar with related files |

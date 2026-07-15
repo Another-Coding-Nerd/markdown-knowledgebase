@@ -17,7 +17,7 @@ High-priority improvements to the template itself.
 - [ ] Fill in the `## Scope` placeholder in
   `prompts/process-input-files.md` with guidance text instead of leaving it
   empty
-- [ ] Document the RAG query feature (`tools/kb_query.py`) — use case is
+- [ ] Document the KB Q&A feature (`tools/kb_query.py`) — use case is
   "query the KB + synthesize a short answer" via a local LLM. Needs a quick
   setup section in the README covering Ollama install, model selection, and
   example invocation. Note: after extensive testing, a GPU is required for
@@ -68,13 +68,13 @@ Lower-priority or larger-scope efforts.
 
 - [ ] **Flask app (Obsidian lite)** — lightweight local web UI for browsing
   the KB. Graph visualization (D3.js), semantic search bar, rendered
-  markdown pages, RAG question box (retrieve + synthesize via local LLM).
+  markdown pages, KB Q&A question box (retrieve + synthesize via local LLM).
   See `FLASK-APP-PLAN.md` for full spec. Config via `flask_config.yaml`
   (shipped with defaults for port, model, graph layout, theme). Key
   routes: `/` (graph), `/page/<file>` (rendered markdown), `/api/search`
-  (ChromaDB query), `/api/rag` (RAG synthesis), `/api/graph` (JSON for
+  (ChromaDB query), `/api/ask` (KB Q&A), `/api/graph` (JSON for
   D3.js). Falls back to parsing See Also sections if connections.db
-  doesn't exist. RAG requires Ollama or compatible endpoint; works
+  doesn't exist. KB Q&A requires Ollama or compatible endpoint; works
   without it. Dependencies: Flask + markdown.
 - [ ] Tagging or metadata system beyond file/directory structure (e.g. YAML
   front matter fields that `kb_index.py` indexes and `kb_search.py` can

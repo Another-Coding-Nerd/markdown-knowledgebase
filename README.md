@@ -63,16 +63,19 @@ model (~130MB, cached under `~/.cache/`).
 shorter to type, and they resolve the repo root from their own path so they
 work from any directory.
 
+**KB Q&A (Retrieve & Synthesize)** (optional) — retrieve KB chunks and synthesize an answer
+via a local LLM:
+
 ```bash
-# RAG: retrieve KB chunks and synthesize an answer via a local LLM
 tools/query "what do I know about X?"
 tools/query --top-k 8 --model phi4-mini "question"
-tools/query --api-url http://192.168.1.50:8080 "question"
+tools/query --max-tokens 256 "short answer please"
 ```
 
 Requires a running [Ollama](https://ollama.com) instance (≥ 0.1.24) or any
-OpenAI-compatible `/v1/chat/completions` endpoint. `tools/index` and
-`tools/search` have no server dependency.
+OpenAI-compatible `/v1/chat/completions` endpoint. **Not required** for
+indexing or search — `tools/index` and `tools/search` work with zero
+server dependencies.
 
 ## Design Philosophy
 
@@ -128,7 +131,7 @@ prompts/
 tools/
   kb_index.py     # rebuild the index
   kb_search.py    # query the index
-  kb_query.py     # RAG: retrieve + synthesize via local LLM
+  kb_query.py     # KB Q&A: retrieve + synthesize via local LLM
   chunking.py     # heading-based + token-budget chunking
   kb_common.py    # shared config/model/collection helpers
   index           # wrapper → kb_index.py
