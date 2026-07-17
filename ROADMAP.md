@@ -66,7 +66,7 @@ Lower-priority or larger-scope efforts.
 
 ### Features
 
-- [ ] **Flask app (Obsidian lite)** — lightweight local web UI for browsing
+- [x] **Flask app (Obsidian lite)** — lightweight local web UI for browsing
   the KB. Graph visualization (D3.js), semantic search bar, rendered
   markdown pages, KB Q&A question box (retrieve + synthesize via local LLM).
   See `FLASK-APP-PLAN.md` for full spec. Config via `flask_config.yaml`

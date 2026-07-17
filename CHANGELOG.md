@@ -1,3 +1,13 @@
+## 2026-07-17 (5)
+### Added
+- README.md: "Flask Web Interface" section — setup steps, feature table
+  (graph/page viewer/search/KB Q&A), config options, Ollama setup, and
+  proxy compatibility note. Added `flask_config.yaml` and `tools/templates/`
+  to the Layout section; added `tools/kb_app.py` to the tools listing.
+
+### Changed
+- ROADMAP.md: Flask app item marked complete under Later → Features.
+
 ## 2026-07-17 (4)
 ### Fixed
 - `tools/kb_app.py`: path containment check changed from `startswith` to

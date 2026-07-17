@@ -115,10 +115,58 @@ tools are the product. The UI is a convenience layer.
   path, similarity score, snippet), and warns if any `kb/**/*.md` file has
   changed since the last index build.
 
+## Flask Web Interface (optional)
+
+A lightweight local web UI — graph visualization, semantic search, rendered
+markdown pages, and a KB Q&A question box.
+
+```bash
+# 1. Build the vector index (if not already done)
+.venv/bin/python tools/kb_index.py
+
+# 2. Start the app
+.venv/bin/python tools/kb_app.py
+# → App URL: http://localhost:5000
+```
+
+**What it provides:**
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Graph | `/` | D3.js force-directed graph of KB connections (from See Also links). Click a node to open the page. |
+| Page viewer | `/page/<file>` | Rendered markdown with sidebar showing related files and backlinks. |
+| Search | header bar | Debounced semantic search — press `/` to focus, `Esc` to close. |
+| Ask your KB | panel on `/` | One-shot Q&A: retrieves relevant chunks, sends to a local LLM, returns a synthesized answer with citations. |
+
+**Configuration:** `flask_config.yaml` (shipped with defaults). Options:
+port, host, theme (`dark`/`light`), `search_top_k`, graph layout
+(`charge_strength`, `link_distance`, node sizes), and KB Q&A settings
+(`api_url`, `model`, `top_k`, `max_tokens`).
+
+```bash
+.venv/bin/python tools/kb_app.py --port 8080   # override port
+.venv/bin/python tools/kb_app.py --config my.yaml  # custom config file
+```
+
+**KB Q&A requires** a running [Ollama](https://ollama.com) instance
+(≥ 0.1.24) or any OpenAI-compatible `/v1/chat/completions` endpoint. The
+rest of the app (graph, search, page viewer) works without it.
+
+```bash
+# Start Ollama in a separate terminal, then pull a model:
+ollama serve
+ollama pull phi4-mini   # default; gemma2:2b or llama3.2:3b also work
+```
+
+Any OpenAI-compatible proxy works via `api_url` in `flask_config.yaml` —
+[LiteLLM](https://github.com/BerriAI/litellm) can front AWS Bedrock,
+Anthropic, Azure OpenAI, and others with no code changes.
+
 ## Layout
 
 ```
 config.yaml              # kb_root, embedding model, chunk size/overlap, top_k
+flask_config.yaml        # Flask app config (port, theme, graph layout, KB Q&A)
 communication-levels.md  # optional: QuASAP 7-level scale + target level templates
 kb/               # the markdown knowledgebase content
   projects/       # optional Projects/Resources split (see AGENTS.md);
@@ -133,12 +181,14 @@ prompts/
   organize-kb-files.md          # sort kb/ files into Projects vs. Resources
   process-knowledgebase-files.md # periodic quality review of kb/
 tools/
+  kb_app.py       # Flask web interface (graph, search, page viewer, KB Q&A)
   kb_index.py     # rebuild the index
   kb_search.py    # query the index
   kb_query.py     # KB Q&A: retrieve + synthesize via local LLM
   html_to_text.py # convert .html files / pasted HTML in .txt to plain text
   chunking.py     # heading-based + token-budget chunking
   kb_common.py    # shared config/model/collection helpers
+  templates/      # Jinja2 templates for the Flask app
   index           # wrapper → kb_index.py
   search          # wrapper → kb_search.py
   query           # wrapper → kb_query.py
