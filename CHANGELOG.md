@@ -1,3 +1,28 @@
+## 2026-07-17 (3)
+### Added
+- `tools/kb_app.py`: Flask web interface implementing all routes from
+  `FLASK-APP-PLAN.md` — graph visualization (`/`), page viewer
+  (`/page/<path>`), semantic search (`/api/search`), KB Q&A (`/api/ask`),
+  file listing (`/api/files`), connections (`/api/connections/<path>`).
+  Reuses `build_prompt()` and `query_llm()` from `kb_query.py`;
+  `load_config()`, `get_embedding_model()`, `get_collection()` from
+  `kb_common.py`. Embedding model and Chroma collection loaded once at
+  startup (not per-request). Path containment check on `/page/` prevents
+  directory traversal. Graceful degradation on LLM errors.
+- `tools/templates/base.html`: shared layout — Foundation 6.9.0 CDN,
+  Tailwind v3 color palette as static CSS custom properties (no Tailwind
+  CDN), debounced search bar (300ms, `/` shortcut, `Esc` to close), dark
+  theme support via `body.dark`.
+- `tools/templates/graph.html`: D3.js v7 force-directed graph — nodes
+  colored by directory (projects/resources/top-level), degree-scaled node
+  sizes, zoom/pan/drag, double-click to reset, edge-click to highlight
+  connected nodes, collapsible KB Q&A panel below graph.
+- `tools/templates/page.html`: two-column markdown viewer — sidebar with
+  outgoing (See Also) and incoming (backlinks) connections, rendered
+  markdown via Python `markdown` library with codehilite/fenced_code/
+  tables/toc extensions, breadcrumb navigation.
+- `requirements.txt`: added `flask`, `markdown`, `pygments`.
+
 ## 2026-07-17 (2)
 ### Added
 - `kb/resources/.gitkeep`: creates the `kb/resources/` directory in the

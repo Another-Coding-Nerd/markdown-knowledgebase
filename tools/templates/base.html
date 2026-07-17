@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Knowledge Base{% endblock %}</title>
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/foundation-sites@6.9.0/dist/css/foundation.min.css"
+    crossorigin="anonymous">
+  <style>
+    /* ── Tailwind v3 palette as CSS custom properties ── */
+    :root {
+      --bg:         #ffffff;  /* white */
+      --surface:    #f8fafc;  /* slate-50 */
+      --text:       #0f172a;  /* slate-900 */
+      --text-muted: #64748b;  /* slate-500 */
+      --border:     #e2e8f0;  /* slate-200 */
+      --primary:    #2563eb;  /* blue-600 */
+      --primary-h:  #1d4ed8;  /* blue-700 */
+      --success:    #16a34a;  /* green-600 */
+      --error:      #dc2626;  /* red-600 */
+      --code-bg:    #f1f5f9;  /* slate-100 */
+    }
+    .dark {
+      --bg:         #0f172a;  /* slate-900 */
+      --surface:    #1e293b;  /* slate-800 */
+      --text:       #f8fafc;  /* slate-50 */
+      --text-muted: #94a3b8;  /* slate-400 */
+      --border:     #334155;  /* slate-700 */
+      --primary:    #3b82f6;  /* blue-500 */
+      --primary-h:  #60a5fa;  /* blue-400 */
+      --success:    #22c55e;  /* green-500 */
+      --error:      #ef4444;  /* red-500 */
+      --code-bg:    #1e293b;  /* slate-800 */
+    }
+
+    /* ── Base ── */
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { color: var(--primary-h); text-decoration: underline; }
+
+    /* ── Nav ── */
+    .kb-nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1rem;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .kb-nav-brand {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .kb-nav-brand:hover { color: var(--primary); text-decoration: none; }
+    .kb-nav-links {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .kb-nav-links a {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .kb-nav-links a:hover {
+      background: var(--border);
+      color: var(--text);
+      text-decoration: none;
+    }
+    .kb-nav-search {
+      flex: 1;
+      max-width: 400px;
+      position: relative;
+    }
+    #search-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 0.35rem 0.75rem;
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    #search-input:focus { border-color: var(--primary); }
+    #search-input::placeholder { color: var(--text-muted); }
+    #search-results {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      max-height: 360px;
+      overflow-y: auto;
+      z-index: 200;
+    }
+    .search-result {
+      display: block;
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+    }
+    .search-result:last-child { border-bottom: none; }
+    .search-result:hover { background: var(--border); text-decoration: none; color: var(--text); }
+    .search-result-title { font-size: 0.85rem; font-weight: 600; }
+    .search-result-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .search-result-snippet { font-size: 0.75rem; color: var(--text-muted); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .search-no-results { padding: 0.75rem; font-size: 0.85rem; color: var(--text-muted); text-align: center; }
+
+    /* ── Content wrapper ── */
+    .kb-main { padding: 1.5rem 1rem; max-width: 1400px; margin: 0 auto; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: background 0.15s;
+      text-decoration: none;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-h); color: #fff; text-decoration: none; }
+    .btn-sm { padding: 0.25rem 0.65rem; font-size: 0.8rem; }
+    .btn:disabled { opacity: 0.55; cursor: default; }
+
+    {% block styles %}{% endblock %}
+  </style>
+</head>
+<body class="{{ theme }}">
+
+  <nav class="kb-nav">
+    <a class="kb-nav-brand" href="/">KB</a>
+    <div class="kb-nav-links">
+      <a href="/">Graph</a>
+      <a href="/api/files">Files</a>
+    </div>
+    <div class="kb-nav-search">
+      <input id="search-input" type="text" placeholder='Search… (press /)' autocomplete="off">
+      <div id="search-results"></div>
+    </div>
+  </nav>
+
+  {% block content %}{% endblock %}
+
+  <script>
+    (function () {
+      const input = document.getElementById('search-input');
+      const results = document.getElementById('search-results');
+      let timer;
+
+      document.addEventListener('keydown', e => {
+        if (e.key === '/' && document.activeElement !== input && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          input.focus();
+        }
+        if (e.key === 'Escape') {
+          results.style.display = 'none';
+          input.blur();
+        }
+      });
+
+      input.addEventListener('input', () => {
+        clearTimeout(timer);
+        const q = input.value.trim();
+        if (!q) { results.style.display = 'none'; return; }
+        timer = setTimeout(() => doSearch(q), 300);
+      });
+
+      input.addEventListener('focus', () => {
+        if (input.value.trim()) doSearch(input.value.trim());
+      });
+
+      async function doSearch(q) {
+        try {
+          const res = await fetch('/api/search?q=' + encodeURIComponent(q));
+          const data = await res.json();
+          if (!data.results || !data.results.length) {
+            results.innerHTML = '<div class="search-no-results">No results</div>';
+            results.style.display = 'block';
+            return;
+          }
+          results.innerHTML = data.results.map(r => {
+            const loc = r.heading ? r.file + ' › ' + r.heading : r.file;
+            const anchor = r.heading ? '#' + r.heading.toLowerCase().replace(/[^\w]+/g, '-') : '';
+            return `<a class="search-result" href="/page/${r.file}${anchor}">
+              <div class="search-result-title">${escHtml(r.file)}</div>
+              <div class="search-result-meta">${r.heading ? escHtml(r.heading) + ' · ' : ''}${r.score.toFixed(3)}</div>
+              <div class="search-result-snippet">${escHtml(r.snippet)}</div>
+            </a>`;
+          }).join('');
+          results.style.display = 'block';
+        } catch (_) {
+          results.style.display = 'none';
+        }
+      }
+
+      document.addEventListener('click', e => {
+        if (!e.target.closest('.kb-nav-search')) results.style.display = 'none';
+      });
+
+      function escHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+    })();
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block title %}Graph — Knowledge Base{% endblock %}
+
+{% block styles %}
+  #graph-container {
+    width: 100%;
+    height: calc(100vh - 52px - 200px);
+    min-height: 400px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  #graph-container svg { width: 100%; height: 100%; cursor: grab; }
+  #graph-container svg:active { cursor: grabbing; }
+
+  #graph-legend {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; margin: 2px 0; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  .graph-tooltip {
+    position: fixed;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    color: var(--text);
+    pointer-events: none;
+    z-index: 300;
+    max-width: 220px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+  .graph-tooltip strong { display: block; margin-bottom: 2px; }
+
+  /* ── KB Q&A panel ── */
+  #qa-panel {
+    margin-top: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  #qa-panel summary {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  #qa-panel summary::-webkit-details-marker { display: none; }
+  #qa-panel summary::before { content: '▶'; font-size: 0.7rem; color: var(--text-muted); transition: transform 0.2s; }
+  #qa-panel[open] summary::before { transform: rotate(90deg); }
+  #qa-panel summary:hover { background: var(--border); }
+
+  #qa-body { padding: 0.75rem 1rem 1rem; }
+  #qa-row { display: flex; gap: 0.5rem; }
+  #qa-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    padding: 0.4rem 0.75rem;
+    font-size: 0.875rem;
+    outline: none;
+  }
+  #qa-input:focus { border-color: var(--primary); }
+  #qa-input::placeholder { color: var(--text-muted); }
+
+  #qa-result { margin-top: 0.75rem; display: none; }
+  #qa-answer {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    white-space: pre-wrap;
+    color: var(--text);
+  }
+  #qa-sources { margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted); }
+  #qa-sources a { color: var(--primary); }
+  #qa-note { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; }
+{% endblock %}
+
+{% block content %}
+<div class="kb-main">
+  <div id="graph-wrapper" style="position:relative;">
+    <div id="graph-container">
+      <div id="graph-legend">
+        <div class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span> top-level</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span> projects/</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#22c55e"></span> resources/</div>
+        <div style="margin-top:4px; font-size:0.7rem;">Click node → page · Scroll → zoom · Drag → pan</div>
+      </div>
+    </div>
+  </div>
+
+  <details id="qa-panel">
+    <summary>Ask your KB</summary>
+    <div id="qa-body">
+      <div id="qa-row">
+        <input id="qa-input" type="text" placeholder="Ask a question about this knowledge base…">
+        <button id="qa-submit" class="btn btn-primary btn-sm">Ask</button>
+      </div>
+      <div id="qa-result">
+        <div id="qa-answer"></div>
+        <div id="qa-sources"></div>
+      </div>
+      <div id="qa-note">Requires a running Ollama instance or compatible LLM endpoint (see flask_config.yaml).</div>
+    </div>
+  </details>
+</div>
+
+<div class="graph-tooltip" id="tooltip" style="display:none"></div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" crossorigin="anonymous"></script>
+<script>
+  const GRAPH_CFG = {{ graph_config | tojson }};
+
+  async function renderGraph() {
+    let data;
+    try {
+      const res = await fetch('/api/graph');
+      data = await res.json();
+    } catch (e) {
+      document.getElementById('graph-container').innerHTML =
+        '<div style="padding:2rem;color:var(--error)">Failed to load graph data.</div>';
+      return;
+    }
+
+    if (!data.nodes.length) {
+      document.getElementById('graph-container').innerHTML =
+        '<div style="padding:2rem;color:var(--text-muted)">No KB files found. Add .md files to kb/ and reindex.</div>';
+      return;
+    }
+
+    const container = document.getElementById('graph-container');
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    const tooltip = document.getElementById('tooltip');
+
+    const svg = d3.select('#graph-container').append('svg')
+      .attr('width', width)
+      .attr('height', height);
+
+    const zoom = d3.zoom()
+      .scaleExtent([0.1, 6])
+      .on('zoom', e => g.attr('transform', e.transform));
+
+    svg.call(zoom)
+       .on('dblclick.zoom', () => svg.transition().duration(400).call(zoom.transform, d3.zoomIdentity));
+
+    const g = svg.append('g');
+
+    const sim = d3.forceSimulation(data.nodes)
+      .force('link', d3.forceLink(data.edges).id(d => d.id)
+        .distance(GRAPH_CFG.link_distance || 80))
+      .force('charge', d3.forceManyBody()
+        .strength(GRAPH_CFG.charge_strength || -120))
+      .force('center', d3.forceCenter(width / 2, height / 2))
+      .force('collision', d3.forceCollide().radius(d => (d.size || 6) + 4));
+
+    const link = g.append('g').attr('class', 'links')
+      .selectAll('line')
+      .data(data.edges)
+      .join('line')
+      .attr('stroke', 'var(--border)')
+      .attr('stroke-width', 1.5)
+      .attr('stroke-opacity', 0.7);
+
+    const node = g.append('g').attr('class', 'nodes')
+      .selectAll('g')
+      .data(data.nodes)
+      .join('g')
+      .style('cursor', 'pointer')
+      .call(drag(sim))
+      .on('click', (event, d) => { window.location.href = '/page/' + d.id; })
+      .on('mousemove', (event, d) => {
+        tooltip.innerHTML = `<strong>${escHtml(d.title)}</strong>${escHtml(d.id)}`;
+        tooltip.style.display = 'block';
+        tooltip.style.left = (event.clientX + 12) + 'px';
+        tooltip.style.top = (event.clientY - 8) + 'px';
+      })
+      .on('mouseleave', () => { tooltip.style.display = 'none'; });
+
+    node.append('circle')
+      .attr('r', d => d.size || 6)
+      .attr('fill', d => d.color || 'var(--primary)')
+      .attr('stroke', 'var(--bg)')
+      .attr('stroke-width', 1.5)
+      .attr('fill-opacity', 0.85);
+
+    node.filter(d => (d.size || 6) >= 9).append('text')
+      .text(d => d.title.length > 18 ? d.title.slice(0, 16) + '…' : d.title)
+      .attr('x', d => (d.size || 6) + 3)
+      .attr('y', '0.35em')
+      .attr('fill', 'var(--text-muted)')
+      .style('font-size', '10px')
+      .style('pointer-events', 'none');
+
+    sim.on('tick', () => {
+      link
+        .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+      node.attr('transform', d => `translate(${d.x ?? 0},${d.y ?? 0})`);
+    });
+
+    // Highlight connected nodes on edge click
+    link.on('click', (event, d) => {
+      event.stopPropagation();
+      node.select('circle').attr('fill-opacity', n =>
+        (n.id === d.source.id || n.id === d.target.id) ? 1 : 0.3);
+    });
+    svg.on('click', () => node.select('circle').attr('fill-opacity', 0.85));
+  }
+
+  function drag(simulation) {
+    return d3.drag()
+      .on('start', (event, d) => {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x; d.fy = d.y;
+      })
+      .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y; })
+      .on('end', (event, d) => {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null; d.fy = null;
+      });
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── KB Q&A ──────────────────────────────────────────────────────────────
+  document.getElementById('qa-submit').addEventListener('click', askKB);
+  document.getElementById('qa-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') askKB();
+  });
+
+  async function askKB() {
+    const question = document.getElementById('qa-input').value.trim();
+    if (!question) return;
+
+    const btn = document.getElementById('qa-submit');
+    const resultDiv = document.getElementById('qa-result');
+    btn.disabled = true;
+    btn.textContent = '…';
+    resultDiv.style.display = 'none';
+
+    try {
+      const res = await fetch('/api/ask', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({question}),
+      });
+      const data = await res.json();
+      document.getElementById('qa-answer').textContent = data.answer || '(no answer)';
+      document.getElementById('qa-sources').innerHTML = (data.sources || []).map((s, i) => {
+        const label = s.heading ? `${s.file} › ${s.heading}` : s.file;
+        return `<a href="/page/${s.file}">[${i+1}] ${escHtml(label)}</a> (${s.score.toFixed(3)})`;
+      }).join(' &nbsp; ');
+      resultDiv.style.display = 'block';
+    } catch (_) {
+      document.getElementById('qa-answer').textContent = 'Request failed. Is the LLM endpoint running?';
+      document.getElementById('qa-sources').innerHTML = '';
+      resultDiv.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Ask';
+    }
+  }
+
+  renderGraph();
+</script>
+{% endblock %}
