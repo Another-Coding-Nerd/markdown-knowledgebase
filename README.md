@@ -136,6 +136,7 @@ tools/
   kb_index.py     # rebuild the index
   kb_search.py    # query the index
   kb_query.py     # KB Q&A: retrieve + synthesize via local LLM
+  html_to_text.py # convert .html files / pasted HTML in .txt to plain text
   chunking.py     # heading-based + token-budget chunking
   kb_common.py    # shared config/model/collection helpers
   index           # wrapper → kb_index.py

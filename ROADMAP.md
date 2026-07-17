@@ -9,12 +9,12 @@ High-priority improvements to the template itself.
 
 ### Docs
 
-- [ ] Add `html_to_text.py` to README Layout section (currently undocumented
+- [x] Add `html_to_text.py` to README Layout section (currently undocumented
   alongside the other tools)
-- [ ] Add default `kb/resources/` directory with `.gitkeep` — matches
+- [x] Add default `kb/resources/` directory with `.gitkeep` — matches
   `kb/projects/` and makes the Projects/Resources split feel complete out of
   the box
-- [ ] Fill in the `## Scope` placeholder in
+- [x] Fill in the `## Scope` placeholder in
   `prompts/process-input-files.md` with guidance text instead of leaving it
   empty
 - [ ] Document the KB Q&A feature (`tools/kb_query.py`) — use case is

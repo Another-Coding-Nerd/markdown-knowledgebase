@@ -1,3 +1,14 @@
+## 2026-07-17 (2)
+### Added
+- `kb/resources/.gitkeep`: creates the `kb/resources/` directory in the
+  template so the Projects/Resources split feels complete out of the box.
+- README.md Layout: added `html_to_text.py` entry (was missing alongside
+  the other tools).
+- `prompts/process-input-files.md`: replaced HTML comment `## Scope`
+  placeholder with visible guidance text — rendered markdown now shows the
+  instruction rather than hiding it in a comment.
+- ROADMAP.md: marked all three Now → Docs items complete.
+
 ## 2026-07-17
 ### Added
 - `CONTENT-STYLE.md`: new `## Language Standard` section — concrete-over-abstract

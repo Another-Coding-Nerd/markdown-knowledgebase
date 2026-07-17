@@ -9,9 +9,9 @@ not run this inventory/dedup workflow against `kb/` content.
 
 ## Scope
 
-<!-- Define this KB's topical scope here so step 2f (off-topic detection) has
-a concrete test, e.g. "Dating, relationships, female psychology, and male
-strategy." -->
+Define this KB's topical scope in one sentence so step 2f (off-topic
+detection) has a concrete test. Example: "Dating, relationships, female
+psychology, and male strategy." Replace this paragraph with your own.
 
 ## Workflow
 
