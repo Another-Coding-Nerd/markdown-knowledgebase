@@ -1,3 +1,26 @@
+## 2026-07-17
+### Added
+- `CONTENT-STYLE.md`: new `## Language Standard` section — concrete-over-abstract
+  rule, adjacent abstract noun test, define-on-first-use, read-aloud test,
+  jargon pattern-detection table, and sentence structure rules. Ported from
+  a companion project's style guide; domain-specific content excluded.
+- `communication-levels.md`: QuASAP 7-level audience scale with two generic
+  target-level templates (Level 4 / Level 5) as a starting point for KBs
+  that produce audience-targeted content. Domain-specific content removed;
+  users replace the target levels to match their format and audience.
+- README.md: note pointing to `communication-levels.md` in Getting Started
+  step 1; added to Layout section.
+- FLASK-APP-PLAN.md: proxy compatibility note — any OpenAI-compatible proxy
+  (LiteLLM, OpenRouter, etc.) works via `api_url` config; covers Bedrock,
+  Anthropic, Azure OpenAI without code changes.
+- `tools/kb_query.py`: updated `OLLAMA_URL` comment to mention proxy support.
+
+### Changed
+- ROADMAP.md: marked CONTENT-STYLE.md language standard item complete;
+  updated dedup workflow item to reference `index_notes.md` (plan file
+  deleted); removed external project path references from all entries.
+- CHANGELOG.md: removed external project path reference from earlier entry.
+
 ## 2026-07-15 (2)
 ### Added
 - `index_notes.md`: consolidated dedup workflow notes from
@@ -26,9 +49,8 @@
 
 ### Added
 - ROADMAP.md: added "Adapt CONTENT-STYLE.md writing quality principles"
-  under Later → Docs — tracks re-evaluating and porting universal
-  principles from `fem-media/deep-style/CONTENT-STYLE-v2.md` into the
-  template's content style guide once the v2 guide is finalized.
+  under Later → Docs — tracks porting universal language principles from a
+  companion project's style guide into the template's content style guide.
 
 ## 2026-07-06
 ### Added

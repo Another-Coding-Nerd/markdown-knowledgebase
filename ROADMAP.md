@@ -48,9 +48,9 @@ Medium-priority enhancements.
 
 ### Workflow
 
-- [ ] Implement deferred items from `dedup-improvement-plan.md`: calibration
-  step for score bands in AGENTS.md, and the detail-check decision tree in
-  `prompts/process-input-files.md` step d
+- [ ] Implement deferred items from `index_notes.md` (dedup workflow section):
+  calibration step for score bands in AGENTS.md, and the detail-check
+  decision tree in `prompts/process-input-files.md` step d
 
 ### Documentation
 
@@ -87,14 +87,13 @@ Lower-priority or larger-scope efforts.
 
 ### Docs
 
-- [ ] Adapt `CONTENT-STYLE.md` writing quality principles from
-  `fem-media/deep-style/CONTENT-STYLE-v2.md` — the v2 style guide is
-  nearly finalized. Once it is, re-evaluate it for what translates to a
-  generic KB template (concrete over abstract, jargon detection patterns,
-  plain English test, sentence structure). Port the universal principles as
-  a new "Language Standard" section in the template's `CONTENT-STYLE.md`.
-  Skip project-specific content: L4/L5 level system, citation placement,
-  the coffee test, video-script-specific rules, and domain examples.
+- [x] Adapt `CONTENT-STYLE.md` writing quality principles from a companion
+  project's style guide — re-evaluate what translates to a generic KB
+  template (concrete over abstract, jargon detection patterns, plain English
+  test, sentence structure). Port the universal principles as a new
+  "Language Standard" section in the template's `CONTENT-STYLE.md`. Skip
+  project-specific content: level system, citation placement, the coffee
+  test, format-specific rules, and domain examples.
 
 ### Infrastructure
 

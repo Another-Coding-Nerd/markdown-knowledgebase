@@ -300,6 +300,12 @@ Extracted into shared helpers or imported directly.
 OpenAI-compatible `/v1/chat/completions` endpoint. Default model:
 `phi4-mini` (configurable via `--model` flag or config).
 
+**Proxy compatibility:** Any OpenAI-compatible proxy works without code
+changes — point `api_url` in `flask_config.yaml` at it. Examples:
+[LiteLLM](https://github.com/BerriAI/litellm) can front AWS Bedrock,
+Anthropic, OpenRouter, Azure OpenAI, and 100+ other providers behind the
+same interface (`litellm --model bedrock/anthropic.claude-...`).
+
 **Note:** After extensive testing, a GPU is required for the synthesis step.
 CPU-only inference is too slow for practical use. The search/retrieval part
 works fine on CPU (fastembed is CPU-only by design).

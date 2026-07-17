@@ -16,7 +16,10 @@ After completing Setup below:
 
 1. **Define the KB's scope** — edit `CONTENT-STYLE.md` for this KB's content
    conventions, and fill in the `## Scope` placeholder in
-   `prompts/process-input-files.md`.
+   `prompts/process-input-files.md`. If your KB produces content for a
+   specific audience, `communication-levels.md` provides a 7-level scale
+   (QuASAP framework) with two default target levels as a starting point —
+   adjust or replace them to match your output format and audience.
 2. **Choose a layout** — `kb/` is flat by default: every file at the top
    level (or in topic subdirectories), organized by topic. If this KB has
    bounded-effort content (a deliverable or finish line, e.g. "build X",
@@ -115,7 +118,8 @@ tools are the product. The UI is a convenience layer.
 ## Layout
 
 ```
-config.yaml       # kb_root, embedding model, chunk size/overlap, top_k
+config.yaml              # kb_root, embedding model, chunk size/overlap, top_k
+communication-levels.md  # optional: QuASAP 7-level scale + target level templates
 kb/               # the markdown knowledgebase content
   projects/       # optional Projects/Resources split (see AGENTS.md);
   resources/      # both dirs are created together when adopted;

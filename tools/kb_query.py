@@ -10,7 +10,7 @@ Usage:
 """
 
 # ── Configurable defaults ────────────────────────────────────────────────
-OLLAMA_URL = "http://localhost:11434"   # Ollama ≥0.1.24 exposes /v1/chat/completions natively
+OLLAMA_URL = "http://localhost:11434"   # Ollama ≥0.1.24; or any OpenAI-compatible proxy (LiteLLM, OpenRouter, etc.)
 DEFAULT_MODEL = "phi4-mini"             # best reasoning/speed balance on CPU
 # DEFAULT_MODEL = "gemma2:2b"           # fastest on CPU at this quality level
 # DEFAULT_MODEL = "llama3.2:3b"         # most community support, longest context
