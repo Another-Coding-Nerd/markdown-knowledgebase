@@ -14,6 +14,7 @@ from datetime import datetime
 from pathlib import Path
 
 import chromadb
+import markdown as mdlib
 import requests
 import yaml
 from flask import Flask, abort, jsonify, render_template, request
@@ -241,9 +242,17 @@ def list_kb_files() -> dict:
 def get_connections(filename: str) -> dict:
     kb_resolved = kb_root.resolve()
     target = (kb_root / filename).resolve()
-    if not str(target).startswith(str(kb_resolved)):
+    if not target.is_relative_to(kb_resolved):
         return {"outgoing": [], "incoming": []}
-    outgoing = _parse_see_also(target) if target.exists() else []
+    # Resolve raw See Also hrefs to kb_root-relative paths so template links work
+    outgoing = []
+    if target.exists():
+        for href in _parse_see_also(target):
+            resolved = (target.parent / href).resolve()
+            try:
+                outgoing.append(str(resolved.relative_to(kb_resolved)))
+            except ValueError:
+                pass
     stem = target.name
     incoming = []
     for f in kb_root.rglob("*.md"):
@@ -270,12 +279,11 @@ def graph():
 def page(filename):
     kb_resolved = kb_root.resolve()
     target = (kb_root / filename).resolve()
-    if not str(target).startswith(str(kb_resolved)):
+    if not target.is_relative_to(kb_resolved):
         abort(403)
     if not target.exists():
         abort(404)
     md_text = target.read_text(encoding="utf-8", errors="replace")
-    import markdown as mdlib
     html_content = mdlib.markdown(
         md_text,
         extensions=["tables", "fenced_code", "codehilite", "toc"],

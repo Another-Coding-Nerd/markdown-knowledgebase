@@ -1,3 +1,19 @@
+## 2026-07-17 (4)
+### Fixed
+- `tools/kb_app.py`: path containment check changed from `startswith` to
+  `Path.is_relative_to()` in both `page()` and `get_connections()` — the
+  string prefix check could allow paths from a directory whose name shares
+  a prefix with `kb_root` (e.g. `/home/user/kb-extra/...`).
+- `tools/kb_app.py`: `get_connections()` now resolves raw See Also hrefs to
+  `kb_root`-relative paths before returning them. Previously, relative links
+  like `../projects/foo.md` would produce broken `/page/../projects/foo.md`
+  URLs in the page sidebar; now they resolve correctly to `/page/projects/foo.md`.
+- `tools/kb_app.py`: moved `import markdown as mdlib` from inside the `page()`
+  route function to module top.
+- `tools/templates/graph.html`: replaced `||` with `??` (nullish coalescing)
+  for D3 `charge_strength` and `link_distance` config fallbacks — `||` treats
+  `0` as falsy and overrides a valid user-set value of 0.
+
 ## 2026-07-17 (3)
 ### Added
 - `tools/kb_app.py`: Flask web interface implementing all routes from
