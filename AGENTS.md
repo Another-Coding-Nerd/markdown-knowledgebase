@@ -3,7 +3,7 @@
 ## What this is
 
 A self-contained markdown knowledgebase (`kb/`) plus a local semantic search
-index (`.kb-index/`, ChromaDB + `bge-small-en-v1.5` via fastembed, CPU-only,
+index (`.kb-index/`, ChromaDB + fastembed, CPU-only,
 no network calls at query time once the model is cached).
 
 Tools live in `tools/`, run via the venv:
@@ -173,6 +173,11 @@ This prints the top-N nearest neighbors and their similarity scores.
 `config.yaml` controls the embedding model, chunk size/overlap, KB root,
 index location, and connections settings (`connections_top_n`,
 `connections_min_score`). No hardcoded paths elsewhere.
+
+Two embedding model options are documented in `config.yaml` comments:
+`bge-small-en-v1.5` (default, fast, ~130MB) and `bge-large-en-v1.5` (best
+quality, slow, ~1.3GB). Changing the model requires deleting `.kb-index/`
+and running a full rebuild.
 
 ## Content conventions
 

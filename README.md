@@ -46,8 +46,9 @@ python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 ```
 
-First run of `kb_index.py` downloads the `BAAI/bge-small-en-v1.5` embedding
-model (~130MB, cached under `~/.cache/`).
+First run of `kb_index.py` downloads the embedding model configured in
+`config.yaml` (default: `bge-small-en-v1.5`, ~130MB; switch to
+`bge-large-en-v1.5` for best quality at ~1.3GB — see config comments).
 
 ## Usage
 
@@ -110,8 +111,9 @@ tools are the product. The UI is a convenience layer.
 - Sections exceeding `max_tokens` (config.yaml) are sub-split into
   overlapping pieces by paragraph/sentence, so embeddings never silently
   truncate.
-- Chunks are embedded with `bge-small-en-v1.5` (ONNX/CPU via fastembed, no
-  PyTorch) and stored in a local ChromaDB collection under `.kb-index/`.
+- Chunks are embedded with the model set in `config.yaml` (`bge-small-en-v1.5`
+  by default; ONNX/CPU via fastembed, no PyTorch) and stored in a local
+  ChromaDB collection under `.kb-index/`.
 - `kb_index.py --incremental` compares each file's mtime against
   `.kb-index/meta.json`, re-chunking/embedding only new or changed files and
   removing chunks for deleted files. It falls back to a full rebuild if no

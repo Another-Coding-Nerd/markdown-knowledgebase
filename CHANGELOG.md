@@ -1,3 +1,10 @@
+## 2026-07-18 (15)
+### Changed
+- `config.yaml`: default embedding model set to `bge-small-en-v1.5`; added
+  comments documenting the small/large trade-off and rebuild requirement.
+- `README.md`, `AGENTS.md`: removed hardcoded model name references; now
+  point to `config.yaml` for model choice with small/large guidance.
+
 ## 2026-07-18 (14)
 ### Removed
 - `FLASK-APP-PLAN.md`: deleted stale "Agent Instructions" section — all work
