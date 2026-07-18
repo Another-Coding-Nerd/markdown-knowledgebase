@@ -31,7 +31,7 @@ High-priority improvements to the template itself.
   requires Claude Code. Should also handle oversized files end-to-end:
   flag files over 30K chars, then offer to split them following
   `CONTENT-STYLE.md` rules (find a genuine analytical seam, create a
-  `part-2` sibling, update See Also cross-references, reindex).
+  `part-2` sibling, reindex, rebuild connections).
 
 ## Next
 
@@ -79,8 +79,8 @@ Lower-priority or larger-scope efforts.
   (shipped with defaults for port, model, graph layout, theme). Key
   routes: `/` (graph), `/page/<file>` (rendered markdown), `/api/search`
   (ChromaDB query), `/api/ask` (KB Q&A), `/api/graph` (JSON for
-  D3.js). Falls back to parsing See Also sections if connections.db
-  doesn't exist. KB Q&A requires Ollama or compatible endpoint; works
+  D3.js). Graph edges from `connections.db` (nodes-only fallback if
+  absent). KB Q&A requires Ollama or compatible endpoint; works
   without it. Dependencies: Flask + markdown.
 - [x] **Dark mode toggle** — nav button toggles `.dark` on `<body>`, persisted in
   `localStorage`; CSS custom properties already support both themes

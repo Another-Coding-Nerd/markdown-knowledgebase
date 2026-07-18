@@ -1,3 +1,16 @@
+## 2026-07-18 (13)
+### Changed
+- `AGENTS.md`: added `tools/connections` to tool listing; reindexing section
+  now requires both `tools/index --incremental` and `tools/connections` after
+  edits; added `connections.db` section explaining agents must not write
+  `## See Also` sections — edges are computed automatically; updated Config
+  and Content conventions references.
+- `CONTENT-STYLE.md`: removed `## See Also` convention block; updated
+  file-splitting guidance to use reindex + connections rebuild instead.
+- `README.md`: startup flow now shows three steps (index → connections →
+  serve); feature table updated to reference `connections.db` instead of
+  See Also links; `connections.py` and `connections` wrapper added to Layout.
+
 ## 2026-07-18 (12)
 ### Added
 - `tools/connections.py` and `tools/connections` wrapper copied to all

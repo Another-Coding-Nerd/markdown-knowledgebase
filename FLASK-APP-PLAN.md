@@ -91,8 +91,7 @@ Falls back to an empty graph if the DB hasn't been built yet.
     {
       "source": "topic-a.md",
       "target": "topic-b.md",
-      "type": "see_also",
-      "weight": 1.0
+      "weight": 0.923
     }
   ]
 }
@@ -540,12 +539,15 @@ Theme toggle via `<body class="dark">` or config default.
 ```
 tools/
 ├── kb_app.py              # Main Flask application
+├── connections.py         # Build connections.db from ChromaDB embeddings
+├── connections            # Thin bash wrapper
 ├── templates/
 │   ├── base.html          # Shared layout + CSS custom properties
 │   ├── graph.html         # Graph visualization + KB Q&A panel
 │   └── page.html          # KB page viewer
 
 flask_config.yaml          # Flask app configuration (shipped with defaults)
+connections.db             # SQLite graph edges (built by tools/connections)
 ```
 
 No `static/` directory needed — all CSS/JS inline or loaded from CDN.
@@ -583,10 +585,10 @@ rest of the app (graph, search, page viewer) works without it.
 | No navigation | Sidebar with related files |
 | Obsidian (external tool) | Self-contained Flask app |
 
-## Agent Instructions (AGENTS.md changes required)
+## Agent Instructions (pending — AGENTS.md changes required)
 
-When `connections.py` is implemented, `AGENTS.md` in the template repo
-must be updated to reflect the new workflow. Changes needed:
+`connections.py` is implemented. The following changes to `AGENTS.md`
+and `CONTENT-STYLE.md` are still pending:
 
 ### Reindexing section — extend to include connections step
 

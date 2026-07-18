@@ -44,13 +44,10 @@ just restate surrounding prose in different words.
   enough to merit its own entry.
 - Split-off naming: `<parent-filename>-<new-topic>.md`, so it sorts next to
   the parent.
-- After splitting: add reciprocal `## See Also` links between parent and new
-  file, and update any index/overview files that listed the parent's content.
-
-## See Also
-
-`## See Also` sections link 2–4 thematically related files, each with one
-clause explaining the relationship — not just a bare link.
+- After splitting: reindex (`tools/index --incremental`) and rebuild
+  connections (`tools/connections`) — the graph will link the new files
+  automatically. Update any index/overview files that listed the parent's
+  content.
 
 ## Language Standard
 
