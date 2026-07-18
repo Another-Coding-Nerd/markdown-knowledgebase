@@ -1,3 +1,15 @@
+## 2026-07-18 (10)
+### Changed
+- `FLASK-APP-PLAN.md`: promoted `connections.db` / `connections.py` from
+  "v2 future" to current design — graph edges now come exclusively from
+  ChromaDB semantic nearest-neighbor, not `## See Also` section parsing.
+  Added `Tool: connections.py` spec section (algorithm, schema, config,
+  CLI). Added `Agent Instructions` section specifying required AGENTS.md
+  and CONTENT-STYLE.md changes, the two-step `index → connections` workflow,
+  and the one-time `kb_strip_see_also.py` cleanup for derivative repos.
+  Removed all v1/v2 framing; updated startup flow, architecture diagram,
+  page viewer layout, and "Not in scope" list accordingly.
+
 ## 2026-07-18 (9)
 ### Added
 - `tools/kb_app.py`: `_iter_kb_files()` — unified file discovery respecting

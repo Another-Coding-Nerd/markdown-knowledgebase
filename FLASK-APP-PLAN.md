@@ -11,6 +11,11 @@ existing infrastructure (ChromaDB index, markdown files, connections DB)
 and adds a browsable UI on top. Includes a KB Q&A (Retrieve & Synthesize)
 question box that synthesizes answers from KB content using a local LLM.
 
+Graph edges come exclusively from `connections.db` (SQLite), built by
+`connections.py` from ChromaDB embeddings (semantic nearest-neighbor).
+There are no static `## See Also` sections in KB files — the app computes
+and injects related-file links dynamically from the DB.
+
 **Dependencies:** Flask + markdown + existing chromadb/fastembed (no new
 packages beyond Flask and markdown).
 
@@ -43,6 +48,8 @@ file for all options: server host/port, search top-k, KB Q&A settings
 ```
 tools/
 ├── kb_app.py              # Flask application
+├── connections.py         # Build connections.db from ChromaDB embeddings
+├── connections            # Thin bash wrapper (like tools/index)
 ├── templates/
 │   ├── base.html          # Shared layout (nav, search bar, CSS)
 │   ├── graph.html         # D3.js graph + KB Q&A panel (folded in)
@@ -64,8 +71,8 @@ tools/
 - Hover node → show tooltip with title + snippet
 - Zoom/pan/drag standard D3 interactions
 
-**Data source:** See Also sections parsed from `kb/**/*.md` (v1 default).
-`connections.db` is a v2 enhancement — see Feature 4.
+**Data source:** `connections.db` (SQLite), built by `connections.py`.
+Falls back to an empty graph if the DB hasn't been built yet.
 
 **Graph data format:**
 
@@ -118,12 +125,14 @@ Connected clusters form naturally via force simulation.
 │ file-b   │                                           │
 │ file-c   │  Content rendered from markdown...         │
 │          │                                           │
-│ Backlinks│  ## See Also                              │
-│ ───────  │  - [File B](/page/file-b.md)              │
-│ file-x   │  - [File C](/page/file-c.md)              │
+│ Backlinks│                                           │
+│ ───────  │                                           │
+│ file-x   │                                           │
 │ file-y   │                                           │
 └──────────┴───────────────────────────────────────────┘
 ```
+Related files and backlinks in sidebar come from `connections.db`.
+No `## See Also` section in the rendered document body.
 
 **Markdown extensions enabled:**
 - Tables
@@ -168,30 +177,14 @@ of printing to stdout.
 
 **Route:** `/api/graph`
 
-**v1 implementation:** Parse See Also sections from `kb/**/*.md` on-the-fly
-(no DB required). This is the default for v1 — `connections.db` and
-`connections.py` are v2 items not yet built.
+**Implementation:** Read edges from `connections.db` (SQLite). If the DB
+is absent (user hasn't run `tools/connections` yet), returns nodes-only
+with no edges rather than attempting on-the-fly parsing.
 
-**v2 (future):** Read from `connections.db` (SQLite) for richer relationship
-types and faster graph builds on large KBs. Falls back to See Also parsing
-if DB is absent.
-
-**See Also fallback:**
-
-```python
-def build_graph_from_see_also():
-    """Parse ## See Also sections from all KB files."""
-    nodes = []
-    edges = []
-    for md_file in kb_root.rglob("*.md"):
-        # Extract file info
-        # Parse See Also links
-        # Build nodes and edges
-    return {"nodes": nodes, "edges": edges}
-```
-
-This means the graph works even without running `connections.py init` —
-it just uses the existing See Also links as edges.
+`connections.db` is built by `connections.py` using per-file semantic
+nearest-neighbor from ChromaDB embeddings. No `## See Also` sections are
+parsed — those have been removed from KB files and the relationship is
+fully DB-driven.
 
 ## Feature 5: File Listing API
 
@@ -222,15 +215,48 @@ Used by the graph (node list) and could power a file browser view.
 
 **Route:** `/api/connections/<filename>`
 
-**Implementation:**
-- v1: Parse the target file's See Also section and return those links as
-  outgoing edges. Incoming edges (backlinks) require scanning all other KB
-  files for references to this filename — do on-the-fly, cache per request.
-  Return empty list for incoming if the scan would be too slow (acceptable
-  v1 limitation).
-- v2: Query connections.db for all edges involving this file, return full
-  incoming + outgoing with relationship types.
-- Used by the page viewer sidebar.
+**Implementation:** Query `connections.db` for all edges involving this
+file — both outgoing (this file → others) and incoming (others → this
+file). Returns empty lists if DB is absent. Used by the page viewer
+sidebar to show related files and backlinks.
+
+## Tool: connections.py
+
+Builds `connections.db` (SQLite) from ChromaDB embeddings. Run after
+`tools/index` whenever KB content changes.
+
+**Usage:**
+```bash
+tools/connections               # full rebuild (always; incremental not supported)
+tools/connections --show <file> # print connections for one file (debug)
+```
+
+**Algorithm:**
+1. Load all chunk embeddings + metadata from ChromaDB via `collection.get(include=['embeddings','metadatas'])`
+2. Group chunks by source file; compute mean embedding per file, re-normalized
+3. For each file, compute dot product (= cosine similarity on unit vectors) against all other files
+4. Keep top-N neighbors above min-score threshold; symmetrize (if A picks B, edge exists even if B didn't pick A)
+5. Write edges to `connections.db`; replace table on each run
+
+**Schema:**
+```sql
+CREATE TABLE connections (
+    source  TEXT NOT NULL,
+    target  TEXT NOT NULL,
+    weight  REAL NOT NULL,
+    PRIMARY KEY (source, target)
+);
+CREATE INDEX idx_source ON connections(source);
+CREATE INDEX idx_target ON connections(target);
+```
+
+**Config** (`config.yaml`):
+```yaml
+connections_top_n: 5        # nearest neighbors per file
+connections_min_score: 0.5  # minimum cosine similarity to include edge
+```
+
+**Output:** `connections.db` at the repo root (same level as `config.yaml`).
 
 ## Feature 7: KB Q&A (Retrieve & Synthesize)
 
@@ -458,7 +484,7 @@ highlighting in rendered code blocks. `requests` is already in
 - **Double-click background** → reset zoom
 
 ### Page viewer navigation
-- Sidebar shows related files (from connections.db or See Also)
+- Sidebar shows related files (from connections.db)
 - Click related file → navigate to that page
 - "Back to Graph" button in header
 - Breadcrumb: Graph > topic-a.md
@@ -527,20 +553,23 @@ No `static/` directory needed — all CSS/JS inline or loaded from CDN.
 ## Startup Flow
 
 ```bash
-# 1. Build the vector index (if not already done)
-.venv/bin/python tools/kb_index.py
+# 1. Build the vector index
+tools/index                     # or: tools/index --incremental
 
-# 2. (Optional, for KB Q&A) Start Ollama with a model
+# 2. Build the connections DB (graph edges)
+tools/connections               # reads ChromaDB, writes connections.db
+
+# 3. (Optional, for KB Q&A) Start Ollama with a model
 ollama serve  # in a separate terminal
 ollama pull phi4-mini  # or your preferred model
 
-# 3. Start the Flask app
-.venv/bin/python tools/kb_app.py
+# 4. Start the Flask app
+tools/serve
 # → Running on http://localhost:5000
 ```
 
-The graph builds from See Also sections in `kb/**/*.md` — no separate DB
-needed. If Ollama isn't running, the KB Q&A panel returns an error; the
+If `tools/connections` hasn't been run yet, the graph shows nodes but no
+edges. If Ollama isn't running, the KB Q&A panel returns an error; the
 rest of the app (graph, search, page viewer) works without it.
 
 ## What this replaces
@@ -554,10 +583,76 @@ rest of the app (graph, search, page viewer) works without it.
 | No navigation | Sidebar with related files |
 | Obsidian (external tool) | Self-contained Flask app |
 
-## Not in scope (v1)
+## Agent Instructions (AGENTS.md changes required)
 
-- `connections.db` / `connections.py` — richer graph relationships; v1 uses
-  See Also section parsing only
+When `connections.py` is implemented, `AGENTS.md` in the template repo
+must be updated to reflect the new workflow. Changes needed:
+
+### Reindexing section — extend to include connections step
+
+Current AGENTS.md tells agents to run `kb_index.py --incremental` after
+edits. Add the connections step immediately after:
+
+```
+After a batch of edits to kb/, run in order:
+
+1. .venv/bin/python tools/kb_index.py --incremental
+2. .venv/bin/python tools/connections.py
+
+Both must run — the index feeds the connections DB. Running index alone
+leaves the graph stale.
+```
+
+Or via wrappers: `tools/index --incremental && tools/connections`
+
+### New section: connections.db
+
+Add a short section explaining what the DB is and when agents interact
+with it:
+
+```
+## connections.db
+
+connections.db (SQLite, repo root) stores per-file semantic similarity
+edges used by the Flask graph. It is built from ChromaDB embeddings by
+tools/connections.py and is not edited directly.
+
+Agents do NOT write ## See Also sections in kb/ files — graph edges are
+computed automatically. If you need to know which files are related to a
+given file, run:
+
+    .venv/bin/python tools/connections.py --show <filename>
+
+This prints the top-N nearest neighbors and their similarity scores.
+```
+
+### Remove See Also authoring guidance
+
+Current AGENTS.md (and CONTENT-STYLE.md) instructs agents to write
+`## See Also` sections when creating or editing KB files. Remove or
+replace that guidance:
+
+- AGENTS.md: remove any mention of writing See Also sections
+- CONTENT-STYLE.md: remove the `## See Also` convention block; replace
+  with a note that related-file links are computed automatically from the
+  index and shown in the web UI sidebar
+
+### Derivative repo cleanup (one-time, per repo)
+
+For any derivative repo that has existing `## See Also` sections in
+`kb/` files, run a cleanup pass before adopting this workflow:
+
+```bash
+.venv/bin/python tools/kb_strip_see_also.py   # removes ## See Also sections
+tools/index --incremental                      # reindex (See Also content removed)
+tools/connections                              # rebuild edges from clean index
+```
+
+`kb_strip_see_also.py` is a one-time migration tool, not part of the
+normal workflow.
+
+## Not in scope
+
 - Multi-user / collaboration
 - Write/edit KB from the web UI
 - Authentication
