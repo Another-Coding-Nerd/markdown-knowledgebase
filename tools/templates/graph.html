@@ -446,7 +446,7 @@
 
   function loadRecentPages() {
     try {
-      const recent = JSON.parse(localStorage.getItem('kb-recent') || '[]');
+      const recent = JSON.parse(localStorage.getItem('kb-recent-{{ instance_id }}') || '[]');
       if (!recent.length) return;
       const container = document.getElementById('file-list');
       let html = '<div class="file-group-header">Recent</div>';

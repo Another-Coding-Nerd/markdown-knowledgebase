@@ -10,6 +10,7 @@ Usage:
 import argparse
 import re
 import sys
+import uuid
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
@@ -92,9 +93,26 @@ def load_flask_config(path=None):
     return defaults
 
 
+def _ensure_instance_id(config_path: Path) -> str:
+    """Return instance_id from flask_config.yaml, generating and persisting one if absent."""
+    if config_path.exists():
+        text = config_path.read_text()
+        for line in text.splitlines():
+            if line.startswith("instance_id:"):
+                return line.split(":", 1)[1].strip()
+        new_id = str(uuid.uuid4())
+        with open(config_path, "a") as f:
+            f.write(f"\ninstance_id: {new_id}\n")
+        return new_id
+    return str(uuid.uuid4())
+
+
 flask_cfg = load_flask_config()
 kb_cfg = load_config()
 kb_root = Path(kb_cfg["kb_root"])
+
+_config_path = Path(flask_cfg.get("_config_path", PROJECT_ROOT / "flask_config.yaml"))
+_instance_id = flask_cfg.get("instance_id") or _ensure_instance_id(PROJECT_ROOT / "flask_config.yaml")
 
 # Load embedding model and collection once at startup
 _embedding_model = get_embedding_model(kb_cfg)
@@ -102,6 +120,7 @@ _chroma_client = chromadb.PersistentClient(path=str(kb_cfg["index_dir"]))
 _collection = get_collection(kb_cfg, _chroma_client)
 
 app = Flask(__name__)
+app.jinja_env.globals["instance_id"] = _instance_id
 
 # ── KB helpers ────────────────────────────────────────────────────────────────
 

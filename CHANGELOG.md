@@ -1,3 +1,14 @@
+## 2026-07-18 (4)
+### Added
+- `tools/kb_app.py`: `_ensure_instance_id()` — generates a UUID4 on first
+  startup and appends `instance_id: <uuid>` to `flask_config.yaml`; subsequent
+  starts read the persisted value. Passed to all templates via
+  `app.jinja_env.globals`.
+- `tools/templates/page.html`, `graph.html`: localStorage key for recent pages
+  changed from `kb-recent` to `kb-recent-<instance_id>` — isolates each KB
+  instance's visit history so two KBs on the same port no longer bleed
+  recently-visited entries into each other.
+
 ## 2026-07-18 (3)
 ### Added
 - `tools/serve`: thin bash wrapper for `kb_app.py` — resolves repo root from its

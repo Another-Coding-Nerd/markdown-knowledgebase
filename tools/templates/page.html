@@ -227,7 +227,7 @@
   // Save to recent pages
   (function () {
     try {
-      const KEY = 'kb-recent', MAX = 8;
+      const KEY = 'kb-recent-{{ instance_id }}', MAX = 8;
       const entry = { path: {{ filename | tojson }}, title: {{ title | tojson }} };
       let recent = JSON.parse(localStorage.getItem(KEY) || '[]');
       recent = [entry, ...recent.filter(r => r.path !== entry.path)].slice(0, MAX);
