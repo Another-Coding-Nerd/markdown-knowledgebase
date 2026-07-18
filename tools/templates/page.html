@@ -50,6 +50,28 @@
   }
   .sidebar-empty { font-size: 0.8rem; color: var(--text-muted); font-style: italic; }
 
+  /* ── TOC ── */
+  .sidebar-toc .toc { margin: 0; }
+  .sidebar-toc .toc ul { list-style: none; margin: 0; padding: 0; }
+  .sidebar-toc .toc ul ul { padding-left: 0.75rem; }
+  .sidebar-toc .toc li { margin: 0.1rem 0; }
+  .sidebar-toc .toc a {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: block;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.15s, background 0.15s;
+  }
+  .sidebar-toc .toc a:hover {
+    color: var(--text);
+    background: var(--border);
+    text-decoration: none;
+  }
+
   /* ── Breadcrumb ── */
   .page-breadcrumb {
     font-size: 0.8rem;
@@ -159,6 +181,12 @@
 
   <div class="page-layout">
     <aside class="page-sidebar">
+      {% if toc %}
+      <div class="sidebar-section">
+        <h4>Contents</h4>
+        <div class="sidebar-toc">{{ toc | safe }}</div>
+      </div>
+      {% endif %}
       <div class="sidebar-section">
         <h4>Related</h4>
         {% if connections.outgoing %}
@@ -196,6 +224,18 @@
 
 {% block scripts %}
 <script>
+  // Save to recent pages
+  (function () {
+    try {
+      const KEY = 'kb-recent', MAX = 8;
+      const entry = { path: {{ filename | tojson }}, title: {{ title | tojson }} };
+      let recent = JSON.parse(localStorage.getItem(KEY) || '[]');
+      recent = [entry, ...recent.filter(r => r.path !== entry.path)].slice(0, MAX);
+      localStorage.setItem(KEY, JSON.stringify(recent));
+    } catch (_) {}
+  })();
+
+  // Highlight search match
   (function () {
     const params = new URLSearchParams(window.location.search);
     const q = params.get('q');

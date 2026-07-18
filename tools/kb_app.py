@@ -10,6 +10,7 @@ Usage:
 import argparse
 import re
 import sys
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
@@ -24,6 +25,37 @@ from kb_common import get_collection, get_embedding_model, load_config
 from kb_query import build_prompt, query_llm
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+_STOPWORDS = frozenset({
+    'the', 'this', 'that', 'these', 'those', 'its',
+    'about', 'above', 'across', 'after', 'against', 'along', 'among',
+    'around', 'before', 'behind', 'below', 'beneath', 'between', 'beyond',
+    'during', 'except', 'from', 'into', 'near', 'off', 'onto', 'out',
+    'outside', 'over', 'past', 'since', 'through', 'throughout', 'under',
+    'until', 'upon', 'via', 'with', 'within', 'without',
+    'and', 'but', 'for', 'nor', 'yet', 'both', 'either', 'neither',
+    'although', 'because', 'unless', 'while', 'though', 'whereas',
+    'whether', 'however', 'therefore', 'thus', 'hence',
+    'all', 'any', 'each', 'few', 'many', 'more', 'most', 'other', 'some',
+    'such', 'who', 'whom', 'whose', 'what', 'which', 'when', 'where',
+    'why', 'how', 'her', 'him', 'his', 'our', 'own', 'she', 'their',
+    'them', 'they', 'you', 'your',
+    'are', 'been', 'being', 'can', 'cannot', 'could', 'did', 'does',
+    'doing', 'done', 'had', 'has', 'have', 'having', 'may', 'might',
+    'must', 'need', 'ought', 'shall', 'should', 'was', 'were', 'will',
+    'would',
+    'also', 'back', 'come', 'get', 'give', 'got', 'just', 'keep',
+    'let', 'like', 'look', 'made', 'make', 'new', 'not', 'now', 'only',
+    'put', 'run', 'say', 'see', 'set', 'show', 'take', 'try', 'use',
+    'used', 'using', 'very', 'well', 'work',
+    'actually', 'already', 'always', 'even', 'every', 'much', 'never',
+    'often', 'really', 'roughly', 'same', 'still', 'than', 'then',
+    'there', 'too', 'usually', 'way',
+    'example', 'note', 'section', 'page', 'file', 'item', 'list',
+    'part', 'type', 'value', 'number', 'one', 'two', 'three', 'etc',
+})
+
+_WORD_RE = re.compile(r'\b[a-z]{3,}\b')
 
 # ── Config ───────────────────────────────────────────────────────────────────
 
@@ -239,6 +271,18 @@ def list_kb_files() -> dict:
     return {"files": files}
 
 
+def get_top_terms(n: int = 40) -> list[dict]:
+    extra = frozenset(w.lower() for w in flask_cfg.get("stats_stopwords", []))
+    stop = _STOPWORDS | extra
+    result = _collection.get(include=["documents"])
+    counter: Counter = Counter()
+    for doc in (result.get("documents") or []):
+        for word in _WORD_RE.findall(doc.lower()):
+            if word not in stop:
+                counter[word] += 1
+    return [{"term": t, "count": c} for t, c in counter.most_common(n)]
+
+
 def get_connections(filename: str) -> dict:
     kb_resolved = kb_root.resolve()
     target = (kb_root / filename).resolve()
@@ -284,15 +328,17 @@ def page(filename):
     if not target.exists():
         abort(404)
     md_text = target.read_text(encoding="utf-8", errors="replace")
-    html_content = mdlib.markdown(
-        md_text,
+    md = mdlib.Markdown(
         extensions=["tables", "fenced_code", "codehilite", "toc"],
         extension_configs={"codehilite": {"guess_lang": False, "noclasses": True}},
     )
+    html_content = md.convert(md_text)
+    toc = md.toc if "<li>" in md.toc else ""
     connections = get_connections(filename)
     return render_template(
         "page.html",
         content=html_content,
+        toc=toc,
         filename=filename,
         title=_file_title(target),
         connections=connections,
@@ -335,6 +381,17 @@ def api_files():
 @app.route("/api/connections/<path:filename>")
 def api_connections(filename):
     return jsonify(get_connections(filename))
+
+
+@app.route("/stats")
+def stats():
+    return render_template("stats.html", theme=flask_cfg.get("theme", "dark"))
+
+
+@app.route("/api/stats/terms")
+def api_stats_terms():
+    n = min(int(request.args.get("n", 40)), 100)
+    return jsonify({"terms": get_top_terms(n)})
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────

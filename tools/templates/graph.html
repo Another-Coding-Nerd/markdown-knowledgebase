@@ -180,7 +180,10 @@
     <div id="file-sidebar">
       <div id="file-sidebar-header">
         <span>Files</span>
-        <span id="file-count" style="font-weight:400"></span>
+        <div style="display:flex;gap:0.6rem;align-items:center">
+          <span id="file-count" style="font-weight:400"></span>
+          <a href="/stats" style="font-size:0.65rem;color:var(--text-muted);text-decoration:none" title="KB statistics">stats</a>
+        </div>
       </div>
       <div id="file-list"></div>
     </div>
@@ -336,8 +339,25 @@
         tooltip.style.display = 'block';
         tooltip.style.left = (event.clientX + 12) + 'px';
         tooltip.style.top = (event.clientY - 8) + 'px';
+        const adj = new Set([d.id]);
+        data.edges.forEach(e => {
+          const s = e.source.id ?? e.source;
+          const t = e.target.id ?? e.target;
+          if (s === d.id) adj.add(t);
+          if (t === d.id) adj.add(s);
+        });
+        node.select('circle').attr('fill-opacity', n => adj.has(n.id) ? 0.95 : 0.12);
+        link.attr('stroke-opacity', e => {
+          const s = e.source.id ?? e.source;
+          const t = e.target.id ?? e.target;
+          return (s === d.id || t === d.id) ? 0.9 : 0.05;
+        });
       })
-      .on('mouseleave', () => { tooltip.style.display = 'none'; });
+      .on('mouseleave', () => {
+        tooltip.style.display = 'none';
+        node.select('circle').attr('fill-opacity', 0.85);
+        link.attr('stroke-opacity', 0.7);
+      });
 
     node.append('circle')
       .attr('r', d => d.size || 6)
@@ -366,7 +386,10 @@
       node.select('circle').attr('fill-opacity', n =>
         (n.id === d.source.id || n.id === d.target.id) ? 1 : 0.3);
     });
-    svg.on('click', () => node.select('circle').attr('fill-opacity', 0.85));
+    svg.on('click', () => {
+      node.select('circle').attr('fill-opacity', 0.85);
+      link.attr('stroke-opacity', 0.7);
+    });
   }
 
   function drag(simulation) {
@@ -421,7 +444,20 @@
     }
   }
 
-  loadFileList();
+  function loadRecentPages() {
+    try {
+      const recent = JSON.parse(localStorage.getItem('kb-recent') || '[]');
+      if (!recent.length) return;
+      const container = document.getElementById('file-list');
+      let html = '<div class="file-group-header">Recent</div>';
+      for (const r of recent) {
+        html += `<a class="file-item" href="/page/${escHtml(r.path)}" title="${escHtml(r.path)}">${escHtml(r.title)}</a>`;
+      }
+      container.insertAdjacentHTML('afterbegin', html);
+    } catch (_) {}
+  }
+
+  loadFileList().then(loadRecentPages);
   renderGraph();
 </script>
 {% endblock %}

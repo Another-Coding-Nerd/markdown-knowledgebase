@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}Stats — Knowledge Base{% endblock %}
+
+{% block styles %}
+  .kb-main { padding-bottom: 0; }
+
+  #stats-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 0.75rem;
+    height: calc(100vh - 52px - 2rem);
+    min-height: 500px;
+  }
+
+  /* ── Term list sidebar ── */
+  #stats-sidebar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  #stats-sidebar-header {
+    padding: 0.55rem 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #stats-sidebar-header a {
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+  #stats-sidebar-header a:hover { color: var(--primary); }
+  #term-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 0.4rem 0;
+  }
+  .term-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.28rem 0.75rem;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .term-item:hover { background: var(--border); }
+  .term-rank {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    width: 1.4rem;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .term-name {
+    font-size: 0.82rem;
+    color: var(--text);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .term-bar-wrap {
+    width: 48px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .term-bar {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 2px;
+    opacity: 0.6;
+  }
+  .term-count {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    width: 2rem;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ── Chart area ── */
+  #stats-main {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  #stats-chart-header {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+  #stats-chart-header h2 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text);
+  }
+  #stats-chart-header p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+  #stats-chart {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+  #stats-chart svg { width: 100%; height: 100%; }
+
+  #stats-empty {
+    display: none;
+    padding: 3rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .stats-tooltip {
+    position: fixed;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    color: var(--text);
+    pointer-events: none;
+    z-index: 300;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+{% endblock %}
+
+{% block content %}
+<div class="kb-main">
+  <div id="stats-layout">
+
+    <div id="stats-sidebar">
+      <div id="stats-sidebar-header">
+        <span>Top Terms</span>
+        <a href="/">← Graph</a>
+      </div>
+      <div id="term-list"></div>
+    </div>
+
+    <div id="stats-main">
+      <div id="stats-chart-header">
+        <h2>Word Cloud</h2>
+        <p>Most frequent terms across all indexed chunks · click any term to search</p>
+      </div>
+      <div id="stats-chart">
+        <div id="stats-empty">No indexed content found. Run <code>tools/index</code> first.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="stats-tooltip" id="stats-tooltip" style="display:none"></div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" crossorigin="anonymous"></script>
+<script>
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function triggerSearch(term) {
+    const input = document.getElementById('search-input');
+    input.value = term;
+    input.dispatchEvent(new Event('input'));
+    input.focus();
+  }
+
+  async function renderStats() {
+    let terms = [];
+    try {
+      const res = await fetch('/api/stats/terms');
+      const data = await res.json();
+      terms = data.terms || [];
+    } catch (_) {}
+
+    if (!terms.length) {
+      document.getElementById('stats-empty').style.display = 'block';
+      return;
+    }
+
+    // Attach rank before layout reorders
+    terms.forEach((t, i) => { t.rank = i; });
+    const maxCount = terms[0].count;
+
+    // ── Sidebar list ──────────────────────────────────────────────────────────
+    const list = document.getElementById('term-list');
+    list.innerHTML = terms.map((t, i) => `
+      <div class="term-item" data-term="${escHtml(t.term)}">
+        <span class="term-rank">${i + 1}</span>
+        <span class="term-name">${escHtml(t.term)}</span>
+        <div class="term-bar-wrap"><div class="term-bar" style="width:${Math.round(t.count / maxCount * 100)}%"></div></div>
+        <span class="term-count">${t.count}</span>
+      </div>
+    `).join('');
+    list.querySelectorAll('.term-item').forEach(el => {
+      el.addEventListener('click', () => triggerSearch(el.dataset.term));
+    });
+
+    // ── D3 bubble chart ───────────────────────────────────────────────────────
+    const container = document.getElementById('stats-chart');
+    const W = container.clientWidth;
+    const H = container.clientHeight;
+    const tooltip = document.getElementById('stats-tooltip');
+
+    const root = d3.hierarchy({ children: terms }).sum(d => d.count || 0);
+    d3.pack().size([W, H]).padding(5)(root);
+
+    const svg = d3.select('#stats-chart').append('svg')
+      .attr('width', W).attr('height', H);
+
+    const leaf = svg.selectAll('g')
+      .data(root.leaves())
+      .join('g')
+      .attr('transform', d => `translate(${d.x},${d.y})`)
+      .style('cursor', 'pointer')
+      .on('click', (event, d) => triggerSearch(d.data.term))
+      .on('mousemove', (event, d) => {
+        tooltip.textContent = `${d.data.term}  ×${d.data.count}`;
+        tooltip.style.display = 'block';
+        tooltip.style.left = (event.clientX + 12) + 'px';
+        tooltip.style.top = (event.clientY - 8) + 'px';
+      })
+      .on('mouseleave', () => { tooltip.style.display = 'none'; });
+
+    leaf.append('circle')
+      .attr('r', d => d.r)
+      .attr('fill', '#3b82f6')
+      .attr('fill-opacity', d => 0.85 - (d.data.rank / terms.length) * 0.5)
+      .attr('stroke', 'var(--bg)')
+      .attr('stroke-width', 1.5);
+
+    leaf.filter(d => d.r > 16).append('text')
+      .attr('text-anchor', 'middle')
+      .attr('dy', '0.35em')
+      .attr('fill', 'white')
+      .style('font-size', d => Math.min(Math.round(d.r * 0.45), 15) + 'px')
+      .style('font-weight', '500')
+      .style('pointer-events', 'none')
+      .text(d => d.data.term);
+  }
+
+  renderStats();
+</script>
+{% endblock %}

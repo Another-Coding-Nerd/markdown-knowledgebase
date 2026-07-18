@@ -25,3 +25,12 @@ graph:
 
 # Theme
 theme: dark
+
+# Stats page — additional stopwords for the word cloud.
+# The built-in list covers common English function words (the, and, is, than…).
+# Add domain-specific words that are frequent in your KB but carry no useful
+# signal for your use case — e.g. for a finance KB: time, years, people, money
+# stats_stopwords:
+#   - time
+#   - years
+#   - people

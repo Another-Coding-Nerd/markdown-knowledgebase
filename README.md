@@ -131,21 +131,41 @@ markdown pages, and a KB Q&A question box.
 
 **What it provides:**
 
-| Page | URL | Description |
-|------|-----|-------------|
-| Graph | `/` | D3.js force-directed graph of KB connections (from See Also links). Click a node to open the page. |
-| Page viewer | `/page/<file>` | Rendered markdown with sidebar showing related files and backlinks. |
-| Search | header bar | Debounced semantic search — press `/` to focus, `Esc` to close. |
-| Ask your KB | panel on `/` | One-shot Q&A: retrieves relevant chunks, sends to a local LLM, returns a synthesized answer with citations. |
+| Feature | Where | Description |
+|---------|-------|-------------|
+| Graph | `/` | D3.js force-directed graph of KB connections (See Also links). Node size = degree. Hover a node to highlight its neighborhood; click to open the page. |
+| File sidebar | `/` left panel | All KB files grouped by directory (top-level / projects / resources). Recently visited pages appear at the top. |
+| Ask your KB | `/` bottom panel | One-shot Q&A: retrieves relevant chunks, synthesizes an answer via a local LLM, returns citations. |
+| Page viewer | `/page/<file>` | Rendered markdown. Sidebar shows a table of contents, outgoing See Also links, and backlinks. Search results scroll to the matched section and highlight the phrase. |
+| Stats | `/stats` | Word cloud (`d3.pack`) of top terms across all indexed chunks — circle size = frequency. Click any term to search. Ranked list alongside for precision. |
+| Search | nav bar | Debounced semantic search (300 ms). Press `/` to focus, `Esc` to close. Results show the matching chunk snippet; clicking navigates to the matched section. |
+| Dark mode | nav toggle | Light/dark theme toggle, persisted in `localStorage`. Default set via `theme` in `flask_config.yaml`. |
 
-**Configuration:** `flask_config.yaml` (shipped with defaults). Options:
-port, host, theme (`dark`/`light`), `search_top_k`, graph layout
-(`charge_strength`, `link_distance`, node sizes), and KB Q&A settings
-(`api_url`, `model`, `top_k`, `max_tokens`).
+**Configuration:** `flask_config.yaml` (shipped with defaults). Key options:
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `host` / `port` | `localhost` / `5000` | Server binding |
+| `theme` | `dark` | Starting theme (`dark` or `light`); user toggle overrides per-browser |
+| `search_top_k` | `5` | Number of semantic search results |
+| `graph.charge_strength` | `-120` | D3 repulsion force |
+| `graph.link_distance` | `80` | D3 edge length |
+| `kb_qa.api_url` | `http://localhost:11434` | Ollama or compatible endpoint |
+| `kb_qa.model` | `phi4-mini` | LLM model name |
+| `stats_stopwords` | `[]` | Extra words to exclude from the `/stats` word cloud (beyond the built-in English function word list) |
+
+Add domain-specific words that are high-frequency but low-signal for your KB:
+
+```yaml
+stats_stopwords:
+  - time
+  - years
+  - people
+```
 
 ```bash
-.venv/bin/python tools/kb_app.py --port 8080   # override port
-.venv/bin/python tools/kb_app.py --config my.yaml  # custom config file
+.venv/bin/python tools/kb_app.py --port 8080          # override port
+.venv/bin/python tools/kb_app.py --config my.yaml     # custom config file
 ```
 
 **KB Q&A requires** a running [Ollama](https://ollama.com) instance

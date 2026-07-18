@@ -1,3 +1,36 @@
+## 2026-07-18 (2)
+### Added
+- `tools/templates/stats.html`: new `/stats` page — `d3.pack()` word cloud of
+  top terms across all indexed chunks, circle size proportional to frequency;
+  ranked sidebar list with frequency bars; clicking any term or bubble fires
+  semantic search via the nav bar. Accessible via "stats" link in the graph
+  file sidebar header.
+- `tools/kb_app.py`: `get_top_terms()` — scans all chunk text via
+  `collection.get()`, counts with `Counter`, filters `_STOPWORDS` plus optional
+  user-configured `stats_stopwords` from `flask_config.yaml`. New routes:
+  `/stats` and `/api/stats/terms`.
+- `tools/kb_app.py`: `_STOPWORDS` list — ~100 common English function words,
+  adverbs, and determiners. Added missing entries: `than`, `even`, `every`,
+  `much`, `never`, `roughly`.
+- `flask_config.yaml`: `stats_stopwords` key (commented out with examples) —
+  lets users filter domain-specific high-frequency/low-signal words from the
+  word cloud without touching Python.
+- `tools/templates/base.html`: dark mode toggle button in nav bar — toggles
+  `.dark` on `<body>`, persists preference to `localStorage`; server-set
+  default (`theme` in `flask_config.yaml`) applies on first visit.
+- `tools/templates/page.html`: TOC sidebar section — Contents panel above
+  Related/Backlinks, generated from `md.toc` (python-markdown `toc` extension);
+  only shown when the document has headings. Recent pages saved to
+  `localStorage` on every page visit.
+- `tools/templates/graph.html`: Recent pages section at top of file sidebar,
+  loaded from `localStorage`. Graph neighborhood highlight on node hover — dims
+  non-adjacent nodes and edges to reveal connection structure on dense graphs.
+  "stats" link in file sidebar header.
+- README.md: rewrote Flask feature table to cover all current features
+  (stats page, file sidebar, recent pages, TOC panel, dark mode toggle, graph
+  neighborhood highlight, search snippet/scroll behavior). Added config options
+  table. Added `stats_stopwords` documentation.
+
 ## 2026-07-18
 ### Added
 - `tools/templates/graph.html`: left file sidebar (220px) listing all KB files
