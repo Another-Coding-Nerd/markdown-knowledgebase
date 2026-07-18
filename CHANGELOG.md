@@ -1,3 +1,8 @@
+## 2026-07-18 (6)
+### Removed
+- `tools/templates/graph.html`: removed "Requires a running Ollama instance…"
+  note from Ask your KB panel — noise for users who already have it configured.
+
 ## 2026-07-18 (5)
 ### Added
 - `tools/templates/graph.html`: file filter input below sidebar header — type
