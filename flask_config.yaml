@@ -14,8 +14,10 @@ kb_qa:
   enabled: true
   api_url: http://localhost:11434
   model: phi4-mini
-  top_k: 5
-  max_tokens: 512
+  top_k: 12                  # chunks retrieved — cast wide, then trim to max_context_chars
+  max_context_chars: 6000   # ~1500 tokens; total chunk text sent to LLM (trim from lowest-score end)
+  max_tokens: 384            # max tokens for explanation/factual answers
+  max_tokens_list: 768       # max tokens for list/enumeration answers
 
 # Graph
 graph:

@@ -9,17 +9,17 @@ Usage:
     python tools/kb_query.py --max-tokens 256 "short answer please"
 """
 
-# ── Configurable defaults ────────────────────────────────────────────────
-OLLAMA_URL = "http://localhost:11434"   # Ollama ≥0.1.24; or any OpenAI-compatible proxy (LiteLLM, OpenRouter, etc.)
-DEFAULT_MODEL = "phi4-mini"             # best reasoning/speed balance on CPU
-# DEFAULT_MODEL = "gemma2:2b"           # fastest on CPU at this quality level
-# DEFAULT_MODEL = "llama3.2:3b"         # most community support, longest context
-DEFAULT_TOP_K = 5                       # number of KB chunks to retrieve
-DEFAULT_MAX_TOKENS = 512                # max tokens in LLM answer
+# ── Hardcoded fallbacks (overridden by flask_config.yaml when present) ───
+_FALLBACK_API_URL   = "http://localhost:11434"
+_FALLBACK_MODEL     = "phi4-mini"
+_FALLBACK_TOP_K     = 5
+_FALLBACK_MAX_TOKENS      = 384   # explanation/factual answers
+_FALLBACK_MAX_TOKENS_LIST = 768   # list/enumeration answers
 # ──────────────────────────────────────────────────────────────────────────
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -28,6 +28,27 @@ import chromadb
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from kb_common import load_config, get_embedding_model, get_collection
+
+
+def _load_flask_qa_cfg() -> dict:
+    """Optionally read kb_qa section from flask_config.yaml; empty dict if absent/unreadable."""
+    config_path = Path(__file__).resolve().parent.parent / "flask_config.yaml"
+    if not config_path.exists():
+        return {}
+    try:
+        import yaml
+        with open(config_path) as f:
+            return (yaml.safe_load(f) or {}).get("kb_qa", {})
+    except Exception:
+        return {}
+
+
+_qa_cfg = _load_flask_qa_cfg()
+OLLAMA_URL          = _qa_cfg.get("api_url",         _FALLBACK_API_URL)
+DEFAULT_MODEL       = _qa_cfg.get("model",            _FALLBACK_MODEL)
+DEFAULT_TOP_K       = _qa_cfg.get("top_k",            _FALLBACK_TOP_K)
+DEFAULT_MAX_TOKENS      = _qa_cfg.get("max_tokens",       _FALLBACK_MAX_TOKENS)
+DEFAULT_MAX_TOKENS_LIST = _qa_cfg.get("max_tokens_list",  _FALLBACK_MAX_TOKENS_LIST)
 
 
 def retrieve(cfg, query, top_k):
@@ -53,14 +74,34 @@ def retrieve(cfg, query, top_k):
     return hits
 
 
+_LIST_RE = re.compile(
+    r'\b(list|what are|what were|name|give me|enumerate|how many|'
+    r'red flags?|signs?|reasons?|ways?|steps?|tips?|examples?|'
+    r'\d+\s+\w+)\b',
+    re.IGNORECASE,
+)
+
+def _is_list_query(query: str) -> bool:
+    return bool(_LIST_RE.search(query))
+
+
 def build_prompt(query, hits):
     """Build a chat-style prompt from query and retrieved chunks."""
-    lines = [
-        "Answer the question concisely in a neutral analytical tone "
-        "based solely on the context below. "
-        "If the context doesn't contain enough information, say so. "
-        "Cite sources as [1], [2] etc.\n"
-    ]
+    if _is_list_query(query):
+        instruction = (
+            "The question asks for a list. "
+            "Scan ALL excerpts below and enumerate every distinct item that answers the question. "
+            "Format as a numbered list. Include all relevant items — do not summarize or truncate. "
+            "Use only information from the excerpts. Cite sources as [1], [2] etc.\n"
+        )
+    else:
+        instruction = (
+            "Answer the question in a neutral analytical tone "
+            "based solely on the excerpts below. "
+            "If the excerpts don't contain enough information, say so. "
+            "Cite sources as [1], [2] etc.\n"
+        )
+    lines = [instruction]
     for i, (text, file, heading, score) in enumerate(hits, 1):
         location = file
         if heading:
@@ -95,8 +136,8 @@ def main():
     parser = argparse.ArgumentParser(description="KB Q&A over the KB")
     parser.add_argument("query", nargs="+", help="natural language question")
     parser.add_argument("--top-k", type=int, default=DEFAULT_TOP_K)
-    parser.add_argument("--max-tokens", type=int, default=DEFAULT_MAX_TOKENS,
-                        help=f"max tokens in LLM answer (default: {DEFAULT_MAX_TOKENS})")
+    parser.add_argument("--max-tokens", type=int, default=None,
+                        help=f"max tokens in LLM answer (default: {DEFAULT_MAX_TOKENS} / {DEFAULT_MAX_TOKENS_LIST} for list queries)")
     parser.add_argument("--api-url", default=OLLAMA_URL)
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--config", default=None)
@@ -114,8 +155,12 @@ def main():
     # 2. Build prompt
     prompt = build_prompt(query, hits)
 
-    # 3. Generate
-    answer = query_llm(args.api_url, args.model, prompt, args.max_tokens)
+    # 3. Generate — auto-select token budget unless explicitly overridden
+    if args.max_tokens is not None:
+        max_tokens = args.max_tokens
+    else:
+        max_tokens = DEFAULT_MAX_TOKENS_LIST if _is_list_query(query) else DEFAULT_MAX_TOKENS
+    answer = query_llm(args.api_url, args.model, prompt, max_tokens)
 
     # 4. Output
     print(answer)

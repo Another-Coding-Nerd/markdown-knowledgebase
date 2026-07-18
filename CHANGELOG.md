@@ -1,3 +1,19 @@
+## 2026-07-18 (7)
+### Added
+- `tools/kb_query.py`: dual token budgets — `max_tokens` (384) for factual
+  answers and `max_tokens_list` (768) for list/enumeration answers, auto-selected
+  via `_is_list_query()` regex. CLI `--max-tokens` still overrides both.
+- `tools/kb_query.py`: soft-reads `flask_config.yaml` at startup for LLM
+  defaults (`api_url`, `model`, `top_k`, `max_tokens`, `max_tokens_list`) —
+  CLI tool now stays in sync with Flask app config without manual duplication.
+  Falls back to hardcoded defaults if the file is absent.
+- `flask_config.yaml`: added `max_tokens_list: 768` param.
+### Changed
+- `tools/kb_app.py`: `rag_query()` now auto-selects token budget via
+  `_is_list_query()` — list questions get more room to enumerate all items.
+- `flask_config.yaml`: `max_tokens` reduced from 512 → 384 (factual answers
+  don't need the extra headroom; list answers use `max_tokens_list` instead).
+
 ## 2026-07-18 (6)
 ### Removed
 - `tools/templates/graph.html`: removed "Requires a running Ollama instance…"

@@ -160,6 +160,10 @@ tools/serve
 | `graph.link_distance` | `80` | D3 edge length |
 | `kb_qa.api_url` | `http://localhost:11434` | Ollama or compatible endpoint |
 | `kb_qa.model` | `phi4-mini` | LLM model name |
+| `kb_qa.top_k` | `12` | Chunks retrieved per query — cast wide, then trim to `max_context_chars` |
+| `kb_qa.max_context_chars` | `6000` | Max total chunk text sent to the LLM (~1500 tokens); trims from lowest-score end |
+| `kb_qa.max_tokens` | `384` | Max tokens for explanation/factual answers |
+| `kb_qa.max_tokens_list` | `768` | Max tokens for list/enumeration answers (auto-detected) |
 | `stats_stopwords` | `[]` | Extra words to exclude from the `/stats` word cloud (beyond the built-in English function word list) |
 
 Add domain-specific words that are high-frequency but low-signal for your KB:

@@ -24,7 +24,7 @@ from flask import Flask, abort, jsonify, render_template, request
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from kb_common import get_collection, get_embedding_model, load_config
-from kb_query import build_prompt, query_llm
+from kb_query import build_prompt, query_llm, _is_list_query
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -71,8 +71,9 @@ def load_flask_config(path=None):
             "enabled": True,
             "api_url": "http://localhost:11434",
             "model": "phi4-mini",
-            "top_k": 5,
+            "top_k": 12,
             "max_tokens": 512,
+            "max_context_chars": 6000,
         },
         "graph": {
             "node_min_size": 4,
@@ -250,12 +251,24 @@ def search_kb(query: str, top_k: int) -> dict:
     }
 
 
-def rag_query(question: str, top_k: int, max_tokens: int) -> tuple[str, list]:
+def rag_query(question: str, top_k: int) -> tuple[str, list]:
     hits = retrieve(question, top_k)
     if not hits:
         return "No relevant content found in the knowledge base.", []
-    prompt = build_prompt(question, hits)
     qa_cfg = flask_cfg.get("kb_qa", {})
+    max_chars = qa_cfg.get("max_context_chars", 6000)
+    trimmed, budget = [], max_chars
+    for hit in hits:
+        if len(hit[0]) > budget:
+            break
+        trimmed.append(hit)
+        budget -= len(hit[0])
+    hits = trimmed or hits[:1]
+    prompt = build_prompt(question, hits)
+    if _is_list_query(question):
+        max_tokens = qa_cfg.get("max_tokens_list", 768)
+    else:
+        max_tokens = qa_cfg.get("max_tokens", 384)
     try:
         answer = query_llm(
             qa_cfg.get("api_url", "http://localhost:11434"),
@@ -420,8 +433,7 @@ def api_ask():
         return jsonify({"answer": "No question provided.", "sources": []})
     qa_cfg = flask_cfg.get("kb_qa", {})
     top_k = data.get("top_k", qa_cfg.get("top_k", 5))
-    max_tokens = data.get("max_tokens", qa_cfg.get("max_tokens", 512))
-    answer, sources = rag_query(question, top_k, max_tokens)
+    answer, sources = rag_query(question, top_k)
     return jsonify({"answer": answer, "sources": sources})
 
 
