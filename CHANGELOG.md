@@ -1,3 +1,19 @@
+## 2026-07-18 (9)
+### Added
+- `tools/kb_app.py`: `_iter_kb_files()` — unified file discovery respecting
+  `file_patterns` (whitelist) and `skip_files` (blacklist) from `config.yaml`,
+  matching `kb_index.py` logic. Applied to graph data, file sidebar, and
+  backlink scanning — skipped files no longer appear as isolated graph nodes.
+- `tools/templates/graph.html`: "⊡ Fit" button overlaid on graph — fits all
+  nodes into the viewport with a 0.4× minimum scale floor; dblclick also fits.
+### Changed
+- `tools/kb_app.py`: all three `rglob("*.md")` call sites replaced with
+  `_iter_kb_files()` — graph, sidebar, and connections now all respect the
+  same file discovery config. Eliminates isolated orphan nodes from skipped
+  navigation files (e.g. glossary.md) that were blowing out the graph bounds.
+- All derivative repos now run identical code; per-repo differences are
+  entirely config-driven (`config.yaml` + `flask_config.yaml`).
+
 ## 2026-07-18 (8)
 ### Added
 - `tools/kb_index.py`: whitelist/blacklist file discovery — `file_patterns`

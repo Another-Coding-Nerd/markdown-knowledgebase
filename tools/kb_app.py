@@ -113,6 +113,22 @@ flask_cfg = load_flask_config()
 kb_cfg = load_config()
 kb_root = Path(kb_cfg["kb_root"])
 
+def _iter_kb_files():
+    """Yield kb .md files respecting file_patterns (whitelist) and skip_files (blacklist)."""
+    import fnmatch
+    patterns = kb_cfg.get("file_patterns") or ["**/*.md"]
+    skips = kb_cfg.get("skip_files") or []
+    seen: set[Path] = set()
+    for pat in patterns:
+        for f in sorted(kb_root.glob(pat)):
+            if f in seen or f.suffix != ".md":
+                continue
+            rel = str(f.relative_to(kb_root))
+            if any(fnmatch.fnmatch(f.name, s) or fnmatch.fnmatch(rel, s) for s in skips):
+                continue
+            seen.add(f)
+            yield f
+
 _config_path = Path(flask_cfg.get("_config_path", PROJECT_ROOT / "flask_config.yaml"))
 _instance_id = flask_cfg.get("instance_id") or _ensure_instance_id(PROJECT_ROOT / "flask_config.yaml")
 
@@ -176,7 +192,7 @@ def _node_color(rel_path: str) -> str:
 # ── Data functions ────────────────────────────────────────────────────────────
 
 def get_graph_data() -> dict:
-    all_files = list(kb_root.rglob("*.md"))
+    all_files = list(_iter_kb_files())
     node_map = {}
     for f in all_files:
         nid = _rel(f)
@@ -291,7 +307,7 @@ def rag_query(question: str, top_k: int) -> tuple[str, list]:
 
 def list_kb_files() -> dict:
     files = []
-    for f in sorted(kb_root.rglob("*.md")):
+    for f in _iter_kb_files():
         stat = f.stat()
         files.append({
             "name": f.name,
@@ -332,7 +348,7 @@ def get_connections(filename: str) -> dict:
                 pass
     stem = target.name
     incoming = []
-    for f in kb_root.rglob("*.md"):
+    for f in _iter_kb_files():
         if f.resolve() == target:
             continue
         for href in _parse_see_also(f):

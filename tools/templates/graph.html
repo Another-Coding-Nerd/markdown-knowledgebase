@@ -100,6 +100,13 @@
   }
   #graph-container svg { width: 100%; height: 100%; cursor: grab; }
   #graph-container svg:active { cursor: grabbing; }
+  #fit-btn {
+    position: absolute; bottom: 10px; right: 10px; z-index: 10;
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    color: var(--text-muted); border-radius: 6px; padding: 5px 9px;
+    font-size: 0.75rem; cursor: pointer; line-height: 1;
+  }
+  #fit-btn:hover { background: var(--border); color: var(--text); }
 
   #graph-legend {
     position: absolute;
@@ -219,6 +226,7 @@
       </details>
 
       <div id="graph-container">
+        <button id="fit-btn" title="Fit graph to view">⊡ Fit</button>
         <div id="graph-legend">
           <div class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span> top-level</div>
           <div class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span> projects/</div>
@@ -336,8 +344,27 @@
       .scaleExtent([0.1, 6])
       .on('zoom', e => g.attr('transform', e.transform));
 
+    function fitGraph() {
+      const nodes = data.nodes;
+      if (!nodes.length) return;
+      const pad = 48;
+      const minX = Math.min(...nodes.map(d => d.x)) - pad;
+      const maxX = Math.max(...nodes.map(d => d.x)) + pad;
+      const minY = Math.min(...nodes.map(d => d.y)) - pad;
+      const maxY = Math.max(...nodes.map(d => d.y)) + pad;
+      const cx = (minX + maxX) / 2;
+      const cy = (minY + maxY) / 2;
+      const scale = Math.max(Math.min(width / (maxX - minX), height / (maxY - minY), 2), 0.4);
+      const tx = width / 2 - cx * scale;
+      const ty = height / 2 - cy * scale;
+      svg.transition().duration(500)
+        .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+    }
+
     svg.call(zoom)
-       .on('dblclick.zoom', () => svg.transition().duration(400).call(zoom.transform, d3.zoomIdentity));
+       .on('dblclick.zoom', () => fitGraph());
+
+    document.getElementById('fit-btn').addEventListener('click', fitGraph);
 
     const g = svg.append('g');
 

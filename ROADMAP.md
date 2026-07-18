@@ -42,11 +42,9 @@ Medium-priority enhancements.
 - [ ] Tune non-list LLM prompt — explore suppressing preamble ("no preamble,
   2–4 sentences") and stronger "direct" framing vs. current "concisely in a
   neutral analytical tone". Reference options A/B/C discussed 2026-07-18.
-- [x] Configurable index exclusions — add `index_exclude` list to `config.yaml`
-  (glob or filename patterns) so navigation/reference files like `reading-order.md`
-  can be excluded from chunking/embedding without touching the indexer code.
-  Currently only `See Also` sections are filtered; whole-file exclusion requires
-  a code change.
+- [x] Configurable index exclusions — `file_patterns` (glob whitelist) and
+  `skip_files` (blacklist) in `config.yaml`; `See Also` heading sections also
+  filtered at chunk level. All per-repo, no code changes needed.
 - [ ] Improve error messages in `kb_index.py` when `config.yaml` is missing
   or malformed (currently a raw Python traceback)
 - [ ] Add `--dry-run` flag to `kb_index.py` — show which files would be
@@ -96,6 +94,10 @@ Lower-priority or larger-scope efforts.
   circles sized by frequency from `collection.get()` + `Counter` + English
   stopword filter; clicking a term populates the nav search bar and fires
   semantic search — making the cloud a topic navigator, not just decoration
+- [ ] **Graph "fit to page"** — a button that resets the D3 zoom/pan to fit
+  all nodes within the viewport; also fires automatically after the initial
+  force simulation settles so the graph is fully visible on first load without
+  manual zooming.
 - [ ] **UMAP semantic scatter** — on the `/stats` page, project chunk embeddings
   from ChromaDB to 2D via `umap-learn`, plot as a D3 scatter where each dot is
   a chunk colored by file/directory; semantically similar chunks cluster
