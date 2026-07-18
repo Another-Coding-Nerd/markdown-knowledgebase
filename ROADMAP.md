@@ -94,10 +94,12 @@ Lower-priority or larger-scope efforts.
   circles sized by frequency from `collection.get()` + `Counter` + English
   stopword filter; clicking a term populates the nav search bar and fires
   semantic search — making the cloud a topic navigator, not just decoration
-- [ ] **Graph "fit to page"** — a button that resets the D3 zoom/pan to fit
-  all nodes within the viewport; also fires automatically after the initial
-  force simulation settles so the graph is fully visible on first load without
-  manual zooming.
+- [x] **Graph "fit to page"** — "⊡ Fit" button overlaid on graph fits all
+  nodes into the viewport (0.4× minimum scale floor); dblclick also fits.
+- [x] **`connections.py` / `connections.db`** — semantic nearest-neighbor graph
+  edges built from ChromaDB embeddings; replaces `## See Also` section parsing.
+  `tools/connections` wrapper; `connections_top_n` + `connections_min_score` in
+  `config.yaml`. `kb_app.py` reads from DB; fallback is nodes-only (no edges).
 - [ ] **UMAP semantic scatter** — on the `/stats` page, project chunk embeddings
   from ChromaDB to 2D via `umap-learn`, plot as a D3 scatter where each dot is
   a chunk colored by file/directory; semantically similar chunks cluster

@@ -1,3 +1,25 @@
+## 2026-07-18 (12)
+### Added
+- `tools/connections.py` and `tools/connections` wrapper copied to all
+  derivative repos; `connections_top_n` and `connections_min_score` added
+  to each repo's `config.yaml`.
+
+## 2026-07-18 (11)
+### Added
+- `tools/connections.py`: builds `connections.db` (SQLite) from ChromaDB
+  embeddings — per-file mean embedding re-normalized, pairwise cosine
+  similarity, symmetrized top-N edges above min-score threshold written to DB.
+  `--show <file>` flag prints nearest neighbors for debugging.
+- `tools/connections`: bash wrapper (matches `tools/index` / `tools/search` pattern).
+- `config.yaml`: `connections_top_n` (default 5) and `connections_min_score`
+  (default 0.5) — controls edges per file and similarity floor.
+### Changed
+- `tools/kb_app.py`: graph edges, page sidebar connections, and file connection
+  counts now read from `connections.db` via `_db_connect()`. Removed
+  `_parse_see_also()` and `_SEE_ALSO_RE` entirely — See Also section parsing
+  is no longer used anywhere in the app. Falls back gracefully (empty edges /
+  empty connections) when `connections.db` hasn't been built yet.
+
 ## 2026-07-18 (10)
 ### Changed
 - `FLASK-APP-PLAN.md`: promoted `connections.db` / `connections.py` from

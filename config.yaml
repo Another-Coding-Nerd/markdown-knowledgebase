@@ -29,3 +29,11 @@ top_k: 5
 # skip_files:
 #   - reading-order.md
 #   - cheatsheet.md
+
+# Connections — controls graph edges built by tools/connections.
+# connections_top_n: max edges per file stored in connections.db (like the
+#   old "See Also" 2-4 limit — keeps the graph readable; raise for denser graphs).
+# connections_min_score: cosine similarity floor; edges below this are dropped
+#   regardless of top_n. 0.5 is a reasonable starting point for most KBs.
+connections_top_n: 5
+connections_min_score: 0.5

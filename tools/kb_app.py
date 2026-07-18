@@ -9,6 +9,7 @@ Usage:
 
 import argparse
 import re
+import sqlite3
 import sys
 import uuid
 from collections import Counter
@@ -142,28 +143,6 @@ app.jinja_env.globals["instance_id"] = _instance_id
 
 # ── KB helpers ────────────────────────────────────────────────────────────────
 
-_SEE_ALSO_RE = re.compile(r"\[([^\]]+)\]\(([^)#]+\.md)\)")
-
-def _parse_see_also(md_path: Path) -> list[str]:
-    """Return relative filenames linked from the ## See Also section."""
-    try:
-        text = md_path.read_text(encoding="utf-8", errors="replace")
-    except OSError:
-        return []
-    in_see_also = False
-    links = []
-    for line in text.splitlines():
-        if re.match(r"^#{1,3}\s+See Also", line, re.IGNORECASE):
-            in_see_also = True
-            continue
-        if in_see_also:
-            if re.match(r"^#+\s", line):
-                break
-            for _, href in _SEE_ALSO_RE.findall(line):
-                links.append(href.strip())
-    return links
-
-
 def _file_title(md_path: Path) -> str:
     """Return the first H1 heading, or a title-cased stem."""
     try:
@@ -179,6 +158,14 @@ def _rel(md_path: Path) -> str:
     """Path relative to kb_root as a stable node/file ID."""
     return str(md_path.relative_to(kb_root))
 
+
+_DB_PATH = PROJECT_ROOT / "connections.db"
+
+def _db_connect():
+    """Return a read-only sqlite3 connection to connections.db, or None if absent."""
+    if not _DB_PATH.exists():
+        return None
+    return sqlite3.connect(f"file:{_DB_PATH}?mode=ro", uri=True)
 
 _NODE_COLORS = {
     "projects": "#f59e0b",
@@ -205,25 +192,22 @@ def get_graph_data() -> dict:
 
     edges = []
     degree: dict[str, int] = {nid: 0 for nid in node_map}
-    seen_edges: set[tuple[str, str]] = set()
 
-    for f in all_files:
-        src = _rel(f)
-        for href in _parse_see_also(f):
-            target = (f.parent / href).resolve()
-            try:
-                tgt = _rel(target)
-            except ValueError:
-                continue
-            if tgt not in node_map:
-                continue
-            pair = (src, tgt)
-            if pair in seen_edges:
-                continue
-            seen_edges.add(pair)
-            edges.append({"source": src, "target": tgt, "type": "see_also", "weight": 1.0})
-            degree[src] = degree.get(src, 0) + 1
-            degree[tgt] = degree.get(tgt, 0) + 1
+    con = _db_connect()
+    if con:
+        try:
+            # source < target gives one row per undirected pair (both directions stored)
+            rows = con.execute(
+                "SELECT source, target, weight FROM connections WHERE source < target"
+            ).fetchall()
+            for src, tgt, w in rows:
+                if src not in node_map or tgt not in node_map:
+                    continue
+                edges.append({"source": src, "target": tgt, "weight": round(w, 4)})
+                degree[src] = degree.get(src, 0) + 1
+                degree[tgt] = degree.get(tgt, 0) + 1
+        finally:
+            con.close()
 
     g_cfg = flask_cfg.get("graph", {})
     min_sz = g_cfg.get("node_min_size", 4)
@@ -306,16 +290,28 @@ def rag_query(question: str, top_k: int) -> tuple[str, list]:
 
 
 def list_kb_files() -> dict:
+    degree: dict[str, int] = {}
+    con = _db_connect()
+    if con:
+        try:
+            rows = con.execute(
+                "SELECT source, COUNT(*) FROM connections GROUP BY source"
+            ).fetchall()
+            degree = {r[0]: r[1] for r in rows}
+        finally:
+            con.close()
+
     files = []
     for f in _iter_kb_files():
         stat = f.stat()
+        nid = _rel(f)
         files.append({
             "name": f.name,
             "title": _file_title(f),
-            "path": _rel(f),
+            "path": nid,
             "size": stat.st_size,
             "last_modified": datetime.fromtimestamp(stat.st_mtime).isoformat(timespec="seconds"),
-            "connections": len(_parse_see_also(f)),
+            "connections": degree.get(nid, 0),
         })
     return {"files": files}
 
@@ -337,25 +333,21 @@ def get_connections(filename: str) -> dict:
     target = (kb_root / filename).resolve()
     if not target.is_relative_to(kb_resolved):
         return {"outgoing": [], "incoming": []}
-    # Resolve raw See Also hrefs to kb_root-relative paths so template links work
-    outgoing = []
-    if target.exists():
-        for href in _parse_see_also(target):
-            resolved = (target.parent / href).resolve()
-            try:
-                outgoing.append(str(resolved.relative_to(kb_resolved)))
-            except ValueError:
-                pass
-    stem = target.name
-    incoming = []
-    for f in _iter_kb_files():
-        if f.resolve() == target:
-            continue
-        for href in _parse_see_also(f):
-            if href == filename or Path(href).name == stem:
-                incoming.append(_rel(f))
-                break
-    return {"outgoing": outgoing, "incoming": incoming}
+
+    rel = str(target.relative_to(kb_resolved))
+    con = _db_connect()
+    if not con:
+        return {"outgoing": [], "incoming": []}
+
+    try:
+        rows = con.execute(
+            "SELECT target, weight FROM connections WHERE source = ? ORDER BY weight DESC",
+            (rel,),
+        ).fetchall()
+    finally:
+        con.close()
+
+    return {"outgoing": [r[0] for r in rows], "incoming": []}
 
 class _LinkRewriter(Treeprocessor):
     """Rewrite [text](foo.md) → /page/foo.md so intra-KB links work.
