@@ -91,12 +91,12 @@ def build_prompt(query, hits):
         instruction = (
             "The question asks for a list. "
             "Scan ALL excerpts below and enumerate every distinct item that answers the question. "
-            "Format as a numbered list. Include all relevant items — do not summarize or truncate. "
+            "Format as a numbered list. List each distinct item only once — do not repeat. "
             "Use only information from the excerpts. Cite sources as [1], [2] etc.\n"
         )
     else:
         instruction = (
-            "Answer the question in a neutral analytical tone "
+            "Answer the question concisely in a neutral analytical tone "
             "based solely on the excerpts below. "
             "If the excerpts don't contain enough information, say so. "
             "Cite sources as [1], [2] etc.\n"

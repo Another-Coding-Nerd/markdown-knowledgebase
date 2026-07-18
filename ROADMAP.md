@@ -39,6 +39,14 @@ Medium-priority enhancements.
 
 ### Tooling
 
+- [ ] Tune non-list LLM prompt — explore suppressing preamble ("no preamble,
+  2–4 sentences") and stronger "direct" framing vs. current "concisely in a
+  neutral analytical tone". Reference options A/B/C discussed 2026-07-18.
+- [x] Configurable index exclusions — add `index_exclude` list to `config.yaml`
+  (glob or filename patterns) so navigation/reference files like `reading-order.md`
+  can be excluded from chunking/embedding without touching the indexer code.
+  Currently only `See Also` sections are filtered; whole-file exclusion requires
+  a code change.
 - [ ] Improve error messages in `kb_index.py` when `config.yaml` is missing
   or malformed (currently a raw Python traceback)
 - [ ] Add `--dry-run` flag to `kb_index.py` — show which files would be

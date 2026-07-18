@@ -17,3 +17,15 @@ overlap_tokens: 50
 
 # Default number of results returned per query
 top_k: 5
+
+# File discovery — both params are optional.
+# file_patterns: glob patterns (relative to kb_root) for files to include.
+#   Defaults to ["**/*.md"] (all markdown files recursively).
+#   Use to restrict indexing to specific files or directories.
+# skip_files: filenames or relative paths to exclude; fnmatch wildcards accepted.
+#   Use for navigation/meta files that cause false-positive search hits.
+# file_patterns:
+#   - "**/*.md"
+# skip_files:
+#   - reading-order.md
+#   - cheatsheet.md

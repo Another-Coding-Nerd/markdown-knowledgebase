@@ -1,3 +1,22 @@
+## 2026-07-18 (8)
+### Added
+- `tools/kb_index.py`: whitelist/blacklist file discovery — `file_patterns`
+  (glob whitelist, defaults to `**/*.md`) and `skip_files` (blacklist, fnmatch)
+  in `config.yaml`. Replaces custom file-discovery code in derivative repos;
+  all repos now use the same indexer, configured per-repo via `config.yaml`.
+- `tools/kb_index.py`: progress indicators — live `[x/y]` file counter during
+  chunking and `x/y chunks embedded` counter during embedding, both using `\r`
+  in-place updates.
+- `tools/kb_index.py`: filter `See Also` sections from index — heading-level
+  chunks whose final heading is `See Also` are skipped before embedding.
+- `config.yaml`: documented `file_patterns` and `skip_files` params with examples.
+### Changed
+- `tools/kb_query.py`: list prompt tightened — removed "stop when done" clause
+  that was causing early termination; `max_tokens_list` raised to 1500 as the
+  natural ceiling. Added `concisely` back to factual prompt.
+- `flask_config.yaml`: `top_k` 12→15, `max_context_chars` 6000→20000,
+  `max_tokens_list` 768→1500 across all repos.
+
 ## 2026-07-18 (7)
 ### Added
 - `tools/kb_query.py`: dual token budgets — `max_tokens` (384) for factual

@@ -15,6 +15,7 @@ meta.json predates per-file mtime tracking.
 """
 
 import argparse
+import fnmatch
 import json
 import sys
 import time
@@ -32,6 +33,8 @@ def chunk_file(path, kb_root, cfg, tokenizer):
     chunks = chunk_markdown(text, cfg["max_tokens"], cfg["overlap_tokens"], tokenizer)
     ids, docs, metas = [], [], []
     for i, (heading_path, chunk_text) in enumerate(chunks):
+        if heading_path.split(" > ")[-1].strip() == "See Also":
+            continue
         ids.append(f"{rel}::{i}")
         docs.append(chunk_text)
         metas.append({
@@ -43,8 +46,9 @@ def chunk_file(path, kb_root, cfg, tokenizer):
 
 
 def embed_and_add(collection, model, ids, docs, metas, batch_size):
-    for start in range(0, len(docs), batch_size):
-        end = start + batch_size
+    total = len(docs)
+    for start in range(0, total, batch_size):
+        end = min(start + batch_size, total)
         batch_embeddings = [e.tolist() for e in model.embed(docs[start:end], batch_size=batch_size)]
         collection.add(
             ids=ids[start:end],
@@ -52,6 +56,8 @@ def embed_and_add(collection, model, ids, docs, metas, batch_size):
             embeddings=batch_embeddings,
             metadatas=metas[start:end],
         )
+        print(f"\r  {end}/{total} chunks embedded", end="", flush=True)
+    print()
 
 
 def main():
@@ -68,9 +74,24 @@ def main():
     index_dir = cfg["index_dir"]
     index_dir.mkdir(parents=True, exist_ok=True)
 
-    md_files = sorted(kb_root.rglob("*.md"))
+    file_patterns = cfg.get("file_patterns") or ["**/*.md"]
+    skip_patterns = cfg.get("skip_files") or cfg.get("exclude_patterns") or []
+    seen = set()
+    md_files_unsorted = []
+    for pat in file_patterns:
+        for p in kb_root.glob(pat):
+            if p in seen or p.suffix != ".md":
+                continue
+            rel = str(p.relative_to(kb_root))
+            if not any(
+                fnmatch.fnmatch(p.name, sp) or fnmatch.fnmatch(rel, sp)
+                for sp in skip_patterns
+            ):
+                seen.add(p)
+                md_files_unsorted.append(p)
+    md_files = sorted(md_files_unsorted)
     if not md_files:
-        print(f"No .md files found under {kb_root}", file=sys.stderr)
+        print(f"No .md files found under {kb_root} matching {file_patterns}", file=sys.stderr)
 
     current_mtimes = {str(p.relative_to(kb_root)): p.stat().st_mtime for p in md_files}
 
@@ -122,13 +143,16 @@ def main():
         # that. Disable truncation so chunking sees true token counts.
         tokenizer.no_truncation()
 
-        for path in to_process:
+        total_files = len(to_process)
+        for i, path in enumerate(to_process, 1):
+            print(f"\r  [{i}/{total_files}] {path.name}", end="", flush=True)
             ids, docs, metas = chunk_file(path, kb_root, cfg, tokenizer)
             all_ids.extend(ids)
             all_docs.extend(docs)
             all_metas.extend(metas)
+        print()
 
-        print(f"Chunked {len(to_process)} file(s) into {len(all_docs)} chunks")
+        print(f"Chunked {total_files} file(s) into {len(all_docs)} chunks")
 
         if all_docs:
             print("Embedding chunks...")
