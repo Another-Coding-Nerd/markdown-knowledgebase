@@ -76,6 +76,26 @@ Lower-priority or larger-scope efforts.
   D3.js). Falls back to parsing See Also sections if connections.db
   doesn't exist. KB Q&A requires Ollama or compatible endpoint; works
   without it. Dependencies: Flask + markdown.
+- [ ] **Dark mode toggle** — nav button toggles `.dark` on `<body>`, persisted in
+  `localStorage`; CSS custom properties already support both themes
+- [ ] **TOC sidebar panel** — on `/page/` views, show document headings above
+  Related/Backlinks; `markdown` `toc` extension already extracts this, just
+  needs to be passed from the route and rendered in the sidebar
+- [ ] **Recent pages** — "Recently visited" section in the graph file sidebar,
+  stored in `localStorage`; purely frontend, no backend change needed
+- [ ] **Top terms word cloud** — dedicated `/stats` page; `d3.pack()` circle
+  packing layout (deterministic, cleaner than force-directed for this use case),
+  circles sized by frequency from `collection.get()` + `Counter` + English
+  stopword filter; clicking a term populates the nav search bar and fires
+  semantic search — making the cloud a topic navigator, not just decoration
+- [ ] **UMAP semantic scatter** — on the `/stats` page, project chunk embeddings
+  from ChromaDB to 2D via `umap-learn`, plot as a D3 scatter where each dot is
+  a chunk colored by file/directory; semantically similar chunks cluster
+  together, revealing the KB's topical structure; click a dot → navigate to
+  that page/section. Note: `umap-learn` is a heavier dependency (~500MB with
+  numpy/scipy) and projection takes a few seconds — cache the result
+- [ ] **Graph neighborhood highlight** — on node hover, dim all non-adjacent
+  nodes and edges to make connection structure legible on dense graphs; pure D3
 - [ ] Tagging or metadata system beyond file/directory structure (e.g. YAML
   front matter fields that `kb_index.py` indexes and `kb_search.py` can
   filter on)

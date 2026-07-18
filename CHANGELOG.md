@@ -1,3 +1,30 @@
+## 2026-07-18
+### Added
+- `tools/templates/graph.html`: left file sidebar (220px) listing all KB files
+  grouped by directory (top-level / projects / resources), loaded from
+  `/api/files`; replaces the "Files" nav link that pointed at raw JSON.
+  Two-column grid layout (sidebar + graph/Q&A right column).
+- `tools/templates/page.html`: exact phrase highlight on arrival from search —
+  TreeWalker wraps matched text in `<mark>` elements and smooth-scrolls to the
+  first hit. Fallback when the phrase isn't literally present: subtly highlights
+  the entire matched section (amber tint + left border accent on the heading)
+  using the `#anchor` already in the URL — so semantic matches that don't
+  contain the exact query string still get a clear visual indicator.
+- `tools/templates/base.html`: search dropdown now shows 3-line snippet of the
+  matching chunk (not a single truncated line); result URLs include `?q=` param
+  so the page can highlight on arrival; `slugify()` aligned with python-markdown
+  `toc` extension to ensure anchor links land on the right heading.
+- ROADMAP.md: six new Later → Features items — dark mode toggle, TOC sidebar
+  panel on page view, recent pages in file sidebar, top terms word cloud
+  (`d3.pack()`, click-to-search), UMAP semantic scatter (heavier dep, cache
+  recommended), graph neighborhood highlight on hover.
+
+### Changed
+- `tools/templates/base.html`: removed nav links div (Graph / Files) — graph
+  is the home page, file browsing moved to the graph sidebar.
+- `tools/templates/graph.html`: `||` → `??` for D3 `charge_strength` and
+  `link_distance` config fallbacks — `||` would override a valid `0` value.
+
 ## 2026-07-17 (5)
 ### Added
 - README.md: "Flask Web Interface" section — setup steps, feature table

@@ -3,10 +3,81 @@
 {% block title %}Graph — Knowledge Base{% endblock %}
 
 {% block styles %}
+  /* ── Two-column layout ── */
+  .kb-main { padding-bottom: 0; }
+
+  #graph-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 0.75rem;
+    height: calc(100vh - 52px - 2rem);
+    min-height: 500px;
+  }
+
+  /* ── File sidebar ── */
+  #file-sidebar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  #file-sidebar-header {
+    padding: 0.55rem 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #file-list {
+    overflow-y: auto;
+    flex: 1;
+  }
+  .file-group-header {
+    padding: 0.35rem 0.75rem 0.2rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+  }
+  .file-item {
+    display: block;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-decoration: none;
+    transition: background 0.1s, color 0.1s;
+  }
+  .file-item:last-child { border-bottom: none; }
+  .file-item:hover { background: var(--border); color: var(--text); text-decoration: none; }
+
+  /* ── Right column ── */
+  #graph-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 0;
+  }
+
   #graph-container {
-    width: 100%;
-    height: calc(100vh - 52px - 200px);
-    min-height: 400px;
+    flex: 1;
+    min-height: 300px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -48,17 +119,17 @@
 
   /* ── KB Q&A panel ── */
   #qa-panel {
-    margin-top: 1rem;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
+    flex-shrink: 0;
   }
   #qa-panel summary {
-    padding: 0.75rem 1rem;
+    padding: 0.65rem 1rem;
     cursor: pointer;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     color: var(--text);
     user-select: none;
     list-style: none;
@@ -103,31 +174,45 @@
 
 {% block content %}
 <div class="kb-main">
-  <div id="graph-wrapper" style="position:relative;">
-    <div id="graph-container">
-      <div id="graph-legend">
-        <div class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span> top-level</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span> projects/</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#22c55e"></span> resources/</div>
-        <div style="margin-top:4px; font-size:0.7rem;">Click node → page · Scroll → zoom · Drag → pan</div>
-      </div>
-    </div>
-  </div>
+  <div id="graph-layout">
 
-  <details id="qa-panel">
-    <summary>Ask your KB</summary>
-    <div id="qa-body">
-      <div id="qa-row">
-        <input id="qa-input" type="text" placeholder="Ask a question about this knowledge base…">
-        <button id="qa-submit" class="btn btn-primary btn-sm">Ask</button>
+    <!-- Left: file list -->
+    <div id="file-sidebar">
+      <div id="file-sidebar-header">
+        <span>Files</span>
+        <span id="file-count" style="font-weight:400"></span>
       </div>
-      <div id="qa-result">
-        <div id="qa-answer"></div>
-        <div id="qa-sources"></div>
-      </div>
-      <div id="qa-note">Requires a running Ollama instance or compatible LLM endpoint (see flask_config.yaml).</div>
+      <div id="file-list"></div>
     </div>
-  </details>
+
+    <!-- Right: graph + Q&A -->
+    <div id="graph-right">
+      <div id="graph-container">
+        <div id="graph-legend">
+          <div class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span> top-level</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span> projects/</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#22c55e"></span> resources/</div>
+          <div style="margin-top:4px; font-size:0.7rem;">Click node → page · Scroll → zoom · Drag → pan</div>
+        </div>
+      </div>
+
+      <details id="qa-panel">
+        <summary>Ask your KB</summary>
+        <div id="qa-body">
+          <div id="qa-row">
+            <input id="qa-input" type="text" placeholder="Ask a question about this knowledge base…">
+            <button id="qa-submit" class="btn btn-primary btn-sm">Ask</button>
+          </div>
+          <div id="qa-result">
+            <div id="qa-answer"></div>
+            <div id="qa-sources"></div>
+          </div>
+          <div id="qa-note">Requires a running Ollama instance or compatible LLM endpoint (see flask_config.yaml).</div>
+        </div>
+      </details>
+    </div>
+
+  </div>
 </div>
 
 <div class="graph-tooltip" id="tooltip" style="display:none"></div>
@@ -138,6 +223,56 @@
 <script>
   const GRAPH_CFG = {{ graph_config | tojson }};
 
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── File sidebar ─────────────────────────────────────────────────────────
+  async function loadFileList() {
+    const container = document.getElementById('file-list');
+    try {
+      const res = await fetch('/api/files');
+      const data = await res.json();
+      const files = data.files || [];
+
+      document.getElementById('file-count').textContent = files.length;
+
+      if (!files.length) {
+        container.innerHTML = '<div style="padding:0.75rem;font-size:0.8rem;color:var(--text-muted)">No files found.</div>';
+        return;
+      }
+
+      // Group by first directory segment
+      const groups = {};
+      for (const f of files) {
+        const parts = f.path.split('/');
+        const group = parts.length > 1 ? parts[0] : '';
+        if (!groups[group]) groups[group] = [];
+        groups[group].push(f);
+      }
+
+      const ORDER = ['', 'projects', 'resources'];
+      const LABELS = { '': 'Files', projects: 'Projects', resources: 'Resources' };
+      const extra = Object.keys(groups).filter(g => !ORDER.includes(g));
+      const groupOrder = [...ORDER, ...extra].filter(g => groups[g]);
+      const multiGroup = groupOrder.length > 1;
+
+      let html = '';
+      for (const group of groupOrder) {
+        if (multiGroup) {
+          html += `<div class="file-group-header">${escHtml(LABELS[group] || group)}</div>`;
+        }
+        for (const f of groups[group]) {
+          html += `<a class="file-item" href="/page/${escHtml(f.path)}" title="${escHtml(f.path)}">${escHtml(f.title)}</a>`;
+        }
+      }
+      container.innerHTML = html;
+    } catch (_) {
+      container.innerHTML = '<div style="padding:0.75rem;font-size:0.8rem;color:var(--error)">Failed to load files.</div>';
+    }
+  }
+
+  // ── D3 graph ──────────────────────────────────────────────────────────────
   async function renderGraph() {
     let data;
     try {
@@ -158,7 +293,6 @@
     const container = document.getElementById('graph-container');
     const width = container.clientWidth;
     const height = container.clientHeight;
-
     const tooltip = document.getElementById('tooltip');
 
     const svg = d3.select('#graph-container').append('svg')
@@ -227,7 +361,6 @@
       node.attr('transform', d => `translate(${d.x ?? 0},${d.y ?? 0})`);
     });
 
-    // Highlight connected nodes on edge click
     link.on('click', (event, d) => {
       event.stopPropagation();
       node.select('circle').attr('fill-opacity', n =>
@@ -249,11 +382,7 @@
       });
   }
 
-  function escHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-
-  // ── KB Q&A ──────────────────────────────────────────────────────────────
+  // ── KB Q&A ────────────────────────────────────────────────────────────────
   document.getElementById('qa-submit').addEventListener('click', askKB);
   document.getElementById('qa-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') askKB();
@@ -292,6 +421,7 @@
     }
   }
 
+  loadFileList();
   renderGraph();
 </script>
 {% endblock %}

@@ -120,6 +120,21 @@
   .markdown-body img { max-width: 100%; border-radius: 4px; }
   .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
 
+  mark {
+    background: rgba(234, 179, 8, 0.4);
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+  .section-match {
+    background: rgba(234, 179, 8, 0.07);
+  }
+  .section-match-head {
+    border-left: 3px solid rgba(234, 179, 8, 0.55);
+    padding-left: 0.5rem;
+    margin-left: -0.5rem;
+  }
+
   /* ── Meta bar ── */
   .page-meta {
     display: flex;
@@ -177,4 +192,66 @@
     </main>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q');
+    if (!q) return;
+
+    const body = document.querySelector('.markdown-body');
+    if (!body) return;
+
+    const escaped = q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (!escaped) return;
+    const re = new RegExp(`(${escaped})`, 'gi');
+
+    // Collect matching text nodes before modifying DOM
+    const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, {
+      acceptNode: n => n.parentElement.closest('script,style') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
+    });
+    const hits = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      if (re.test(node.nodeValue)) hits.push(node);
+      re.lastIndex = 0;
+    }
+
+    let firstMark = null;
+    for (const textNode of hits) {
+      const frag = document.createDocumentFragment();
+      let last = 0, m;
+      re.lastIndex = 0;
+      while ((m = re.exec(textNode.nodeValue)) !== null) {
+        if (m.index > last) frag.appendChild(document.createTextNode(textNode.nodeValue.slice(last, m.index)));
+        const mark = document.createElement('mark');
+        mark.textContent = m[0];
+        if (!firstMark) firstMark = mark;
+        frag.appendChild(mark);
+        last = m.index + m[0].length;
+      }
+      if (last < textNode.nodeValue.length) frag.appendChild(document.createTextNode(textNode.nodeValue.slice(last)));
+      textNode.parentNode.replaceChild(frag, textNode);
+    }
+
+    if (firstMark) {
+      setTimeout(() => firstMark.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+    } else if (window.location.hash) {
+      const heading = document.getElementById(window.location.hash.slice(1));
+      if (heading) {
+        const level = parseInt(heading.tagName[1]);
+        heading.classList.add('section-match', 'section-match-head');
+        let el = heading;
+        while ((el = el.nextElementSibling)) {
+          const m = el.tagName.match(/^H(\d)$/i);
+          if (m && parseInt(m[1]) <= level) break;
+          el.classList.add('section-match');
+        }
+        setTimeout(() => heading.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+      }
+    }
+  })();
+</script>
 {% endblock %}
