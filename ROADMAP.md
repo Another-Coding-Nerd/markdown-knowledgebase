@@ -76,14 +76,14 @@ Lower-priority or larger-scope efforts.
   D3.js). Falls back to parsing See Also sections if connections.db
   doesn't exist. KB Q&A requires Ollama or compatible endpoint; works
   without it. Dependencies: Flask + markdown.
-- [ ] **Dark mode toggle** — nav button toggles `.dark` on `<body>`, persisted in
+- [x] **Dark mode toggle** — nav button toggles `.dark` on `<body>`, persisted in
   `localStorage`; CSS custom properties already support both themes
-- [ ] **TOC sidebar panel** — on `/page/` views, show document headings above
+- [x] **TOC sidebar panel** — on `/page/` views, show document headings above
   Related/Backlinks; `markdown` `toc` extension already extracts this, just
   needs to be passed from the route and rendered in the sidebar
-- [ ] **Recent pages** — "Recently visited" section in the graph file sidebar,
+- [x] **Recent pages** — "Recently visited" section in the graph file sidebar,
   stored in `localStorage`; purely frontend, no backend change needed
-- [ ] **Top terms word cloud** — dedicated `/stats` page; `d3.pack()` circle
+- [x] **Top terms word cloud** — dedicated `/stats` page; `d3.pack()` circle
   packing layout (deterministic, cleaner than force-directed for this use case),
   circles sized by frequency from `collection.get()` + `Counter` + English
   stopword filter; clicking a term populates the nav search bar and fires
@@ -94,7 +94,7 @@ Lower-priority or larger-scope efforts.
   together, revealing the KB's topical structure; click a dot → navigate to
   that page/section. Note: `umap-learn` is a heavier dependency (~500MB with
   numpy/scipy) and projection takes a few seconds — cache the result
-- [ ] **Graph neighborhood highlight** — on node hover, dim all non-adjacent
+- [x] **Graph neighborhood highlight** — on node hover, dim all non-adjacent
   nodes and edges to make connection structure legible on dense graphs; pure D3
 - [ ] Tagging or metadata system beyond file/directory structure (e.g. YAML
   front matter fields that `kb_index.py` indexes and `kb_search.py` can
