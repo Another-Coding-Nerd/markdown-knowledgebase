@@ -62,9 +62,15 @@ model (~130MB, cached under `~/.cache/`).
 .venv/bin/python tools/kb_search.py "some query" "another query" --top-k 5
 ```
 
-`tools/index`, `tools/search`, and `tools/query` are thin wrapper scripts —
-shorter to type, and they resolve the repo root from their own path so they
-work from any directory.
+`tools/index`, `tools/search`, `tools/query`, and `tools/serve` are thin
+wrapper scripts — shorter to type, and they resolve the repo root from their
+own path so they work from any directory.
+
+```bash
+tools/serve                  # start the web UI (http://localhost:5000)
+tools/serve --port 8080      # custom port
+tools/serve --config my.yaml # custom config
+```
 
 **KB Q&A (Retrieve & Synthesize)** (optional) — retrieve KB chunks and synthesize an answer
 via a local LLM:
@@ -125,7 +131,7 @@ markdown pages, and a KB Q&A question box.
 .venv/bin/python tools/kb_index.py
 
 # 2. Start the app
-.venv/bin/python tools/kb_app.py
+tools/serve
 # → App URL: http://localhost:5000
 ```
 
@@ -164,8 +170,9 @@ stats_stopwords:
 ```
 
 ```bash
-.venv/bin/python tools/kb_app.py --port 8080          # override port
-.venv/bin/python tools/kb_app.py --config my.yaml     # custom config file
+tools/serve                        # start the web UI
+tools/serve --port 8080            # override port
+tools/serve --config my.yaml       # custom config file
 ```
 
 **KB Q&A requires** a running [Ollama](https://ollama.com) instance

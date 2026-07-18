@@ -1,6 +1,7 @@
 # Flask app configuration for the knowledge base viewer (Obsidian lite)
 
 # Server
+# host: 0.0.0.0 to bind all interfaces (accessible from other machines on the network)
 host: localhost
 port: 5000
 debug: false

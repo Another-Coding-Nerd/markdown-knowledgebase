@@ -1,3 +1,14 @@
+## 2026-07-18 (3)
+### Added
+- `tools/serve`: thin bash wrapper for `kb_app.py` — resolves repo root from its
+  own path so it works from any directory; matches the `tools/index` /
+  `tools/search` / `tools/query` pattern. Usage: `tools/serve`,
+  `tools/serve --port 8080`, `tools/serve --config my.yaml`.
+- `flask_config.yaml`: comment on `host` explaining that `0.0.0.0` binds all
+  interfaces (makes the app accessible from other machines on the network).
+- README.md: updated all `kb_app.py` invocation examples to use `tools/serve`;
+  added `tools/serve` to wrapper scripts description with usage examples.
+
 ## 2026-07-18 (2)
 ### Added
 - `tools/templates/stats.html`: new `/stats` page — `d3.pack()` word cloud of
