@@ -17,6 +17,7 @@ from pathlib import Path
 
 import chromadb
 import markdown as mdlib
+from markdown.treeprocessors import Treeprocessor
 import requests
 import yaml
 from flask import Flask, abort, jsonify, render_template, request
@@ -327,6 +328,38 @@ def get_connections(filename: str) -> dict:
                 break
     return {"outgoing": outgoing, "incoming": incoming}
 
+class _LinkRewriter(Treeprocessor):
+    """Rewrite [text](foo.md) → /page/foo.md so intra-KB links work.
+
+    Also converts `` `foo.md` `` (backtick-wrapped filenames in <code>) to
+    clickable links when the text looks like a markdown filename.
+    """
+    _MD_RE = re.compile(r"^[a-zA-Z0-9_][a-zA-Z0-9._-]*\.md$")
+
+    def run(self, root):
+        for el in root.iter("a"):
+            href = el.get("href", "")
+            if href and href.endswith(".md") and not href.startswith(("/", "http://", "https://")):
+                el.set("href", f"/page/{href}")
+        parent_map = {child: parent for parent in root.iter() for child in parent}
+        for code_el in list(root.iter("code")):
+            text = (code_el.text or "").strip()
+            if self._MD_RE.match(text):
+                parent = parent_map.get(code_el)
+                if parent is None:
+                    continue
+                import xml.etree.ElementTree as _etree
+                link = _etree.Element("a")
+                link.set("href", f"/page/{text}")
+                link.text = text
+                parent[list(parent).index(code_el)] = link
+
+
+class _LinkRewriteExtension(mdlib.Extension):
+    def extendMarkdown(self, md):
+        md.treeprocessors.register(_LinkRewriter(md), "link_rewriter", priority=15)
+
+
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @app.route("/")
@@ -348,7 +381,7 @@ def page(filename):
         abort(404)
     md_text = target.read_text(encoding="utf-8", errors="replace")
     md = mdlib.Markdown(
-        extensions=["tables", "fenced_code", "codehilite", "toc"],
+        extensions=["tables", "fenced_code", "codehilite", "toc", _LinkRewriteExtension()],
         extension_configs={"codehilite": {"guess_lang": False, "noclasses": True}},
     )
     html_content = md.convert(md_text)

@@ -66,6 +66,20 @@
   }
   .file-item:last-child { border-bottom: none; }
   .file-item:hover { background: var(--border); color: var(--text); text-decoration: none; }
+  #file-filter {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8rem;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    flex-shrink: 0;
+  }
+  #file-filter::placeholder { color: var(--text-muted); }
+  #file-filter:focus { background: var(--bg); }
 
   /* ── Right column ── */
   #graph-right {
@@ -185,22 +199,14 @@
           <a href="/stats" style="font-size:0.65rem;color:var(--text-muted);text-decoration:none" title="KB statistics">stats</a>
         </div>
       </div>
+      <input id="file-filter" type="text" placeholder="Filter files… (f)" autocomplete="off">
       <div id="file-list"></div>
     </div>
 
-    <!-- Right: graph + Q&A -->
+    <!-- Right: Q&A + graph -->
     <div id="graph-right">
-      <div id="graph-container">
-        <div id="graph-legend">
-          <div class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span> top-level</div>
-          <div class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span> projects/</div>
-          <div class="legend-item"><span class="legend-dot" style="background:#22c55e"></span> resources/</div>
-          <div style="margin-top:4px; font-size:0.7rem;">Click node → page · Scroll → zoom · Drag → pan</div>
-        </div>
-      </div>
-
       <details id="qa-panel">
-        <summary>Ask your KB</summary>
+        <summary>Ask your KB <span style="font-size:0.7rem;font-weight:400;color:var(--text-muted);margin-left:0.4rem">(a)</span></summary>
         <div id="qa-body">
           <div id="qa-row">
             <input id="qa-input" type="text" placeholder="Ask a question about this knowledge base…">
@@ -213,6 +219,15 @@
           <div id="qa-note">Requires a running Ollama instance or compatible LLM endpoint (see flask_config.yaml).</div>
         </div>
       </details>
+
+      <div id="graph-container">
+        <div id="graph-legend">
+          <div class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span> top-level</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span> projects/</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#22c55e"></span> resources/</div>
+          <div style="margin-top:4px; font-size:0.7rem;">Click node → page · Scroll → zoom · Drag → pan</div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -231,6 +246,46 @@
   }
 
   // ── File sidebar ─────────────────────────────────────────────────────────
+  let _allFiles = [];
+
+  function renderFileList(filter) {
+    const container = document.getElementById('file-list');
+    const q = (filter || '').toLowerCase().trim();
+    const files = q ? _allFiles.filter(f => f.path.toLowerCase().includes(q) || f.title.toLowerCase().includes(q)) : _allFiles;
+
+    document.getElementById('file-count').textContent = files.length;
+
+    if (!files.length) {
+      container.innerHTML = '<div style="padding:0.75rem;font-size:0.8rem;color:var(--text-muted)">No files found.</div>';
+      return;
+    }
+
+    const groups = {};
+    for (const f of files) {
+      const parts = f.path.split('/');
+      const group = parts.length > 1 ? parts[0] : '';
+      if (!groups[group]) groups[group] = [];
+      groups[group].push(f);
+    }
+
+    const ORDER = ['', 'projects', 'resources'];
+    const LABELS = { '': 'Files', projects: 'Projects', resources: 'Resources' };
+    const extra = Object.keys(groups).filter(g => !ORDER.includes(g));
+    const groupOrder = [...ORDER, ...extra].filter(g => groups[g]);
+    const multiGroup = groupOrder.length > 1;
+
+    let html = '';
+    for (const group of groupOrder) {
+      if (multiGroup) {
+        html += `<div class="file-group-header">${escHtml(LABELS[group] || group)}</div>`;
+      }
+      for (const f of files.filter(f2 => (f2.path.split('/').length > 1 ? f2.path.split('/')[0] : '') === group)) {
+        html += `<a class="file-item" href="/page/${escHtml(f.path)}" title="${escHtml(f.path)}">${escHtml(f.title)}</a>`;
+      }
+    }
+    container.innerHTML = html;
+  }
+
   async function loadFileList() {
     const container = document.getElementById('file-list');
     try {
@@ -238,38 +293,15 @@
       const data = await res.json();
       const files = data.files || [];
 
-      document.getElementById('file-count').textContent = files.length;
+      const sortKey = s => s.title.replace(/^(the|a|an)\s+/i, '').toLowerCase();
+      files.sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
+      _allFiles = files;
 
-      if (!files.length) {
-        container.innerHTML = '<div style="padding:0.75rem;font-size:0.8rem;color:var(--text-muted)">No files found.</div>';
-        return;
-      }
+      renderFileList('');
 
-      // Group by first directory segment
-      const groups = {};
-      for (const f of files) {
-        const parts = f.path.split('/');
-        const group = parts.length > 1 ? parts[0] : '';
-        if (!groups[group]) groups[group] = [];
-        groups[group].push(f);
-      }
-
-      const ORDER = ['', 'projects', 'resources'];
-      const LABELS = { '': 'Files', projects: 'Projects', resources: 'Resources' };
-      const extra = Object.keys(groups).filter(g => !ORDER.includes(g));
-      const groupOrder = [...ORDER, ...extra].filter(g => groups[g]);
-      const multiGroup = groupOrder.length > 1;
-
-      let html = '';
-      for (const group of groupOrder) {
-        if (multiGroup) {
-          html += `<div class="file-group-header">${escHtml(LABELS[group] || group)}</div>`;
-        }
-        for (const f of groups[group]) {
-          html += `<a class="file-item" href="/page/${escHtml(f.path)}" title="${escHtml(f.path)}">${escHtml(f.title)}</a>`;
-        }
-      }
-      container.innerHTML = html;
+      document.getElementById('file-filter').addEventListener('input', e => {
+        renderFileList(e.target.value);
+      });
     } catch (_) {
       container.innerHTML = '<div style="padding:0.75rem;font-size:0.8rem;color:var(--error)">Failed to load files.</div>';
     }
@@ -456,6 +488,20 @@
       container.insertAdjacentHTML('afterbegin', html);
     } catch (_) {}
   }
+
+  // ── Keyboard shortcuts ────────────────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'a') {
+      e.preventDefault();
+      const panel = document.getElementById('qa-panel');
+      if (!panel.open) panel.open = true;
+      document.getElementById('qa-input').focus();
+    } else if (e.key === 'f') {
+      e.preventDefault();
+      document.getElementById('file-filter').focus();
+    }
+  });
 
   loadFileList().then(loadRecentPages);
   renderGraph();

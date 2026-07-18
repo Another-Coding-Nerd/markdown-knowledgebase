@@ -143,7 +143,7 @@
   <nav class="kb-nav">
     <a class="kb-nav-brand" href="/">KB</a>
     <div class="kb-nav-search">
-      <input id="search-input" type="text" placeholder='Search… (press /)' autocomplete="off">
+      <input id="search-input" type="text" placeholder='Content search… (s)' autocomplete="off">
       <div id="search-results"></div>
     </div>
     <button id="theme-toggle" class="btn btn-sm" style="flex-shrink:0;padding:0.2rem 0.55rem;font-size:1rem;background:transparent;border:1px solid var(--border);color:var(--text-muted)" aria-label="Toggle theme" title="Toggle light/dark mode"></button>
@@ -175,7 +175,7 @@
       let timer;
 
       document.addEventListener('keydown', e => {
-        if (e.key === '/' && document.activeElement !== input && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        if (e.key === 's' && document.activeElement !== input && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
           e.preventDefault();
           input.focus();
         }

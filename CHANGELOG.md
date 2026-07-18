@@ -1,3 +1,25 @@
+## 2026-07-18 (5)
+### Added
+- `tools/templates/graph.html`: file filter input below sidebar header — type
+  to narrow the file list by name or title client-side; no server round-trip.
+  Article-aware alphabetical sort (`the`/`a`/`an` stripped from sort key) on
+  all file lists.
+- `tools/templates/graph.html`: three keyboard shortcuts — `s` focuses content
+  search, `a` opens and focuses Ask your KB, `f` focuses file filter. Shortcuts
+  fire only when no input/textarea is active.
+- `tools/templates/graph.html`: Ask your KB panel moved above the graph and
+  collapsed by default; shortcut hint `(a)` shown in the summary.
+- `tools/kb_app.py`: `_LinkRewriter` Markdown treeprocessor — rewrites
+  `[text](foo.md)` links and backtick-wrapped `.md` filenames to `/page/` routes
+  so intra-KB links are clickable in the page viewer. Fixed `getparent()` lxml
+  incompatibility (stdlib ElementTree has no such method) using a parent map
+  and index-based replacement.
+
+### Changed
+- `tools/templates/base.html`: content search placeholder updated to
+  `Content search… (s)`; `s` replaces `/` as the keyboard shortcut (removed
+  `/` alias for consistency with the `a`/`f` letter-key convention).
+
 ## 2026-07-18 (4)
 ### Added
 - `tools/kb_app.py`: `_ensure_instance_id()` — generates a UUID4 on first
