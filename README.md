@@ -141,11 +141,13 @@ tools/serve
 |---------|-------|-------------|
 | Graph | `/` | D3.js force-directed graph of KB connections (See Also links). Node size = degree. Hover a node to highlight its neighborhood; click to open the page. |
 | File sidebar | `/` left panel | All KB files grouped by directory (top-level / projects / resources). Recently visited pages appear at the top. |
-| Ask your KB | `/` bottom panel | One-shot Q&A: retrieves relevant chunks, synthesizes an answer via a local LLM, returns citations. |
+| Ask your KB | `/` top panel | One-shot Q&A: retrieves relevant chunks, synthesizes an answer via a local LLM, returns citations. Collapsed by default. |
 | Page viewer | `/page/<file>` | Rendered markdown. Sidebar shows a table of contents, outgoing See Also links, and backlinks. Search results scroll to the matched section and highlight the phrase. |
 | Stats | `/stats` | Word cloud (`d3.pack`) of top terms across all indexed chunks — circle size = frequency. Click any term to search. Ranked list alongside for precision. |
-| Search | nav bar | Debounced semantic search (300 ms). Press `/` to focus, `Esc` to close. Results show the matching chunk snippet; clicking navigates to the matched section. |
+| Search | nav bar | Debounced semantic search (300 ms). Results show the matching chunk snippet; clicking navigates to the matched section. |
+| File filter | `/` left panel | Type to narrow the file list by name or title; filters client-side with no server round-trip. |
 | Dark mode | nav toggle | Light/dark theme toggle, persisted in `localStorage`. Default set via `theme` in `flask_config.yaml`. |
+| Keyboard shortcuts | anywhere | `s` — content search · `a` — Ask your KB · `f` — file filter · `Esc` — close search. Shortcuts fire only when no input is focused. |
 
 **Configuration:** `flask_config.yaml` (shipped with defaults). Key options:
 
