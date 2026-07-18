@@ -1,3 +1,23 @@
+## 2026-07-18 (14)
+### Removed
+- `FLASK-APP-PLAN.md`: deleted stale "Agent Instructions" section — all work
+  it described (connections.db, AGENTS.md updates, See Also removal) is done.
+- `tools/templates/page.html`: removed Backlinks sidebar section — edges are
+  symmetric so incoming was always empty, making the section pointless.
+- Removed all `## See Also` authoring instructions from prompts and
+  CONTENT-STYLE.md across template and all derivative repos; graph edges are
+  DB-driven and need no manual curation.
+### Changed
+- `ROADMAP.md`: removed "broken See Also links" from `tools/validate` item
+  (no longer applicable); added sidebar scroll bug entry (marked complete).
+- `prompts/organize-kb-files.md`: post-move step no longer references See Also
+  links — just update index/navigation files and reindex.
+- `prompts/process-input-files.md`: dropped "See Also conventions" from the
+  Conventions pointer to CONTENT-STYLE.md.
+### Fixed
+- `tools/templates/page.html`: sidebar now scrolls independently on long
+  documents (`overflow-y: auto` + `max-height: calc(100vh - 72px - 1rem)`).
+
 ## 2026-07-18 (13)
 ### Changed
 - `AGENTS.md`: added `tools/connections` to tool listing; reindexing section

@@ -23,7 +23,6 @@ these files — they're already part of the KB.
      that way).
 3. **Present the proposed moves** — file, destination, one-line rationale —
    and wait for confirmation before moving anything.
-4. After moves, update any `## See Also` links or index/navigation files
-   affected (per `CONTENT-STYLE.md`).
+4. After moves, update any index/navigation files affected by the rename.
 5. Reindex per `AGENTS.md` (`kb_index.py --incremental` handles a move as a
    delete+add: the old path's chunks are removed, the new path is indexed).

@@ -26,7 +26,7 @@ High-priority improvements to the template itself.
 ### Tooling
 
 - [ ] Add a `tools/validate` wrapper that checks KB structural integrity
-  (broken See Also links, orphan files, oversized files) — currently only
+  (orphan files, oversized files) — currently only
   available as the `.claude/commands/kb-audit.md` slash command, which
   requires Claude Code. Should also handle oversized files end-to-end:
   flag files over 30K chars, then offer to split them following
@@ -69,6 +69,15 @@ Medium-priority enhancements.
 ## Later
 
 Lower-priority or larger-scope efforts.
+
+### Bugs
+
+- [x] **`/page/` sidebar not independently scrollable** — on long documents
+  the left sidebar (TOC / Related / Backlinks) cannot be scrolled
+  independently; it only scrolls after the main content area has been
+  scrolled to the bottom. Fix: give the sidebar `overflow-y: auto` with a
+  constrained height (e.g. `height: 100vh`, sticky positioning) so it
+  scrolls independently of the content column.
 
 ### Features
 

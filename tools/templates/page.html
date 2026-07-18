@@ -18,6 +18,8 @@
   .page-sidebar {
     position: sticky;
     top: 72px;
+    max-height: calc(100vh - 72px - 1rem);
+    overflow-y: auto;
   }
   .sidebar-section {
     margin-bottom: 1.25rem;
@@ -192,18 +194,6 @@
         {% if connections.outgoing %}
           <ul class="sidebar-links">
             {% for f in connections.outgoing %}
-              <li><a href="/page/{{ f }}" title="{{ f }}">{{ f.split('/')[-1].replace('-', ' ').replace('.md', '') }}</a></li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <div class="sidebar-empty">none</div>
-        {% endif %}
-      </div>
-      <div class="sidebar-section">
-        <h4>Backlinks</h4>
-        {% if connections.incoming %}
-          <ul class="sidebar-links">
-            {% for f in connections.incoming %}
               <li><a href="/page/{{ f }}" title="{{ f }}">{{ f.split('/')[-1].replace('-', ' ').replace('.md', '') }}</a></li>
             {% endfor %}
           </ul>

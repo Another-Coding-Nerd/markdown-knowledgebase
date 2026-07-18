@@ -96,6 +96,6 @@ psychology, and male strategy." Replace this paragraph with your own.
 
 ## Conventions
 
-Register, filenames, bullets/prose, blockquotes, file size/splitting, and
-"See Also" conventions for anything written or edited in this workflow are
-in `CONTENT-STYLE.md`.
+Register, filenames, bullets/prose, blockquotes, and file size/splitting
+conventions for anything written or edited in this workflow are in
+`CONTENT-STYLE.md`.
