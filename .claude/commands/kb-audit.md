@@ -1,62 +1,63 @@
 Audit `kb/` for structural integrity. Run all checks and report findings before making any fixes.
 
-## 1. Broken See Also Links
+## 1. Stale See Also Sections
+
+Graph edges are computed automatically from `connections.db`. Manually written
+`## See Also` sections are obsolete and should be removed.
 
 ```bash
 cd kb && python3 -c "
-import re, os, glob
+import glob
 
-broken = []
+hits = []
 for fpath in sorted(glob.glob('**/*.md', recursive=True)):
-    content = open(fpath).read()
-    in_see_also = False
-    for line in content.split('\n'):
-        if '## See Also' in line:
-            in_see_also = True
-            continue
-        if in_see_also:
-            for link in re.findall(r'\]\(([^)]+\.md)\)', line):
-                if not os.path.exists(link):
-                    broken.append((fpath, link))
-for f, l in broken:
-    print(f'BROKEN: {f} -> {l}')
-if not broken:
-    print('OK: All See Also links resolve.')
+    if '## See Also' in open(fpath).read():
+        hits.append(fpath)
+for f in hits:
+    print(f'SEE ALSO: {f} — section can be removed')
+if not hits:
+    print('OK: No stale See Also sections found.')
 "
 ```
 
-## 2. Orphan Files (no inbound See Also links)
+If hits are found, remove the `## See Also` heading and its link list from each
+file. Do not remove any other content.
+
+## 2. Orphan Files (no connections.db edges)
+
+Files with no semantic neighbors may be under-indexed or too short/narrow to
+embed meaningfully. Requires `connections.db` to exist — run `tools/connections`
+first if absent.
 
 ```bash
-cd kb && python3 -c "
-import re, glob
+python3 -c "
+import sqlite3, glob, os, sys
 
-content_files = sorted(glob.glob('**/*.md', recursive=True))
+db = 'connections.db'
+if not os.path.exists(db):
+    print('SKIP: connections.db not found — run tools/connections first')
+    sys.exit(0)
 
-inbound = {f: set() for f in content_files}
-for fpath in content_files:
-    text = open(fpath).read()
-    in_see_also = False
-    for line in text.split('\n'):
-        if '## See Also' in line:
-            in_see_also = True
-            continue
-        if in_see_also:
-            for link in re.findall(r'\]\(([^)]+\.md)\)', line):
-                if link in inbound:
-                    inbound[link].add(fpath)
+con = sqlite3.connect(f'file:{db}?mode=ro', uri=True)
+connected = set()
+for row in con.execute('SELECT source FROM connections').fetchall():
+    connected.add(row[0])
+for row in con.execute('SELECT target FROM connections').fetchall():
+    connected.add(row[0])
+con.close()
 
-orphans = [f for f in content_files if not inbound[f]]
+kb_files = sorted(glob.glob('kb/**/*.md', recursive=True))
+orphans = [f for f in kb_files if os.path.relpath(f, 'kb') not in connected]
 for f in orphans:
-    print(f'ORPHAN: {f} (zero inbound See Also links)')
+    print(f'ORPHAN: {f} (no edges in connections.db)')
 if not orphans:
-    print('OK: All content files have at least one inbound See Also link.')
+    print('OK: All files have at least one connection.')
 "
 ```
 
-Orphans aren't necessarily broken — treat as a semantic flag (Part 2), not an auto-fix: for each orphan, check via `tools/kb_search.py` whether a thematically related file should link to it, and propose the addition.
-
-If your KB has files that are intentionally link-free (e.g. a glossary), exclude them from this check by adding a `skip = {...}` set.
+Orphans aren't necessarily broken — treat as a semantic flag, not an auto-fix.
+A file may be too short, too narrow, or simply a new addition not yet connected.
+Use `tools/connections --show <file>` to inspect its nearest neighbors and score.
 
 ## 3. Large Files (splitting candidates)
 
@@ -65,7 +66,6 @@ cd kb && python3 -c "
 import glob
 
 content_files = sorted(glob.glob('**/*.md', recursive=True))
-
 threshold = 30000
 large = [(f, len(open(f).read())) for f in content_files]
 large = [(f, size) for f, size in large if size > threshold]
@@ -76,8 +76,13 @@ if not large:
 "
 ```
 
-Per the File Size & Splitting policy in `CONTENT-STYLE.md`: not necessarily a problem, but a candidate for review. Treat as a semantic flag, not an auto-fix — propose a split only if there's a genuine seam (analytically distinct section, minimal internal cross-references, substantial enough for its own See Also entries).
+Per the File Size & Splitting policy in `CONTENT-STYLE.md`: not necessarily a
+problem, but a candidate for review. Treat as a semantic flag, not an auto-fix
+— propose a split only if there's a genuine seam (analytically distinct section,
+minimal internal cross-references, substantial enough to stand alone).
 
 ## Output
 
-Fix broken links (1) immediately if any are found. Report orphans (2) and large files (3) as flags for user review — do not edit `kb/` without approval.
+Fix stale See Also sections (1) immediately if found. Report orphans (2) and
+large files (3) as flags for user review — do not edit `kb/` content without
+approval.

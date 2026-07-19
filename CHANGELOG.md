@@ -1,3 +1,14 @@
+## 2026-07-19
+### Added
+- `.claude/commands/fix-register.md`: slash command to scan and fix second-person
+  register violations across `kb/` — ported from derivative repo, genericized.
+- `.claude/commands/audit-citation.md`: slash command to audit unattributed
+  research/study claims via WebSearch — useful for any evidence-heavy KB.
+### Changed
+- `.claude/commands/kb-audit.md`: replaced stale See Also link checks with a
+  stale See Also section detector and a connections.db orphan check; large-file
+  check updated to remove the "See Also entries" reference in the output guidance.
+
 ## 2026-07-18 (15)
 ### Changed
 - `config.yaml`: default embedding model set to `bge-small-en-v1.5`; added

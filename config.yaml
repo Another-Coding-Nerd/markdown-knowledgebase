@@ -8,11 +8,10 @@ index_dir: ./.kb-index
 
 # Embedding model (served via fastembed, CPU/ONNX, no torch).
 # Two practical options:
-#   BAAI/bge-small-en-v1.5  — fast indexing, ~130MB download, good quality
-#   BAAI/bge-large-en-v1.5  — slow indexing, ~1.3GB download, best quality
-# Use small for quick setup or frequently re-indexed KBs; large if you index
-# rarely and want the best retrieval quality. Changing this requires deleting
-# .kb-index/ and running a full rebuild (tools/index, then tools/connections).
+#   BAAI/bge-small-en-v1.5  — ~130MB download, good quality, fast on any hardware
+#   BAAI/bge-large-en-v1.5  — ~1.3GB download, best quality, fast with GPU (slow CPU-only)
+# Changing this requires deleting .kb-index/ and running a full rebuild
+# (tools/index, then tools/connections).
 embedding_model: BAAI/bge-small-en-v1.5
 
 # Chunking
