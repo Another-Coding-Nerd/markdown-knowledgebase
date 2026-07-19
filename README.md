@@ -3,12 +3,10 @@
 A self-contained system for maintaining a markdown knowledgebase (`kb/`)
 with local semantic search, designed to avoid reading the entire KB into
 context every time new content needs to be cross-checked against existing
-material.
-
-**Core:** markdown files + semantic index + agent workflow. **Optional:** a
-Flask web UI (graph, search, page viewer), KB Q&A via a local LLM, and a
-semantic graph of file connections. Everything optional works without a
-server at query time — the CLI tools are always sufficient.
+material. Core: markdown files + semantic index + agent workflow. Optional
+additions: a Flask web UI (graph, search, page viewer), KB Q&A via a local
+LLM, and a semantic graph of file connections — all usable without a running
+server at query time.
 
 ## Getting Started
 
