@@ -17,7 +17,7 @@ High-priority improvements to the template itself.
 - [x] Fill in the `## Scope` placeholder in
   `prompts/process-input-files.md` with guidance text instead of leaving it
   empty
-- [ ] Document the KB Q&A feature (`tools/kb_query.py`) — use case is
+- [x] Document the KB Q&A feature (`tools/kb_query.py`) — use case is
   "query the KB + synthesize a short answer" via a local LLM. Needs a quick
   setup section in the README covering Ollama install, model selection, and
   example invocation. Note: after extensive testing, a GPU is required for

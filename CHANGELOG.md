@@ -1,3 +1,11 @@
+## 2026-07-19 (2)
+### Fixed
+- `README.md`: removed stale "backlinks" reference from page viewer feature
+  table — backlinks sidebar was removed when edges became symmetric.
+### Changed
+- `ROADMAP.md`: marked KB Q&A docs item complete — README already covers
+  Ollama setup, model selection, and example invocations.
+
 ## 2026-07-19
 ### Added
 - `.claude/commands/fix-register.md`: slash command to scan and fix second-person

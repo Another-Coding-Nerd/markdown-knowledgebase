@@ -147,7 +147,7 @@ tools/serve
 | Graph | `/` | D3.js force-directed graph of KB connections (semantic similarity via `connections.db`). Node size = degree. Hover a node to highlight its neighborhood; click to open the page. |
 | File sidebar | `/` left panel | All KB files grouped by directory (top-level / projects / resources). Recently visited pages appear at the top. |
 | Ask your KB | `/` top panel | One-shot Q&A: retrieves relevant chunks, synthesizes an answer via a local LLM, returns citations. Collapsed by default. |
-| Page viewer | `/page/<file>` | Rendered markdown. Sidebar shows a table of contents, related files (from `connections.db`), and backlinks. Search results scroll to the matched section and highlight the phrase. |
+| Page viewer | `/page/<file>` | Rendered markdown. Sidebar shows a table of contents and related files (from `connections.db`). Search results scroll to the matched section and highlight the phrase. |
 | Stats | `/stats` | Word cloud (`d3.pack`) of top terms across all indexed chunks — circle size = frequency. Click any term to search. Ranked list alongside for precision. |
 | Search | nav bar | Debounced semantic search (300 ms). Results show the matching chunk snippet; clicking navigates to the matched section. |
 | File filter | `/` left panel | Type to narrow the file list by name or title; filters client-side with no server round-trip. |
