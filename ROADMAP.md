@@ -7,6 +7,13 @@ a prioritized backlog.
 
 High-priority improvements to the template itself.
 
+### Infra
+
+- [ ] **Set `main` as default GitHub branch** — `master` is currently the
+  default; all commits are on `main`. Once `gh` CLI is installed locally:
+  `gh repo edit --default-branch main`, then delete `master` via the UI.
+  Until then the repo homepage shows stale content.
+
 ### Docs
 
 - [x] Add `html_to_text.py` to README Layout section (currently undocumented
