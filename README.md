@@ -57,7 +57,8 @@ After installing dependencies:
 1. **Add seed content** — drop a few `.md` files into `kb/` to give the
    agent something to read. Even rough notes work.
 2. **Build the index** — `tools/index`
-3. **Build graph edges** — `tools/connections`
+3. **Build graph edges** — `tools/connections` _(optional — only needed for
+   the Flask web UI; skip if you're using CLI tools only)_
 4. **Generate `about.md`** — tell your agent:
    > "Look at the kb/ files and our conversation, then write about.md —
    > 2–3 sentences on what this KB covers, and an explicit out-of-scope list."
@@ -235,10 +236,11 @@ Anthropic, Azure OpenAI, and others with no code changes.
 
 ```
 config.yaml              # kb_root, embedding model, chunk size/overlap, top_k
-flask_config.yaml        # Flask app config (port, theme, graph layout, KB Q&A)
-communication-levels.md  # optional: QuASAP 7-level scale + target level templates
+about.md                 # KB scope definition (generated at init; see First-time setup)
+flask_config.yaml        # [optional] Flask app config (port, theme, graph layout, KB Q&A)
+communication-levels.md  # [optional] QuASAP 7-level scale + target level templates
 kb/               # the markdown knowledgebase content
-  projects/       # optional Projects/Resources split (see AGENTS.md);
+  projects/       # [optional] Projects/Resources split (see AGENTS.md);
   resources/      # both dirs are created together when adopted;
                   # kb/ is flat by default if unused
 inputs/           # new source files awaiting triage
@@ -246,25 +248,26 @@ inputs/           # new source files awaiting triage
   processed/      # files already absorbed into kb/
   off-topic/      # files outside this KB's scope
 prompts/
-  process-input-files.md       # triage inputs/ into kb/
+  process-input-files.md        # triage inputs/ into kb/ (normal prose)
+  process-input-files-dense.md  # triage dense/bullet-point input files
   organize-kb-files.md          # sort kb/ files into Projects vs. Resources
   process-knowledgebase-files.md # periodic quality review of kb/
 tools/
-  kb_app.py       # Flask web interface (graph, search, page viewer, KB Q&A)
   kb_index.py     # rebuild the index
   kb_search.py    # query the index
-  kb_query.py     # KB Q&A: retrieve + synthesize via local LLM
-  connections.py  # build connections.db from ChromaDB embeddings
+  kb_query.py     # [optional] KB Q&A: retrieve + synthesize via local LLM
+  kb_app.py       # [optional] Flask web interface (graph, search, page viewer, KB Q&A)
+  connections.py  # [optional] build connections.db (graph edges for Flask UI)
   html_to_text.py # convert .html files / pasted HTML in .txt to plain text
   chunking.py     # heading-based + token-budget chunking
   kb_common.py    # shared config/model/collection helpers
   templates/      # Jinja2 templates for the Flask app
   index           # wrapper → kb_index.py
   search          # wrapper → kb_search.py
-  query           # wrapper → kb_query.py
-  connections     # wrapper → connections.py
-  serve           # wrapper → kb_app.py
-connections.db    # SQLite graph edges (gitignored; built by tools/connections)
+  query           # wrapper → kb_query.py  [optional]
+  connections     # wrapper → connections.py  [optional]
+  serve           # wrapper → kb_app.py  [optional]
+connections.db    # [optional] SQLite graph edges (gitignored; built by tools/connections)
 .kb-index/        # ChromaDB persistent store (gitignored)
 ```
 

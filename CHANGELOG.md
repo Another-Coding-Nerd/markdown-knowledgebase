@@ -1,3 +1,10 @@
+## 2026-07-19 (5)
+### Changed
+- `README.md`: clarified optional vs required in First-time setup (connections
+  step now noted as Flask-only) and Layout tree (`[optional]` labels on
+  flask_config.yaml, communication-levels.md, kb_query.py, kb_app.py,
+  connections.py/db, and their wrappers; added about.md and dense prompt).
+
 ## 2026-07-19 (4)
 ### Changed
 - `LICENSE`: replaced MIT with CC BY-NC 4.0 — free for non-commercial use,
