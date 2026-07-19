@@ -1,6 +1,12 @@
-# Process Input Files
+# Process Input Files — Dense Format
 
-Process new source files in `inputs/` into the knowledgebase (`kb/`).
+Process dense input files into the knowledgebase (`kb/`). Use this variant
+when the source is a compressed interview summary, transcript digest, or
+de-duplicated notes where each sentence carries a distinct claim — typically
+headingless, one long block of text, ~1 point per sentence.
+
+For normal prose, structured articles, or files with headings, use
+`prompts/process-input-files.md` instead.
 
 This workflow processes files in `inputs/` only. To sort existing
 `kb/**/*.md` files into `kb/projects/` vs `kb/resources/` (the
@@ -26,16 +32,22 @@ test in steps 2f and 2d2.
       same name, deleting the original. Then continue with step 2 as usual.
 2. For each file found:
    a. Read it fully.
-   b. **Full inventory first** — work section-by-section, not the whole
-      document at once: one inventory pass per H2/H3 section if the file has
-      headings, or per ~100-line segment (or natural paragraph breaks if
-      shorter) if headingless. Within each section/segment, enumerate every
-      analytically distinct point/claim before evaluating any of them for
-      placement. Do not evaluate, filter, or write KB content until the full
-      inventory is complete. The failure mode to prevent: identifying the two
-      most obvious points and treating them as the full yield — working
-      section-by-section makes it harder to skip subtle points buried in a
-      section whose headline point was already captured.
+   b. **Full inventory first — sentence-level granularity** — dense files
+      have no headings or paragraph breaks to segment by; treat each sentence
+      as a candidate inventory item. Work through the file in passes of
+      ~20 sentences at a time. Within each pass, enumerate every distinct
+      claim before evaluating any of them. After completing all passes,
+      consolidate claims that are genuinely the same point stated twice into
+      a single entry; do not consolidate points that are merely on the same
+      topic. Do not evaluate, filter, or write KB content until the full
+      inventory across all passes is complete.
+
+      The failure mode to prevent in dense files: conflating two distinct
+      claims because they appear adjacent and share a subject. A sentence
+      that says "X is unpredictable" and the next that says "X masquerades
+      as Y early on" are two separate inventory items, not one. Default to
+      more entries, not fewer — deduplication happens at the consolidation
+      step, not the enumeration step.
    c. Cross-check each inventory item against the existing KB via
       `tools/kb_search.py "<point>"` — see `AGENTS.md` for the scoring
       guidance. Do not read every file in `kb/`.
@@ -76,15 +88,14 @@ test in steps 2f and 2d2.
       does it have a deliverable or finish line? If so, it belongs in
       `kb/projects/`; otherwise file it as a resource by topic in
       `kb/resources/`. If this KB is flat, skip this and file by topic as
-      usual. Then decide whether it fits
-      as a new file or as an addition to an existing file. If the source uses
-      named-anecdote framing (e.g. "Marcus told me...", "let's call her
-      Anna"), absorb the underlying ideas into the nearest analytical section
-      and drop the named frame.
+      usual. Then decide whether it fits as a new file or as an addition to
+      an existing file. If the source uses named-anecdote framing (e.g.
+      "Marcus told me...", "let's call her Anna"), absorb the underlying
+      ideas into the nearest analytical section and drop the named frame.
    k. **Present the full inventory** — list every item with: status (covered
       / partial / new / off-scope), proposed target file + section, and a
-      one-line rationale. For **partial** items, name the specific detail (fact,
-      mechanism, example, figure) being added. Do not summarize or
+      one-line rationale. For **partial** items, name the specific detail
+      (fact, mechanism, example, figure) being added. Do not summarize or
       cherry-pick. Flag anything uncertain.
    l. **Wait for confirmation** — do not write or edit any `kb/` files until
       the user approves the scope.

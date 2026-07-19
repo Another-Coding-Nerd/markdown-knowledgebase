@@ -18,6 +18,24 @@ Tools live in `tools/`, run via the venv:
 
 Or via wrappers (shorter): `tools/index`, `tools/index --incremental`, `tools/search`, `tools/connections`.
 
+## Initializing a new KB
+
+Run this sequence once after cloning:
+
+1. `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`
+2. Add initial content to `kb/` (even a few seed files)
+3. `tools/index` — full index build (downloads embedding model on first run)
+4. `tools/connections` — build graph edges
+5. **Generate `about.md`** — ask your agent:
+   > "Look at the kb/ files and our conversation so far, then write about.md —
+   > 2–3 sentences on what this KB covers, and an explicit out-of-scope list."
+
+   If `kb/` is empty, the agent asks you for the gist and drafts from that
+   conversation. Either way, review and commit the result.
+
+`about.md` can be regenerated anytime the KB's scope shifts — just ask the
+agent to re-read `kb/` and rewrite it.
+
 ## Core workflow: checking if something is already covered
 
 **Do not read every file in `kb/` to check for duplication or existing

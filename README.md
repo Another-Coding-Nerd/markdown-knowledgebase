@@ -50,6 +50,37 @@ First run of `kb_index.py` downloads the embedding model configured in
 `config.yaml` (default: `bge-small-en-v1.5`, ~130MB; switch to
 `bge-large-en-v1.5` for best quality at ~1.3GB — see config comments).
 
+### First-time setup
+
+After installing dependencies:
+
+1. **Add seed content** — drop a few `.md` files into `kb/` to give the
+   agent something to read. Even rough notes work.
+2. **Build the index** — `tools/index`
+3. **Build graph edges** — `tools/connections`
+4. **Generate `about.md`** — tell your agent:
+   > "Look at the kb/ files and our conversation, then write about.md —
+   > 2–3 sentences on what this KB covers, and an explicit out-of-scope list."
+
+   If `kb/` is empty, the agent will ask you for the gist and draft from
+   that conversation. **Answer carefully** — this scope definition is the
+   filter every input-processing prompt uses to decide what belongs in the
+   KB and what doesn't. A crisp sentence or two plus an explicit out-of-scope
+   list gives much better triage results than a vague description.
+5. **Review and commit `about.md`.**
+
+`about.md` can be regenerated anytime — ask the agent to re-read `kb/` and
+rewrite it.
+
+### Input processing prompts
+
+| Prompt | Use when |
+|--------|----------|
+| `prompts/process-input-files.md` | Normal prose, structured articles, files with headings |
+| `prompts/process-input-files-dense.md` | Compressed summaries, interview digests, bullet-point notes — one claim per sentence, no headings |
+
+Drop files in `inputs/`, then tell the agent which prompt to run.
+
 ## Usage
 
 ```bash

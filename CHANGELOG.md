@@ -1,3 +1,21 @@
+## 2026-07-19 (3)
+### Added
+- `about.md`: scaffold file at repo root — the per-repo scope definition,
+  generated once by the agent at KB init time (or written manually); both
+  input processing prompts read it for on-topic/off-scope decisions.
+- `prompts/process-input-files-dense.md`: new prompt variant for sentence-level
+  dense input (interview summaries, compressed bullet notes, headingless text);
+  ported and genericized from derivative repo; references `about.md` for scope.
+### Changed
+- `AGENTS.md`: added `## Initializing a new KB` section documenting the
+  one-time setup sequence, including the generate-about.md step.
+- `prompts/process-input-files.md`: `## Scope` placeholder replaced with
+  reference to `about.md`; added step 2d2 (per-point scope filter); updated
+  step 2k status list to include `off-scope`.
+- `README.md`: added "First-time setup" subsection (seed content → index →
+  connections → generate about.md) and input-processing prompt comparison table.
+- `ROADMAP.md`: removed "fem-kb" name reference from documentation backlog item.
+
 ## 2026-07-19 (2)
 ### Fixed
 - `README.md`: removed stale "backlinks" reference from page viewer feature

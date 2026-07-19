@@ -63,8 +63,8 @@ Medium-priority enhancements.
 - [ ] Document the "Notes" pattern for capturing tried-and-failed approaches
   (see `index_notes.md` for the first example). Add guidance in the template
   so users know to record dead ends with reasoning — prevents repeating
-  mistakes across sessions. The fem-kb notes on embedding-only pre-scans
-  and cheap LLM triage tiers are the seed content.
+  mistakes across sessions. Notes on embedding-only pre-scans and cheap
+  LLM triage tiers are the seed content.
 
 ## Later
 
