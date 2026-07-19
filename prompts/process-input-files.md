@@ -9,9 +9,9 @@ not run this inventory/dedup workflow against `kb/` content.
 
 ## Scope
 
-This KB's scope is defined in `about.md` at the repo root. Read it before
-beginning inventory. Use the scope description and out-of-scope list as the
-test in steps 2f and 2d2.
+<!-- Define this KB's topical scope here so step 2f (off-topic detection) has
+a concrete test, e.g. "Dating, relationships, female psychology, and male
+strategy." -->
 
 ## Workflow
 
@@ -50,16 +50,12 @@ test in steps 2f and 2d2.
       fact reworded → **covered**, skip it even if the wording differs.
       Different fact on the same topic → **partial**, naming the specific
       detail to add.
-   d2. **Scope filter** — for each item classified as new or partial, apply
-       the scope definition from `about.md` as a one-sentence test. Items
-       that are authentic but outside scope are marked **off-scope** in the
-       inventory table. Off-scope items are listed, not silently dropped —
-       user confirms before anything is excluded.
    e. Quality check: if the source claims a specific count (e.g., "5
       reasons", "3 types", "10 signs"), verify the inventory found that many
       distinct items. If there's a mismatch, flag it.
-   f. Off-topic content: if the entire file falls outside this KB's scope,
-      auto-skip and move it to `inputs/off-topic/`. Note this in the summary.
+   f. Off-topic content: if the file falls outside this KB's scope (defined
+      above), auto-skip and move it to `inputs/off-topic/`. Note this in the
+      summary.
    g. Mostly-overlapping content with unique elements: the unique material
       is the yield — check whether it can supplement an existing file rather
       than creating a new file or skipping entirely.
@@ -82,8 +78,8 @@ test in steps 2f and 2d2.
       Anna"), absorb the underlying ideas into the nearest analytical section
       and drop the named frame.
    k. **Present the full inventory** — list every item with: status (covered
-      / partial / new / off-scope), proposed target file + section, and a
-      one-line rationale. For **partial** items, name the specific detail (fact,
+      / partial / new), proposed target file + section, and a one-line
+      rationale. For **partial** items, name the specific detail (fact,
       mechanism, example, figure) being added. Do not summarize or
       cherry-pick. Flag anything uncertain.
    l. **Wait for confirmation** — do not write or edit any `kb/` files until
@@ -100,6 +96,6 @@ test in steps 2f and 2d2.
 
 ## Conventions
 
-Register, filenames, bullets/prose, blockquotes, and file size/splitting
-conventions for anything written or edited in this workflow are in
-`CONTENT-STYLE.md`.
+Register, filenames, bullets/prose, blockquotes, file size/splitting, and
+"See Also" conventions for anything written or edited in this workflow are
+in `CONTENT-STYLE.md`.

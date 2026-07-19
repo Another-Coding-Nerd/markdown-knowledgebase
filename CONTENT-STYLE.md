@@ -44,46 +44,13 @@ just restate surrounding prose in different words.
   enough to merit its own entry.
 - Split-off naming: `<parent-filename>-<new-topic>.md`, so it sorts next to
   the parent.
-- After splitting: reindex (`tools/index --incremental`) and rebuild
-  connections (`tools/connections`) — the graph will link the new files
-  automatically. Update any index/overview files that listed the parent's
-  content.
+- After splitting: add reciprocal `## See Also` links between parent and new
+  file, and update any index/overview files that listed the parent's content.
 
-## Language Standard
+## See Also
 
-**Concrete over abstract.** Replace abstract nouns with verbs or concrete
-nouns that show the action. If a sentence requires domain expertise to parse,
-it fails.
-
-**Two abstract nouns adjacent: at least one isn't working.** Say what the
-thing does, not what it is called.
-
-**Define technical terms on first use.** When a specialist term is
-unavoidable, follow it immediately with a plain explanation — "the default
-mode network — active when the mind is idle." After that, the term may be
-reused without redefining it.
-
-**Read it out loud.** If you stumble, it still has academic phrasing. If the
-same claim can be made in plainer words without losing precision, use them.
-
-### Jargon — Pattern-Based Detection
-
-A static word list doesn't scale. Detect jargon by pattern instead:
-
-| Pattern | Detection | Fix |
-|---------|-----------|-----|
-| **Abstract noun stack** | Two abstract nouns adjacent in a sentence | Replace one with a verb or concrete noun |
-| **Nominalization** | Action turned into stiff noun ("failure," "output," "utilization") | Replace with the verb form ("breaks down," "what happens," "using") |
-| **Hedge cluster** | "It has been suggested that," "Research indicates" | State the claim directly; name the source |
-| **Passive construction** | "X is implicated in," "Y was found to" | Flip to active voice with a named agent |
-
-### Sentence Structure
-
-- **One idea per sentence.** Long sentences earn their length only when the
-  idea genuinely can't be split.
-- **Prefer active voice.**
-- **Name sources directly.** Avoid bare "research shows" — name the study,
-  year, or phenomenon. Reframe as observation if no named source exists.
+`## See Also` sections link 2–4 thematically related files, each with one
+clause explaining the relationship — not just a bare link.
 
 ## General Hygiene
 

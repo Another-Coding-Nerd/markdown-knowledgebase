@@ -3,10 +3,7 @@
 A self-contained system for maintaining a markdown knowledgebase (`kb/`)
 with local semantic search, designed to avoid reading the entire KB into
 context every time new content needs to be cross-checked against existing
-material. Core: markdown files + semantic index + agent workflow. Optional
-additions: a Flask web UI (graph, search, page viewer), KB Q&A via a local
-LLM, and a semantic graph of file connections — all usable without a running
-server at query time.
+material.
 
 ## Getting Started
 
@@ -19,10 +16,7 @@ After completing Setup below:
 
 1. **Define the KB's scope** — edit `CONTENT-STYLE.md` for this KB's content
    conventions, and fill in the `## Scope` placeholder in
-   `prompts/process-input-files.md`. If your KB produces content for a
-   specific audience, `communication-levels.md` provides a 7-level scale
-   (QuASAP framework) with two default target levels as a starting point —
-   adjust or replace them to match your output format and audience.
+   `prompts/process-input-files.md`.
 2. **Choose a layout** — `kb/` is flat by default: every file at the top
    level (or in topic subdirectories), organized by topic. If this KB has
    bounded-effort content (a deliverable or finish line, e.g. "build X",
@@ -49,41 +43,8 @@ python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 ```
 
-First run of `kb_index.py` downloads the embedding model configured in
-`config.yaml` (default: `bge-small-en-v1.5`, ~130MB; switch to
-`bge-large-en-v1.5` for best quality at ~1.3GB — see config comments).
-
-### First-time setup
-
-After installing dependencies:
-
-1. **Add seed content** — drop a few `.md` files into `kb/` to give the
-   agent something to read. Even rough notes work.
-2. **Build the index** — `tools/index`
-3. **Build graph edges** — `tools/connections` _(optional — only needed for
-   the Flask web UI; skip if you're using CLI tools only)_
-4. **Generate `about.md`** — tell your agent:
-   > "Look at the kb/ files and our conversation, then write about.md —
-   > 2–3 sentences on what this KB covers, and an explicit out-of-scope list."
-
-   If `kb/` is empty, the agent will ask you for the gist and draft from
-   that conversation. **Answer carefully** — this scope definition is the
-   filter every input-processing prompt uses to decide what belongs in the
-   KB and what doesn't. A crisp sentence or two plus an explicit out-of-scope
-   list gives much better triage results than a vague description.
-5. **Review and commit `about.md`.**
-
-`about.md` can be regenerated anytime — ask the agent to re-read `kb/` and
-rewrite it.
-
-### Input processing prompts
-
-| Prompt | Use when |
-|--------|----------|
-| `prompts/process-input-files.md` | Normal prose, structured articles, files with headings |
-| `prompts/process-input-files-dense.md` | Compressed summaries, interview digests, bullet-point notes — one claim per sentence, no headings |
-
-Drop files in `inputs/`, then tell the agent which prompt to run.
+First run of `kb_index.py` downloads the `BAAI/bge-small-en-v1.5` embedding
+model (~130MB, cached under `~/.cache/`).
 
 ## Usage
 
@@ -98,57 +59,14 @@ Drop files in `inputs/`, then tell the agent which prompt to run.
 .venv/bin/python tools/kb_search.py "some query" "another query" --top-k 5
 ```
 
-`tools/index`, `tools/search`, `tools/query`, and `tools/serve` are thin
-wrapper scripts — shorter to type, and they resolve the repo root from their
-own path so they work from any directory.
-
-```bash
-tools/serve                  # start the web UI (http://localhost:5000)
-tools/serve --port 8080      # custom port
-tools/serve --config my.yaml # custom config
-```
-
-**KB Q&A (Retrieve & Synthesize)** (optional) — retrieve KB chunks and synthesize an answer
-via a local LLM:
-
-```bash
-tools/query "what do I know about X?"
-tools/query --top-k 8 --model phi4-mini "question"
-tools/query --max-tokens 256 "short answer please"
-```
-
-Requires a running [Ollama](https://ollama.com) instance (≥ 0.1.24) or any
-OpenAI-compatible `/v1/chat/completions` endpoint. **Not required** for
-indexing or search — `tools/index` and `tools/search` work with zero
-server dependencies.
-
-## Design Philosophy
-
-**CLI/agent first, UI optional.** Every feature works from the terminal —
-no GUI required, no app that needs to be running on your machine.
-
-- **Agents** use the CLI tools directly (`kb_search.py`, `kb_query.py`,
-  `kb_index.py`) — no browser, no server, no wrapper.
-- **Humans** can work the same way, or optionally launch a lightweight
-  Flask app (`tools/kb_app.py`) for visual browsing, graph exploration,
-  and search in a browser.
-- **The data works without the UI.** Markdown files, the vector index,
-  and the connections graph are all usable from the command line. The
-  Flask app is one interface among several, not a requirement.
-
-This is the opposite of app-first systems (Obsidian, Notion) where the
-GUI is the primary interface and CLI access is an afterthought. Here the
-tools are the product. The UI is a convenience layer.
-
 ## How it works
 
 - `kb/**/*.md` files are split into chunks at H1/H2/H3 heading boundaries.
 - Sections exceeding `max_tokens` (config.yaml) are sub-split into
   overlapping pieces by paragraph/sentence, so embeddings never silently
   truncate.
-- Chunks are embedded with the model set in `config.yaml` (`bge-small-en-v1.5`
-  by default; ONNX/CPU via fastembed, no PyTorch) and stored in a local
-  ChromaDB collection under `.kb-index/`.
+- Chunks are embedded with `bge-small-en-v1.5` (ONNX/CPU via fastembed, no
+  PyTorch) and stored in a local ChromaDB collection under `.kb-index/`.
 - `kb_index.py --incremental` compares each file's mtime against
   `.kb-index/meta.json`, re-chunking/embedding only new or changed files and
   removing chunks for deleted files. It falls back to a full rebuild if no
@@ -158,92 +76,12 @@ tools are the product. The UI is a convenience layer.
   path, similarity score, snippet), and warns if any `kb/**/*.md` file has
   changed since the last index build.
 
-## Flask Web Interface (optional)
-
-A lightweight local web UI — graph visualization, semantic search, rendered
-markdown pages, and a KB Q&A question box.
-
-```bash
-# 1. Build the vector index
-tools/index
-
-# 2. Build the connections DB (graph edges)
-tools/connections
-
-# 3. Start the app
-tools/serve
-# → App URL: http://localhost:5000
-```
-
-**What it provides:**
-
-| Feature | Where | Description |
-|---------|-------|-------------|
-| Graph | `/` | D3.js force-directed graph of KB connections (semantic similarity via `connections.db`). Node size = degree. Hover a node to highlight its neighborhood; click to open the page. |
-| File sidebar | `/` left panel | All KB files grouped by directory (top-level / projects / resources). Recently visited pages appear at the top. |
-| Ask your KB | `/` top panel | One-shot Q&A: retrieves relevant chunks, synthesizes an answer via a local LLM, returns citations. Collapsed by default. |
-| Page viewer | `/page/<file>` | Rendered markdown. Sidebar shows a table of contents and related files (from `connections.db`). Search results scroll to the matched section and highlight the phrase. |
-| Stats | `/stats` | Word cloud (`d3.pack`) of top terms across all indexed chunks — circle size = frequency. Click any term to search. Ranked list alongside for precision. |
-| Search | nav bar | Debounced semantic search (300 ms). Results show the matching chunk snippet; clicking navigates to the matched section. |
-| File filter | `/` left panel | Type to narrow the file list by name or title; filters client-side with no server round-trip. |
-| Dark mode | nav toggle | Light/dark theme toggle, persisted in `localStorage`. Default set via `theme` in `flask_config.yaml`. |
-| Keyboard shortcuts | anywhere | `s` — content search · `a` — Ask your KB · `f` — file filter · `Esc` — close search. Shortcuts fire only when no input is focused. |
-
-**Configuration:** `flask_config.yaml` (shipped with defaults). Key options:
-
-| Key | Default | Description |
-|-----|---------|-------------|
-| `host` / `port` | `localhost` / `5000` | Server binding |
-| `theme` | `dark` | Starting theme (`dark` or `light`); user toggle overrides per-browser |
-| `search_top_k` | `5` | Number of semantic search results |
-| `graph.charge_strength` | `-120` | D3 repulsion force |
-| `graph.link_distance` | `80` | D3 edge length |
-| `kb_qa.api_url` | `http://localhost:11434` | Ollama or compatible endpoint |
-| `kb_qa.model` | `phi4-mini` | LLM model name |
-| `kb_qa.top_k` | `12` | Chunks retrieved per query — cast wide, then trim to `max_context_chars` |
-| `kb_qa.max_context_chars` | `6000` | Max total chunk text sent to the LLM (~1500 tokens); trims from lowest-score end |
-| `kb_qa.max_tokens` | `384` | Max tokens for explanation/factual answers |
-| `kb_qa.max_tokens_list` | `768` | Max tokens for list/enumeration answers (auto-detected) |
-| `stats_stopwords` | `[]` | Extra words to exclude from the `/stats` word cloud (beyond the built-in English function word list) |
-
-Add domain-specific words that are high-frequency but low-signal for your KB:
-
-```yaml
-stats_stopwords:
-  - time
-  - years
-  - people
-```
-
-```bash
-tools/serve                        # start the web UI
-tools/serve --port 8080            # override port
-tools/serve --config my.yaml       # custom config file
-```
-
-**KB Q&A requires** a running [Ollama](https://ollama.com) instance
-(≥ 0.1.24) or any OpenAI-compatible `/v1/chat/completions` endpoint. The
-rest of the app (graph, search, page viewer) works without it.
-
-```bash
-# Start Ollama in a separate terminal, then pull a model:
-ollama serve
-ollama pull phi4-mini   # default; gemma2:2b or llama3.2:3b also work
-```
-
-Any OpenAI-compatible proxy works via `api_url` in `flask_config.yaml` —
-[LiteLLM](https://github.com/BerriAI/litellm) can front AWS Bedrock,
-Anthropic, Azure OpenAI, and others with no code changes.
-
 ## Layout
 
 ```
-config.yaml              # kb_root, embedding model, chunk size/overlap, top_k
-about.md                 # KB scope definition (generated at init; see First-time setup)
-flask_config.yaml        # [optional] Flask app config (port, theme, graph layout, KB Q&A)
-communication-levels.md  # [optional] QuASAP 7-level scale + target level templates
+config.yaml       # kb_root, embedding model, chunk size/overlap, top_k
 kb/               # the markdown knowledgebase content
-  projects/       # [optional] Projects/Resources split (see AGENTS.md);
+  projects/       # optional Projects/Resources split (see AGENTS.md);
   resources/      # both dirs are created together when adopted;
                   # kb/ is flat by default if unused
 inputs/           # new source files awaiting triage
@@ -251,34 +89,16 @@ inputs/           # new source files awaiting triage
   processed/      # files already absorbed into kb/
   off-topic/      # files outside this KB's scope
 prompts/
-  process-input-files.md        # triage inputs/ into kb/ (normal prose)
-  process-input-files-dense.md  # triage dense/bullet-point input files
+  process-input-files.md       # triage inputs/ into kb/
   organize-kb-files.md          # sort kb/ files into Projects vs. Resources
   process-knowledgebase-files.md # periodic quality review of kb/
 tools/
   kb_index.py     # rebuild the index
   kb_search.py    # query the index
-  kb_query.py     # [optional] KB Q&A: retrieve + synthesize via local LLM
-  kb_app.py       # [optional] Flask web interface (graph, search, page viewer, KB Q&A)
-  connections.py  # [optional] build connections.db (graph edges for Flask UI)
-  html_to_text.py # convert .html files / pasted HTML in .txt to plain text
   chunking.py     # heading-based + token-budget chunking
   kb_common.py    # shared config/model/collection helpers
-  templates/      # Jinja2 templates for the Flask app
-  index           # wrapper → kb_index.py
-  search          # wrapper → kb_search.py
-  query           # wrapper → kb_query.py  [optional]
-  connections     # wrapper → connections.py  [optional]
-  serve           # wrapper → kb_app.py  [optional]
-connections.db    # [optional] SQLite graph edges (gitignored; built by tools/connections)
 .kb-index/        # ChromaDB persistent store (gitignored)
 ```
 
 See `AGENTS.md` for the workflow your AI agent should follow when maintaining
 this KB, and `CONTENT-STYLE.md` for content-authoring conventions.
-
-## License
-
-[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) — free to
-use and adapt for non-commercial purposes. Derivative works must credit this
-repository.

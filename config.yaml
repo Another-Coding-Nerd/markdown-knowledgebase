@@ -6,12 +6,7 @@ kb_root: ./kb
 # Where the ChromaDB persistent index is stored
 index_dir: ./.kb-index
 
-# Embedding model (served via fastembed, CPU/ONNX, no torch).
-# Two practical options:
-#   BAAI/bge-small-en-v1.5  — ~130MB download, good quality, fast on any hardware
-#   BAAI/bge-large-en-v1.5  — ~1.3GB download, best quality, fast with GPU (slow CPU-only)
-# Changing this requires deleting .kb-index/ and running a full rebuild
-# (tools/index, then tools/connections).
+# Embedding model (served via fastembed, CPU/ONNX, no torch)
 embedding_model: BAAI/bge-small-en-v1.5
 
 # Chunking
@@ -22,23 +17,3 @@ overlap_tokens: 50
 
 # Default number of results returned per query
 top_k: 5
-
-# File discovery — both params are optional.
-# file_patterns: glob patterns (relative to kb_root) for files to include.
-#   Defaults to ["**/*.md"] (all markdown files recursively).
-#   Use to restrict indexing to specific files or directories.
-# skip_files: filenames or relative paths to exclude; fnmatch wildcards accepted.
-#   Use for navigation/meta files that cause false-positive search hits.
-# file_patterns:
-#   - "**/*.md"
-# skip_files:
-#   - reading-order.md
-#   - cheatsheet.md
-
-# Connections — controls graph edges built by tools/connections.
-# connections_top_n: max edges per file stored in connections.db (like the
-#   old "See Also" 2-4 limit — keeps the graph readable; raise for denser graphs).
-# connections_min_score: cosine similarity floor; edges below this are dropped
-#   regardless of top_n. 0.5 is a reasonable starting point for most KBs.
-connections_top_n: 5
-connections_min_score: 0.5

@@ -3,7 +3,7 @@
 ## What this is
 
 A self-contained markdown knowledgebase (`kb/`) plus a local semantic search
-index (`.kb-index/`, ChromaDB + fastembed, CPU-only,
+index (`.kb-index/`, ChromaDB + `bge-small-en-v1.5` via fastembed, CPU-only,
 no network calls at query time once the model is cached).
 
 Tools live in `tools/`, run via the venv:
@@ -12,29 +12,7 @@ Tools live in `tools/`, run via the venv:
 .venv/bin/python tools/kb_index.py              # full rebuild of the index
 .venv/bin/python tools/kb_index.py --incremental # only re-index changed/new/deleted files
 .venv/bin/python tools/kb_search.py "query" ... # semantic search, ranked hits
-.venv/bin/python tools/connections.py           # rebuild connections.db (graph edges)
-.venv/bin/python tools/connections.py --show <file> # inspect nearest neighbors for a file
 ```
-
-Or via wrappers (shorter): `tools/index`, `tools/index --incremental`, `tools/search`, `tools/connections`.
-
-## Initializing a new KB
-
-Run this sequence once after cloning:
-
-1. `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`
-2. Add initial content to `kb/` (even a few seed files)
-3. `tools/index` — full index build (downloads embedding model on first run)
-4. `tools/connections` — build graph edges
-5. **Generate `about.md`** — ask your agent:
-   > "Look at the kb/ files and our conversation so far, then write about.md —
-   > 2–3 sentences on what this KB covers, and an explicit out-of-scope list."
-
-   If `kb/` is empty, the agent asks you for the gist and drafts from that
-   conversation. Either way, review and commit the result.
-
-`about.md` can be regenerated anytime the KB's scope shifts — just ask the
-agent to re-read `kb/` and rewrite it.
 
 ## Core workflow: checking if something is already covered
 
@@ -95,22 +73,10 @@ moved.
 Resource files carry no `status` field — absence of the field is the
 default/current state. Don't add `status: active`.
 
-Once adopted, use this two-part test for new content:
-
-1. Does it have a **specific goal** (a concrete deliverable or finish line)?
-2. Does it have an **active timeframe** (something is happening on it now or
-   soon)?
-
-If yes to both → `kb/projects/`. If no → `kb/resources/`.
-
-The common misclassification: a topic label ("large format photography",
-"home networking") looks like a Resource, but if you're actively building or
-deciding something specific within it ("build 4x5 large format kit", "set up
-home mesh network"), that's a Project. Ask what you're *doing*, not what the
-topic *is*.
-
-Use `tools/kb_search.py` to find the best existing home before creating a new
-file (see Content conventions below).
+Once adopted, the test for new content: does it have a deliverable or finish
+line? If yes, `kb/projects/`. If no, file it as a resource by topic in
+`kb/resources/` — use `tools/kb_search.py` to find the best existing home
+before creating a new file (see Content conventions below).
 
 When cross-checking coverage (above), a hit with `status: archived` in its
 front matter may be superseded — read it to confirm before treating it as
@@ -144,15 +110,11 @@ redundancy, structure), see `prompts/process-knowledgebase-files.md`.
 ## Reindexing
 
 The index is **not** updated automatically. After a batch of edits to
-`kb/`, run both steps in order:
+`kb/`, run:
 
 ```
 .venv/bin/python tools/kb_index.py --incremental
-.venv/bin/python tools/connections.py
 ```
-
-Both must run — the index feeds the connections DB. Running index alone
-leaves the graph edges stale. Batch all edits first, then run both once.
 
 `--incremental` compares each `kb/**/*.md` file's mtime against `.kb-index/meta.json`,
 re-chunks/embeds only new or changed files, and removes chunks for files
@@ -170,34 +132,15 @@ file has been modified more recently than the last index build — if you see
 that warning mid-session, mention it and suggest reindexing before relying
 further on search results.
 
-## connections.db
-
-`connections.db` (SQLite, repo root) stores per-file semantic similarity
-edges used by the Flask graph. It is built from ChromaDB embeddings by
-`tools/connections.py` and is not edited directly.
-
-Do **not** write `## See Also` sections in `kb/` files — graph edges are
-computed automatically from the index. To inspect which files are related
-to a given file:
-
-```
-.venv/bin/python tools/connections.py --show <filename>
-```
-
-This prints the top-N nearest neighbors and their similarity scores.
+When making several edits in one session, batch them and reindex once at
+the end rather than after each file.
 
 ## Config
 
-`config.yaml` controls the embedding model, chunk size/overlap, KB root,
-index location, and connections settings (`connections_top_n`,
-`connections_min_score`). No hardcoded paths elsewhere.
-
-Two embedding model options are documented in `config.yaml` comments:
-`bge-small-en-v1.5` (default, fast, ~130MB) and `bge-large-en-v1.5` (best
-quality, slow, ~1.3GB). Changing the model requires deleting `.kb-index/`
-and running a full rebuild.
+`config.yaml` controls the embedding model, chunk size/overlap, KB root, and
+index location. One config value (`kb_root`) — no hardcoded paths elsewhere.
 
 ## Content conventions
 
-See `CONTENT-STYLE.md` for register, filename, bullet/blockquote, and
-file-size conventions for content in `kb/`.
+See `CONTENT-STYLE.md` for register, filename, bullet/blockquote, file-size,
+and "See Also" conventions for content in `kb/`.

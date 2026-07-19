@@ -3,6 +3,3 @@ fastembed
 PyYAML
 requests
 beautifulsoup4
-flask
-markdown
-pygments
