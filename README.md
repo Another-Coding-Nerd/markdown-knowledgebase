@@ -10,6 +10,8 @@ server at query time.
 
 ## Getting Started
 
+New here? See [QUICKSTART.md](QUICKSTART.md) for the short version.
+
 This is a template for a Claude-Code-maintained knowledgebase: markdown
 content lives in `kb/`, and Claude searches it semantically
 (`tools/kb_search.py`) instead of reading every file to check for
