@@ -270,3 +270,9 @@ connections.db    # SQLite graph edges (gitignored; built by tools/connections)
 
 See `AGENTS.md` for the workflow your AI agent should follow when maintaining
 this KB, and `CONTENT-STYLE.md` for content-authoring conventions.
+
+## License
+
+[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) — free to
+use and adapt for non-commercial purposes. Derivative works must credit this
+repository.

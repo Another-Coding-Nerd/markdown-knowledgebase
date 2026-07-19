@@ -1,3 +1,9 @@
+## 2026-07-19 (4)
+### Changed
+- `LICENSE`: replaced MIT with CC BY-NC 4.0 — free for non-commercial use,
+  attribution required for derivative works.
+- `README.md`: added `## License` section pointing to CC BY-NC 4.0.
+
 ## 2026-07-19 (3)
 ### Added
 - `about.md`: scaffold file at repo root — the per-repo scope definition,
