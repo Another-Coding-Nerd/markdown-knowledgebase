@@ -10,7 +10,7 @@ server at query time.
 
 ## Getting Started
 
-New here? See [QUICKSTART.md](QUICKSTART.md) for the short version.
+New here? See [QUICKSTART.md](QUICKSTART.md) for setup, or [WORKFLOW.md](WORKFLOW.md) for how the system is used day to day.
 
 This is a template for a Claude-Code-maintained knowledgebase: markdown
 content lives in `kb/`, and Claude searches it semantically
@@ -242,6 +242,7 @@ Anthropic, Azure OpenAI, and others with no code changes.
 ```
 config.yaml              # kb_root, embedding model, chunk size/overlap, top_k
 about.md                 # KB scope definition (generated at init; see First-time setup)
+WORKFLOW.md              # day-to-day ingestion workflow (blogs, transcripts, papers)
 flask_config.yaml        # [optional] Flask app config (port, theme, graph layout, KB Q&A)
 communication-levels.md  # [optional] QuASAP 7-level scale + target level templates
 kb/               # the markdown knowledgebase content

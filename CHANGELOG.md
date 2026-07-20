@@ -1,3 +1,21 @@
+## 2026-07-20
+### Added
+- `WORKFLOW.md`: new doc explaining the day-to-day ingestion use case —
+  collecting blogs, transcripts, talks, papers, and tip threads; preparing
+  inputs; picking the right prompt; what the agent does (inventory, scope
+  filter, dedup, approval gate); reindexing; searching. Aimed at new GitHub
+  visitors who want to understand how the system is actually used.
+- `CONTENT-STYLE.md`: added `## Language Standard` section (elevated from
+  below Blockquotes; now includes mechanism framing, "No wasted words,"
+  sharpened read-aloud test, "Name sources directly"); added `## Prose Rhythm`
+  section (Sowell + Sagan compression, short-to-medium sentences, efficient
+  but not terse, no dilution); upgraded Blockquotes (location guidance,
+  one-to-two-sentence max); removed weaker Sentence Structure subsection
+  (content absorbed into Language Standard and Prose Rhythm).
+### Changed
+- `README.md`: Getting Started now links WORKFLOW.md alongside QUICKSTART.md;
+  Layout tree includes WORKFLOW.md entry.
+
 ## 2026-07-19 (5)
 ### Changed
 - `README.md`: clarified optional vs required in First-time setup (connections
