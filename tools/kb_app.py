@@ -24,7 +24,7 @@ import yaml
 from flask import Flask, abort, jsonify, render_template, request
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from kb_common import get_collection, get_embedding_model, load_config
+from kb_common import get_collection, get_embedding_model, iter_kb_files, load_config
 from kb_query import build_prompt, query_llm, _is_list_query
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -115,20 +115,7 @@ kb_cfg = load_config()
 kb_root = Path(kb_cfg["kb_root"])
 
 def _iter_kb_files():
-    """Yield kb .md files respecting file_patterns (whitelist) and skip_files (blacklist)."""
-    import fnmatch
-    patterns = kb_cfg.get("file_patterns") or ["**/*.md"]
-    skips = kb_cfg.get("skip_files") or []
-    seen: set[Path] = set()
-    for pat in patterns:
-        for f in sorted(kb_root.glob(pat)):
-            if f in seen or f.suffix != ".md":
-                continue
-            rel = str(f.relative_to(kb_root))
-            if any(fnmatch.fnmatch(f.name, s) or fnmatch.fnmatch(rel, s) for s in skips):
-                continue
-            seen.add(f)
-            yield f
+    yield from iter_kb_files(kb_cfg)
 
 _config_path = Path(flask_cfg.get("_config_path", PROJECT_ROOT / "flask_config.yaml"))
 _instance_id = flask_cfg.get("instance_id") or _ensure_instance_id(PROJECT_ROOT / "flask_config.yaml")

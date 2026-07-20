@@ -16,7 +16,7 @@ import sys
 
 import chromadb
 
-from kb_common import load_config, get_embedding_model, get_collection
+from kb_common import load_config, get_embedding_model, get_collection, iter_kb_files
 
 SNIPPET_LEN = 300
 
@@ -31,7 +31,7 @@ def check_staleness(cfg):
     indexed_at = meta.get("indexed_at", 0)
 
     stale_files = []
-    for path in cfg["kb_root"].rglob("*.md"):
+    for path in iter_kb_files(cfg):
         if path.stat().st_mtime > indexed_at:
             stale_files.append(str(path.relative_to(cfg["kb_root"])))
 

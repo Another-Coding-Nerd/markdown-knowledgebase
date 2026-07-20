@@ -15,7 +15,6 @@ meta.json predates per-file mtime tracking.
 """
 
 import argparse
-import fnmatch
 import json
 import sys
 import time
@@ -24,7 +23,7 @@ from pathlib import Path
 import chromadb
 
 from chunking import chunk_markdown
-from kb_common import load_config, get_embedding_model
+from kb_common import load_config, get_embedding_model, iter_kb_files
 
 
 def chunk_file(path, kb_root, cfg, tokenizer):
@@ -74,24 +73,9 @@ def main():
     index_dir = cfg["index_dir"]
     index_dir.mkdir(parents=True, exist_ok=True)
 
-    file_patterns = cfg.get("file_patterns") or ["**/*.md"]
-    skip_patterns = cfg.get("skip_files") or cfg.get("exclude_patterns") or []
-    seen = set()
-    md_files_unsorted = []
-    for pat in file_patterns:
-        for p in kb_root.glob(pat):
-            if p in seen or p.suffix != ".md":
-                continue
-            rel = str(p.relative_to(kb_root))
-            if not any(
-                fnmatch.fnmatch(p.name, sp) or fnmatch.fnmatch(rel, sp)
-                for sp in skip_patterns
-            ):
-                seen.add(p)
-                md_files_unsorted.append(p)
-    md_files = sorted(md_files_unsorted)
+    md_files = iter_kb_files(cfg)
     if not md_files:
-        print(f"No .md files found under {kb_root} matching {file_patterns}", file=sys.stderr)
+        print(f"No .md files found under {kb_root}", file=sys.stderr)
 
     current_mtimes = {str(p.relative_to(kb_root)): p.stat().st_mtime for p in md_files}
 

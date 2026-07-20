@@ -240,7 +240,7 @@ Anthropic, Azure OpenAI, and others with no code changes.
 ## Layout
 
 ```
-config.yaml              # kb_root, embedding model, chunk size/overlap, top_k
+config.yaml              # kb_root, embedding model, chunk size/overlap, top_k, follow_symlinks
 about.md                 # KB scope definition (generated at init; see First-time setup)
 WORKFLOW.md              # day-to-day ingestion workflow (blogs, transcripts, papers)
 flask_config.yaml        # [optional] Flask app config (port, theme, graph layout, KB Q&A)

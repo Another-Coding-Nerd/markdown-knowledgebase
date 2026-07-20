@@ -1,3 +1,19 @@
+## 2026-07-20 (2)
+### Added
+- `config.yaml`: `follow_symlinks` boolean (default `false`) — enables
+  indexing symlinked directories inside `kb/`; fixes Python 3.12+ breakage
+  where `Path.glob("**")` stopped following symlinks.
+- `kb_common.py`: `iter_kb_files(cfg)` shared traversal helper via
+  `os.walk(followlinks=)`; replaces three separate glob loops.
+- `connections.py`: `_get_all_chunks()` paginates ChromaDB fetches to avoid
+  SQLite variable-cap failures on large KBs.
+### Changed
+- `connections.py`: float32 → float64 + `np.errstate` to suppress spurious
+  Apple Silicon Accelerate BLAS warnings; assertion guards real failures.
+- `kb_index.py`, `kb_search.py`, `kb_app.py`: file discovery replaced with
+  `iter_kb_files(cfg)`.
+- `base.html`: `.kb-main` max-width `1400px` → `min(94vw, 1800px)`.
+
 ## 2026-07-20
 ### Added
 - `WORKFLOW.md`: new doc explaining the day-to-day ingestion use case —

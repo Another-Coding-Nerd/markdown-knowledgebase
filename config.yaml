@@ -35,6 +35,10 @@ top_k: 5
 #   - reading-order.md
 #   - cheatsheet.md
 
+# Follow symlinks when traversing kb/ for .md files.
+# Enable if you symlink an external directory into kb/.
+follow_symlinks: false
+
 # Connections — controls graph edges built by tools/connections.
 # connections_top_n: max edges per file stored in connections.db (like the
 #   old "See Also" 2-4 limit — keeps the graph readable; raise for denser graphs).
