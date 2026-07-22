@@ -1,3 +1,14 @@
+## 2026-07-20 (3)
+### Added
+- `kb_common.py`: `safe_kb_path()` — rejects path traversal lexically
+  instead of via `resolve()`/`is_relative_to()`, so symlinked files under
+  `kb/` aren't falsely flagged as outside the root.
+### Changed
+- `kb_app.py`: `get_connections()` and `page()` routes use `safe_kb_path`;
+  old resolve-based containment check removed.
+- `page.html`: dark mode CSS fixes — inline code color and border; table,
+  thead, tr backgrounds; th/td text color all use CSS variables.
+
 ## 2026-07-20 (2)
 ### Added
 - `config.yaml`: `follow_symlinks` boolean (default `false`) — enables

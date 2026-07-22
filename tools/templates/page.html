@@ -111,6 +111,8 @@
   }
   .markdown-body code {
     background: var(--code-bg);
+    color: var(--text);
+    border: none;
     border-radius: 3px;
     padding: 0.1em 0.35em;
     font-size: 0.875em;
@@ -131,11 +133,15 @@
     font-size: 0.875rem;
     overflow-x: auto;
     display: block;
+    background: transparent;
   }
+  .markdown-body thead { background: transparent; }
+  .markdown-body tr { background: transparent; }
   .markdown-body th, .markdown-body td {
     border: 1px solid var(--border);
     padding: 0.45rem 0.75rem;
     text-align: left;
+    color: var(--text);
   }
   .markdown-body th { background: var(--bg); font-weight: 600; }
   .markdown-body tr:nth-child(even) { background: var(--bg); }

@@ -19,6 +19,26 @@ def load_config(config_path=None):
     return cfg
 
 
+def safe_kb_path(kb_root, filename):
+    """Resolve a user-supplied relative filename under kb_root, rejecting
+    path traversal, without following symlinks for the containment check.
+
+    kb_root may contain symlinked subdirectories pointing outside kb_root
+    (e.g. kb/docs -> ../../APEX/docs). Calling .resolve() on the joined
+    path (as a naive "target.resolve().is_relative_to(kb_root.resolve())"
+    check would do) follows those symlinks and makes every legitimate file
+    look like it escaped kb_root. Instead, reject any '..' or absolute
+    path component in the *requested* path lexically, then join without
+    resolving — real traversal attempts are blocked, symlinked content
+    isn't. Returns None if filename is unsafe or doesn't exist.
+    """
+    parts = Path(filename).parts
+    if not parts or Path(filename).is_absolute() or any(p in ("..", "") for p in parts):
+        return None
+    target = kb_root / filename
+    return target if target.exists() else None
+
+
 def iter_kb_files(cfg):
     """Return sorted list of Paths for all indexed .md files, per config filters."""
     kb_root = cfg["kb_root"]

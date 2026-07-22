@@ -24,7 +24,7 @@ import yaml
 from flask import Flask, abort, jsonify, render_template, request
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from kb_common import get_collection, get_embedding_model, iter_kb_files, load_config
+from kb_common import get_collection, get_embedding_model, iter_kb_files, load_config, safe_kb_path
 from kb_query import build_prompt, query_llm, _is_list_query
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -316,12 +316,11 @@ def get_top_terms(n: int = 40) -> list[dict]:
 
 
 def get_connections(filename: str) -> dict:
-    kb_resolved = kb_root.resolve()
-    target = (kb_root / filename).resolve()
-    if not target.is_relative_to(kb_resolved):
+    target = safe_kb_path(kb_root, filename)
+    if target is None:
         return {"outgoing": [], "incoming": []}
 
-    rel = str(target.relative_to(kb_resolved))
+    rel = str(target.relative_to(kb_root))
     con = _db_connect()
     if not con:
         return {"outgoing": [], "incoming": []}
@@ -381,11 +380,8 @@ def graph():
 
 @app.route("/page/<path:filename>")
 def page(filename):
-    kb_resolved = kb_root.resolve()
-    target = (kb_root / filename).resolve()
-    if not target.is_relative_to(kb_resolved):
-        abort(403)
-    if not target.exists():
+    target = safe_kb_path(kb_root, filename)
+    if target is None:
         abort(404)
     md_text = target.read_text(encoding="utf-8", errors="replace")
     md = mdlib.Markdown(
