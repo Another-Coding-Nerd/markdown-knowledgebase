@@ -1,3 +1,39 @@
+## Notes: GraphRAG / graph database for context — considered, not adopted
+
+GraphRAG (Graph-augmented Retrieval) is a pattern where a graph database
+stores typed relationships between concepts, enabling multi-hop traversal at
+query time — not just nearest-neighbor lookup. The pitch: flat vector search
+finds semantically similar chunks but loses *relationships*; a graph lets you
+follow edges (cites, contradicts, elaborates-on) to reach content that isn't
+semantically close to the query itself.
+
+This project already has a lightweight version of this idea: `connections.db`
+stores cosine similarity edges between files (built by `tools/connections.py`),
+and the Flask graph visualizes them. What it doesn't have is typed edges,
+multi-hop traversal at query time, or graph context fed into an LLM's window.
+
+**Why not adopt a full graph DB (Neo4j, Kuzu, etc.) now:**
+
+1. The primary use case is *human* search + agent-assisted ingestion — not an
+   LLM doing autonomous multi-step retrieval. GraphRAG's payoff is highest when
+   an LLM is querying the KB at runtime; for human-in-the-loop workflows the
+   current similarity graph is sufficient.
+
+2. Typed edges (cites, contradicts, etc.) require either manual tagging or an
+   LLM extraction pass at ingest time — significant overhead with no clear win
+   for this KB's content type (notes, summaries, reference material).
+
+3. Adding a graph DB introduces infrastructure a cloned template must set up
+   and maintain. SQLite `connections.db` requires nothing beyond Python.
+
+**When to revisit:** if this repo evolves toward fully autonomous LLM retrieval
+(an agent that answers questions by traversing the KB without human review),
+graph traversal becomes genuinely valuable. At that point evaluate
+[Kuzu](https://kuzudb.com/) (embedded, no server) as the lowest-friction path —
+it speaks Cypher, runs in-process, and has a Python API.
+
+---
+
 ## Notes: triage shortcuts tried at scale (don't repeat)
 
 When a large batch (190 files) arrived at a point where the KB was already

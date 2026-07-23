@@ -12,6 +12,11 @@ index_dir: ./.kb-index
 #   BAAI/bge-large-en-v1.5  — ~1.3GB download, best quality, fast with GPU (slow CPU-only)
 # Changing this requires deleting .kb-index/ and running a full rebuild
 # (tools/index, then tools/connections).
+#
+# Incremental reindex cost: when a file changes, the entire file is re-chunked
+# and re-embedded — not just the edited sections. On CPU-only hardware, the large
+# model makes every routine edit expensive. Prefer bge-small unless search quality
+# is a confirmed bottleneck.
 embedding_model: BAAI/bge-small-en-v1.5
 
 # Chunking

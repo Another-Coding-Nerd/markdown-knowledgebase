@@ -1,3 +1,9 @@
+## 2026-07-23
+### Added
+- `index_notes.md`: GraphRAG / graph DB consideration — why not adopted, when to revisit, Kuzu as lowest-friction path if needed.
+- `config.yaml`: note that incremental reindex re-embeds entire changed files, not just edited sections — relevant to large model choice on CPU.
+- `AGENTS.md`: same incremental reindex cost note in Config section.
+
 ## 2026-07-20 (3)
 ### Added
 - `kb_common.py`: `safe_kb_path()` — rejects path traversal lexically
