@@ -27,9 +27,9 @@ test in steps 2f and 2d2.
 2. For each file found:
    a. Read it fully.
    b. **Full inventory first** — work section-by-section, not the whole
-      document at once: one inventory pass per H2/H3 section if the file has
-      headings, or per ~100-line segment (or natural paragraph breaks if
-      shorter) if headingless. Within each section/segment, enumerate every
+      document at once: one inventory pass per ~100-line segment (or natural
+      paragraph breaks if shorter) for plain text files (the common case);
+      per H2/H3 section only if the file is already markdown. Within each section/segment, enumerate every
       analytically distinct point/claim before evaluating any of them for
       placement. Do not evaluate, filter, or write KB content until the full
       inventory is complete. The failure mode to prevent: identifying the two

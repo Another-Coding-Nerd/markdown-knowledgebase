@@ -1,3 +1,9 @@
+## 2026-07-25
+### Changed
+- `inputs/fmt_text.sh`: added split logic — files over 100 lines split into overlapping segments; short files reflowed in place.
+- `prompts/process-input-files.md`: step 2b now leads with 100-line segments for plain text (the common case); H2/H3 only for markdown inputs.
+- `AGENTS.md`: reverted redundant embedding model note (already in `config.yaml`).
+
 ## 2026-07-23
 ### Added
 - `index_notes.md`: GraphRAG / graph DB consideration — why not adopted, when to revisit, Kuzu as lowest-friction path if needed.

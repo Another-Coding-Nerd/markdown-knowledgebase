@@ -192,16 +192,6 @@ This prints the top-N nearest neighbors and their similarity scores.
 index location, and connections settings (`connections_top_n`,
 `connections_min_score`). No hardcoded paths elsewhere.
 
-Two embedding model options are documented in `config.yaml` comments:
-`bge-small-en-v1.5` (default, fast, ~130MB) and `bge-large-en-v1.5` (best
-quality, slow, ~1.3GB). Changing the model requires deleting `.kb-index/`
-and running a full rebuild.
-
-Incremental reindex re-embeds the entire file for any file that changed —
-not just the edited sections. On CPU-only hardware this makes the large model
-painful for routine editing workflows. Prefer `bge-small` unless search quality
-is a confirmed bottleneck.
-
 ## Content conventions
 
 See `CONTENT-STYLE.md` for register, filename, bullet/blockquote, and
