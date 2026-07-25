@@ -8,6 +8,11 @@ for file in *.txt; do
     continue
   fi
 
+  # Skip already-split files
+  if [[ "$file" == *-part-[0-9][0-9].txt ]]; then
+    continue
+  fi
+
   # Check if wrapping is needed
   chars=$(wc -c < "$file")
   lines=$(wc -l < "$file")
@@ -44,7 +49,7 @@ for file in *.txt; do
   overlap_buffer=""
 
   while IFS= read -r line; do
-    output_file=$(printf "%s-%02d.txt" "$basename" "$file_count")
+    output_file=$(printf "%s-part-%02d.txt" "$basename" "$file_count")
 
     if [ ! -f "$output_file" ]; then
       if [ -n "$overlap_buffer" ]; then

@@ -1,7 +1,8 @@
 ## 2026-07-25
 ### Changed
-- `inputs/fmt_text.sh`: added split logic — files over 100 lines split into overlapping segments; short files reflowed in place.
-- `prompts/process-input-files.md`: step 2b now leads with 100-line segments for plain text (the common case); H2/H3 only for markdown inputs.
+- `inputs/fmt_text.sh`: added split logic — files over 100 lines split into overlapping segments; short files reflowed in place. Output named `basename-part-NN.txt`; script skips those on re-run to prevent double-processing.
+- `inputs/de-dupe.sh`: handles part files — checks basename against `processed/` to catch duplicates regardless of whether source was previously whole or split.
+- `prompts/process-input-files.md`: step 2b leads with 100-line segments for plain text; H2/H3 only for markdown. Step 3 clarifies part files are one logical unit — process and move together.
 - `AGENTS.md`: reverted redundant embedding model note (already in `config.yaml`).
 
 ## 2026-07-23

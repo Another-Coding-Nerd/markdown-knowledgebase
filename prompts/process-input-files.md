@@ -88,8 +88,11 @@ test in steps 2f and 2d2.
       cherry-pick. Flag anything uncertain.
    l. **Wait for confirmation** — do not write or edit any `kb/` files until
       the user approves the scope.
-3. After processing, move the source file to `inputs/processed/` (or
-   `inputs/off-topic/` if off-topic).
+3. After processing, move the source file(s) to `inputs/processed/` (or
+   `inputs/off-topic/` if off-topic). If the source was split by
+   `inputs/fmt_text.sh` into `basename-part-01.txt`, `basename-part-02.txt`,
+   etc., treat all parts as one logical unit — process them together and move
+   all part files at once when done.
 4. After any new file is created or an existing file is renamed, update any
    navigation/index files this KB maintains (e.g. a topic listing in
    `README.md`, a glossary, a situational index) that reference the changed
