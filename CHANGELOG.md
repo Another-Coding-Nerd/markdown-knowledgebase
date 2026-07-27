@@ -1,3 +1,9 @@
+## 2026-07-27
+### Added
+- `CONTENT-STYLE.md`: two Prose Rhythm principles from fem kb — "Assume intelligent but uninformed" and "Find the plain English version that loses nothing."
+### Fixed
+- `inputs/fmt_text.sh`, `inputs/de-dupe.sh`: update part-file guards from `[0-9][0-9]` to `[0-9][0-9][0-9]` and sentinel from `-part-01.txt` to `-part-001.txt` to match `%03d` output format.
+
 ## 2026-07-25
 ### Changed
 - `inputs/fmt_text.sh`: added split logic — files over 100 lines split into overlapping segments; short files reflowed in place. Output named `basename-part-NN.txt`; script skips those on re-run to prevent double-processing.

@@ -80,6 +80,17 @@ cut it.
 matters, find plain words for it — don't drop it to keep things simple.
 Accessible to broad readers; accurate enough to hold up.
 
+**Assume intelligent but uninformed.** Don't dumb things down; don't hide
+behind jargon. The reader is capable of following a precise argument — they
+just haven't been given the vocabulary yet. Write accordingly: no
+condescension in either direction.
+
+**Find the plain English version that loses nothing.** Not an approximation
+— the actual idea, in words a non-specialist can parse on first read. If
+that version isn't available yet, it usually means the idea isn't understood
+clearly enough to write it. Clarity is the test of comprehension, not a
+stylistic choice.
+
 ## Filenames
 
 - Kebab-case, no counts (`signs-of-x.md`, not `9-signs-of-x.md`) — counts

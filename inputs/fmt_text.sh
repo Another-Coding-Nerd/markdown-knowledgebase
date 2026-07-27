@@ -9,7 +9,7 @@ for file in *.txt; do
   fi
 
   # Skip already-split files
-  if [[ "$file" == *-part-[0-9][0-9].txt ]]; then
+  if [[ "$file" == *-part-[0-9][0-9][0-9].txt ]]; then
     continue
   fi
 
@@ -49,7 +49,7 @@ for file in *.txt; do
   overlap_buffer=""
 
   while IFS= read -r line; do
-    output_file=$(printf "%s-part-%02d.txt" "$basename" "$file_count")
+    output_file=$(printf "%s-part-%03d.txt" "$basename" "$file_count")
 
     if [ ! -f "$output_file" ]; then
       if [ -n "$overlap_buffer" ]; then
