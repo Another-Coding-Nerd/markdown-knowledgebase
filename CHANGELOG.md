@@ -1,3 +1,8 @@
+## 2026-07-28
+### Added
+- `CONTENT-STYLE.md`: Editing Discipline section; Prose Rhythm additions — "Name the thing, then unpack it," "Mechanisms, not just patterns," "The 8th-grade test" (with example); updated header to reference the third leg.
+- `.gitignore`: added `STYLE-QUICKREF.md` (working file, not tracked).
+
 ## 2026-07-27
 ### Added
 - `CONTENT-STYLE.md`: two Prose Rhythm principles from fem kb — "Assume intelligent but uninformed" and "Find the plain English version that loses nothing."

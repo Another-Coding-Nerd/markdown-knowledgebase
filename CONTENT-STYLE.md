@@ -5,6 +5,10 @@ This file holds content-authoring conventions for `kb/` — separate from
 delete sections to fit your KB's domain; nothing here is required by the
 tooling itself.
 
+## Editing Discipline
+
+Before changing any passage, identify the specific named rule it violates — from this guide's Register, Language Standard, or Blockquotes sections. If the answer is vague ("it feels punchy," "I can say this more cleanly"), that's not a named rule — leave it. Style translation preserves the claim; content deletion is a separate decision the user makes explicitly.
+
 ## Register
 
 Pick one voice and apply it consistently across `kb/`:
@@ -58,7 +62,7 @@ exists, reframe as observation rather than assertion.
 
 ## Prose Rhythm
 
-The target is Sowell's compression fused with Sagan's clarity discipline.
+The target is Sowell's compression fused with Sagan's clarity discipline — plus a third check neither alone provides.
 
 **Short-to-medium sentences.** Most sentences carry one idea. Two at most.
 Long subordinate chains slow the reader without adding precision — break them.
@@ -85,11 +89,17 @@ behind jargon. The reader is capable of following a precise argument — they
 just haven't been given the vocabulary yet. Write accordingly: no
 condescension in either direction.
 
+**Name the thing, then unpack it.** If a phenomenon has a name, use it — then immediately explain it in plain terms. Don't avoid technical language; land it on arrival. "Intermittent reinforcement — rewards that arrive unpredictably, like a slot machine" is one sentence. After that, the term is available without redefinition.
+
 **Find the plain English version that loses nothing.** Not an approximation
 — the actual idea, in words a non-specialist can parse on first read. If
 that version isn't available yet, it usually means the idea isn't understood
 clearly enough to write it. Clarity is the test of comprehension, not a
 stylistic choice.
+
+**The 8th-grade test (the third leg).** Sowell gives compression. Sagan gives clarity. Neither alone gets you to the sentence that stops a conversation. The third check: would a smart person with no academic training say it the same way — or would they say it better? If they'd say it better, they're right and the precise version is wrong. This is not dumbing down; it's finding the version a plain speaker would naturally reach for. If that version loses nothing, it wins. Flag nominalized verbs ("reads as," "registers as," "functions as"), paired abstract nouns, and anything that requires a mental pause to parse — those are the tells that the plain version hasn't been found yet.
+
+**Mechanisms, not just patterns.** State what happens and why it produces what it produces. "The system failed" is a pattern. "The system failed because the retry logic assumed idempotency and the upstream handler wasn't" is a mechanism. The second version is no longer and harder to forget.
 
 ## Filenames
 
