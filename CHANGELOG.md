@@ -1,3 +1,8 @@
+## 2026-07-30
+### Added
+- `tools/kb_stats.py`, `tools/stats`: section length diagnostics — flags SHORT/LONG leaf sections; ported from fem kb as a generic template tool.
+- `AGENTS.md`: document `kb_stats.py` usage and `tools/stats` wrapper.
+
 ## 2026-07-28
 ### Added
 - `CONTENT-STYLE.md`: Editing Discipline section; Prose Rhythm additions — "Name the thing, then unpack it," "Mechanisms, not just patterns," "The 8th-grade test" (with example); updated header to reference the third leg.

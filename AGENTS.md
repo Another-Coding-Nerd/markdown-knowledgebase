@@ -16,7 +16,14 @@ Tools live in `tools/`, run via the venv:
 .venv/bin/python tools/connections.py --show <file> # inspect nearest neighbors for a file
 ```
 
-Or via wrappers (shorter): `tools/index`, `tools/index --incremental`, `tools/search`, `tools/connections`.
+Or via wrappers (shorter): `tools/index`, `tools/index --incremental`, `tools/search`, `tools/connections`, `tools/stats`.
+
+```
+.venv/bin/python tools/kb_stats.py kb/<file>.md         # section length diagnostics
+.venv/bin/python tools/kb_stats.py kb/<file>.md --short 4 --long 25
+```
+
+`kb_stats.py` counts lines in each leaf section (sections with no child headings) and flags SHORT (≤4 lines) and LONG (≥25 lines) outliers. Use it when reviewing a file for sections that may need expansion or trimming. Thresholds are adjustable via `--short` and `--long`.
 
 ## Initializing a new KB
 
