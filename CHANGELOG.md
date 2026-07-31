@@ -1,3 +1,9 @@
+## 2026-07-31 (2)
+### Added
+- `prompts/_inventory-shared-steps.md`: shared include for steps c–m and 3–6, used by both input-processing prompts.
+### Changed
+- `prompts/process-input-files.md`, `process-input-files-dense.md`: replaced duplicated steps c–m and 3–6 with a single reference to `_inventory-shared-steps.md`. Single source of truth; no more maintenance drift between the two variants.
+
 ## 2026-07-31
 ### Fixed
 - `prompts/process-input-files.md`, `process-input-files-dense.md`: fix duplicate `f.` sub-step; renumber d2→e through l→m for clean a–m sequence; add `about.md` missing-file fallback to Scope section; fix part-file sentinel to `part-001.txt`.
