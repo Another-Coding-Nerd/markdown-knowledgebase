@@ -1,15 +1,12 @@
 # Organize kb/ Files into Projects vs. Resources
 
-For files added directly to `kb/` without going through
-`prompts/process-input-files.md` (e.g. a batch of pre-existing `.md` files
-copied straight in), sort them per the Projects vs. Resources convention in
-`AGENTS.md`.
+Pure structural reorganization — sort existing `kb/` files into
+`kb/projects/` vs. `kb/resources/` based on content type. No filename
+cleanup, no overlap check, no style review. Use this when the files are
+already KB-ready and the only task is placement.
 
-This is a file-placement/classification task, not a content-processing task:
-classify each file by its existing title/content/front matter and move it.
-Do not apply `prompts/process-input-files.md`'s inventory/dedup-cross-check
-process (full read, `kb_search.py` checks against the rest of the KB) to
-these files — they're already part of the KB.
+For externally-authored files that need cleanup before placement, use
+`prompts/adopt-markdown-files.md` instead.
 
 ## Workflow
 
@@ -26,6 +23,11 @@ these files — they're already part of the KB.
      confirmation.
 3. **Present the proposed moves** — file, destination, one-line rationale —
    and wait for confirmation before moving anything.
-4. After moves, update any index/navigation files affected by the rename.
-5. Reindex per `AGENTS.md` (`kb_index.py --incremental` handles a move as a
-   delete+add: the old path's chunks are removed, the new path is indexed).
+4. If this KB maintains a topic index, reading-order file, or other
+   navigation file that lists `kb/` paths, update any entries whose paths
+   changed.
+5. Reindex per `AGENTS.md` — run both steps:
+   ```
+   tools/index --incremental
+   tools/connections
+   ```

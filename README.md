@@ -88,6 +88,7 @@ rewrite it.
 |--------|----------|
 | `prompts/process-input-files.md` | Normal prose, structured articles, files with headings |
 | `prompts/process-input-files-dense.md` | Compressed summaries, interview digests, bullet-point notes — one claim per sentence, no headings |
+| `prompts/adopt-markdown-files.md` | Human-authored `.md` files copied straight into `kb/` — all signal, needs filename cleanup, overlap check, and placement |
 
 Drop files in `inputs/`, then tell the agent which prompt to run.
 
@@ -260,7 +261,8 @@ inputs/           # new source files awaiting triage
 prompts/
   process-input-files.md        # triage inputs/ into kb/ (normal prose)
   process-input-files-dense.md  # triage dense/bullet-point input files
-  organize-kb-files.md          # sort kb/ files into Projects vs. Resources
+  adopt-markdown-files.md       # adopt human-authored .md files copied into kb/
+  organize-kb-files.md          # sort kb/ files into Projects vs. Resources (PARA)
   process-knowledgebase-files.md # periodic quality review of kb/
 tools/
   kb_index.py     # rebuild the index

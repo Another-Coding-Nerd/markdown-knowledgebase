@@ -11,7 +11,7 @@ not run this inventory/dedup workflow against `kb/` content.
 
 This KB's scope is defined in `about.md` at the repo root. Read it before
 beginning inventory. Use the scope description and out-of-scope list as the
-test in steps 2f and 2e. If `about.md` does not exist, stop and ask the user
+test in steps 2e and 2g. If `about.md` does not exist, stop and ask the user
 to describe the KB's scope before continuing — do not proceed without it.
 
 ## Workflow

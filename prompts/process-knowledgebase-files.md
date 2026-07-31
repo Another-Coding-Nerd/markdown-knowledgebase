@@ -12,8 +12,8 @@ for sections that need expansion or trimming.
 
 ### 1. Title and filename accuracy
 Two checks: **(a)** Does the filename reflect the topic without embedding a
-point count? (e.g., prefer `traps-men-fall-into.md` over
-`9-traps-men-fall-into.md` — see `CONTENT-STYLE.md`). **(b)** Do the actual
+point count? (e.g., prefer `signs-of-burnout.md` over
+`9-signs-of-burnout.md` — see `CONTENT-STYLE.md`). **(b)** Do the actual
 items match any number in the title? Flag mismatches. If no count is in the
 title, note that.
 

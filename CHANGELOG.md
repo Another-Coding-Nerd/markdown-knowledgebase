@@ -1,3 +1,13 @@
+## 2026-07-31 (3)
+### Added
+- `prompts/adopt-markdown-files.md`: new prompt for adopting human-authored `.md` files copied into `kb/` — filename audit, internal overlap scan, PARA placement, light style flags.
+- `README.md`: `adopt-markdown-files.md` added to prompt table and layout.
+### Changed
+- `prompts/organize-kb-files.md`: clarified as pure placement prompt; pointer to `adopt-markdown-files.md` for externally-authored files; step 4 tightened; step 5 adds `tools/connections` to reindex.
+### Fixed
+- `prompts/process-input-files.md`, `process-input-files-dense.md`: scope section referenced wrong step numbers (`2f and 2e` → `2e and 2g`).
+- `prompts/process-knowledgebase-files.md`: replaced domain-specific filename example with neutral one.
+
 ## 2026-07-31
 ### Added
 - `prompts/_inventory-shared-steps.md`: shared include (steps c–m, 3–6, Conventions) used by both input-processing prompts — single source of truth, no more drift.
