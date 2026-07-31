@@ -1,3 +1,13 @@
+## 2026-07-31
+### Fixed
+- `prompts/process-input-files.md`, `process-input-files-dense.md`: fix duplicate `f.` sub-step; renumber d2→e through l→m for clean a–m sequence; add `about.md` missing-file fallback to Scope section; fix part-file sentinel to `part-001.txt`.
+- `prompts/process-input-files-dense.md`: add missing part-file handling note to step 3.
+- `prompts/process-knowledgebase-files.md`: add H1 title; add `kb_stats.py` prompt before Review Criteria.
+- `prompts/organize-kb-files.md`: add uncertain-classification fallback (flag for user, don't guess).
+### Added
+- `AGENTS.md`: mention `process-input-files-dense.md` in the Processing section so agents know when to reach for it.
+- `README.md`: note on course/lesson material — don't carry lesson numbers into `kb/`.
+
 ## 2026-07-30
 ### Added
 - `tools/kb_stats.py`, `tools/stats`: section length diagnostics — flags SHORT/LONG leaf sections; ported from fem kb as a generic template tool.

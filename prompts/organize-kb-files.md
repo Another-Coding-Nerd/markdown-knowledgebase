@@ -21,6 +21,9 @@ these files — they're already part of the KB.
    - **No** → resource material; move to `kb/resources/` (group into topic
      subdirectories within `kb/resources/` if this KB organizes resources
      that way).
+   - **Uncertain** → flag it in the proposed-moves table with a one-sentence
+     rationale and leave the destination blank — the user decides at
+     confirmation.
 3. **Present the proposed moves** — file, destination, one-line rationale —
    and wait for confirmation before moving anything.
 4. After moves, update any index/navigation files affected by the rename.

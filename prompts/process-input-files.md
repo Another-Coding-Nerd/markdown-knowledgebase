@@ -11,7 +11,8 @@ not run this inventory/dedup workflow against `kb/` content.
 
 This KB's scope is defined in `about.md` at the repo root. Read it before
 beginning inventory. Use the scope description and out-of-scope list as the
-test in steps 2f and 2d2.
+test in steps 2f and 2e. If `about.md` does not exist, stop and ask the user
+to describe the KB's scope before continuing — do not proceed without it.
 
 ## Workflow
 
@@ -50,28 +51,28 @@ test in steps 2f and 2d2.
       fact reworded → **covered**, skip it even if the wording differs.
       Different fact on the same topic → **partial**, naming the specific
       detail to add.
-   d2. **Scope filter** — for each item classified as new or partial, apply
-       the scope definition from `about.md` as a one-sentence test. Items
-       that are authentic but outside scope are marked **off-scope** in the
-       inventory table. Off-scope items are listed, not silently dropped —
-       user confirms before anything is excluded.
-   e. Quality check: if the source claims a specific count (e.g., "5
+   e. **Scope filter** — for each item classified as new or partial, apply
+      the scope definition from `about.md` as a one-sentence test. Items
+      that are authentic but outside scope are marked **off-scope** in the
+      inventory table. Off-scope items are listed, not silently dropped —
+      user confirms before anything is excluded.
+   f. Quality check: if the source claims a specific count (e.g., "5
       reasons", "3 types", "10 signs"), verify the inventory found that many
       distinct items. If there's a mismatch, flag it.
-   f. Off-topic content: if the entire file falls outside this KB's scope,
+   g. Off-topic content: if the entire file falls outside this KB's scope,
       auto-skip and move it to `inputs/off-topic/`. Note this in the summary.
-   g. Mostly-overlapping content with unique elements: the unique material
+   h. Mostly-overlapping content with unique elements: the unique material
       is the yield — check whether it can supplement an existing file rather
       than creating a new file or skipping entirely.
-   h. Bad-frame content: if the source's core argument is reductive, crude,
+   i. Bad-frame content: if the source's core argument is reductive, crude,
       or off-register, assess whether the frame can be stripped while
       preserving analytically sound content embedded within it. Test: does
       the information stand independently of the frame? If yes, treat the
       salvageable content as a targeted supplement to an existing file and
       note the reframing in the recommendation.
-   i. Duplicate content: auto-skip, move to `inputs/processed/`, note in the
+   j. Duplicate content: auto-skip, move to `inputs/processed/`, note in the
       summary.
-   j. New content: if this KB has adopted the Projects/Resources split (see
+   k. New content: if this KB has adopted the Projects/Resources split (see
       `AGENTS.md` — i.e. `kb/projects/` is in use), first apply that test:
       does it have a deliverable or finish line? If so, it belongs in
       `kb/projects/`; otherwise file it as a resource by topic in
@@ -81,16 +82,16 @@ test in steps 2f and 2d2.
       named-anecdote framing (e.g. "Marcus told me...", "let's call her
       Anna"), absorb the underlying ideas into the nearest analytical section
       and drop the named frame.
-   k. **Present the full inventory** — list every item with: status (covered
+   l. **Present the full inventory** — list every item with: status (covered
       / partial / new / off-scope), proposed target file + section, and a
       one-line rationale. For **partial** items, name the specific detail (fact,
       mechanism, example, figure) being added. Do not summarize or
       cherry-pick. Flag anything uncertain.
-   l. **Wait for confirmation** — do not write or edit any `kb/` files until
+   m. **Wait for confirmation** — do not write or edit any `kb/` files until
       the user approves the scope.
 3. After processing, move the source file(s) to `inputs/processed/` (or
    `inputs/off-topic/` if off-topic). If the source was split by
-   `inputs/fmt_text.sh` into `basename-part-01.txt`, `basename-part-02.txt`,
+   `inputs/fmt_text.sh` into `basename-part-001.txt`, `basename-part-002.txt`,
    etc., treat all parts as one logical unit — process them together and move
    all part files at once when done.
 4. After any new file is created or an existing file is renamed, update any

@@ -37,7 +37,11 @@ After completing Setup below:
    No files need editing to switch.
 3. **Add content** — drop files directly into `kb/`, or stage raw source
    material in `inputs/` and have Claude run the
-   `prompts/process-input-files.md` workflow to triage it.
+   `prompts/process-input-files.md` workflow to triage it. If your source
+   material is organized as lessons or chapters, don't carry that structure
+   into `kb/` — lesson numbers are a delivery artifact, not conceptual units.
+   The agent will organize by topic automatically. If the sequence matters,
+   ask it to create a `learning-path.md` listing topics in order.
 4. **Build the index** — `.venv/bin/python tools/kb_index.py`.
 5. **Work with your AI agent** — `AGENTS.md` defines the search-first
    workflow (Claude Code reads it via the `CLAUDE.md` import; other agents

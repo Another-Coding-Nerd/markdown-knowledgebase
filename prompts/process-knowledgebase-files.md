@@ -1,6 +1,12 @@
+# Review Knowledgebase Files
+
 Review each `.md` file in `kb/` against these criteria and present
 findings. Process files one at a time. For each file: report findings, make
 specific recommendations, ask for approval before applying any changes.
+
+Before reviewing a file's structure, run `tools/kb_stats.py kb/<file>.md` to
+flag section length outliers — SHORT and LONG flags narrow where to look first
+for sections that need expansion or trimming.
 
 ## Review Criteria
 

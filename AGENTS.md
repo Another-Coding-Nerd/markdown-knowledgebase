@@ -145,6 +145,9 @@ presenting the inventory, waiting for confirmation — is in
    uncertain.
 4. **Wait for confirmation** before writing/editing any `kb/` files.
 
+For dense inputs (transcript digests, compressed summaries, one-claim-per-sentence
+note dumps with no headings), use `prompts/process-input-files-dense.md` instead.
+
 For periodic quality review of existing `kb/` files (consistency, register,
 redundancy, structure), see `prompts/process-knowledgebase-files.md`.
 
