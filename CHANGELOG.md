@@ -1,501 +1,100 @@
-## 2026-07-31 (2)
-### Added
-- `prompts/_inventory-shared-steps.md`: shared include for steps c–m and 3–6, used by both input-processing prompts.
-### Changed
-- `prompts/process-input-files.md`, `process-input-files-dense.md`: replaced duplicated steps c–m and 3–6 with a single reference to `_inventory-shared-steps.md`. Single source of truth; no more maintenance drift between the two variants.
-
 ## 2026-07-31
-### Fixed
-- `prompts/process-input-files.md`, `process-input-files-dense.md`: fix duplicate `f.` sub-step; renumber d2→e through l→m for clean a–m sequence; add `about.md` missing-file fallback to Scope section; fix part-file sentinel to `part-001.txt`.
-- `prompts/process-input-files-dense.md`: add missing part-file handling note to step 3.
-- `prompts/process-knowledgebase-files.md`: add H1 title; add `kb_stats.py` prompt before Review Criteria.
-- `prompts/organize-kb-files.md`: add uncertain-classification fallback (flag for user, don't guess).
 ### Added
-- `AGENTS.md`: mention `process-input-files-dense.md` in the Processing section so agents know when to reach for it.
-- `README.md`: note on course/lesson material — don't carry lesson numbers into `kb/`.
+- `prompts/_inventory-shared-steps.md`: shared include (steps c–m, 3–6, Conventions) used by both input-processing prompts — single source of truth, no more drift.
+### Changed
+- `prompts/process-input-files.md`, `process-input-files-dense.md`: replaced duplicated body with reference to shared include.
+### Fixed
+- Both input prompts: fix duplicate `f.` sub-step; renumber `d2`→`e` through `l`→`m`; add `about.md` missing-file fallback; fix part-file sentinel to `part-001.txt`.
+- `prompts/process-input-files-dense.md`: add missing part-file handling to step 3.
+- `prompts/process-knowledgebase-files.md`: add H1 title; add `kb_stats.py` prompt before Review Criteria.
+- `prompts/organize-kb-files.md`: add uncertain-classification fallback.
+- `AGENTS.md`: link to dense input variant; add `about.md` fallback note.
+- `README.md`: note on course/lesson material — don't carry lesson structure into `kb/`.
 
 ## 2026-07-30
 ### Added
-- `tools/kb_stats.py`, `tools/stats`: section length diagnostics — flags SHORT/LONG leaf sections; ported from fem kb as a generic template tool.
-- `AGENTS.md`: document `kb_stats.py` usage and `tools/stats` wrapper.
+- `tools/kb_stats.py`, `tools/stats`: section length diagnostics — flags SHORT/LONG leaf sections.
 
 ## 2026-07-28
 ### Added
-- `CONTENT-STYLE.md`: Editing Discipline section; Prose Rhythm additions — "Name the thing, then unpack it," "Mechanisms, not just patterns," "The 8th-grade test" (with example); updated header to reference the third leg.
-- `.gitignore`: added `STYLE-QUICKREF.md` (working file, not tracked).
+- `CONTENT-STYLE.md`: Editing Discipline section; Prose Rhythm additions — "Name the thing, then unpack it," "Mechanisms, not just patterns," "The 8th-grade test."
+- `.gitignore`: `STYLE-QUICKREF.md` (working file, not tracked).
 
 ## 2026-07-27
 ### Added
-- `CONTENT-STYLE.md`: two Prose Rhythm principles from fem kb — "Assume intelligent but uninformed" and "Find the plain English version that loses nothing."
+- `CONTENT-STYLE.md`: Prose Rhythm — "Assume intelligent but uninformed," "Find the plain English version that loses nothing."
 ### Fixed
-- `inputs/fmt_text.sh`, `inputs/de-dupe.sh`: update part-file guards from `[0-9][0-9]` to `[0-9][0-9][0-9]` and sentinel from `-part-01.txt` to `-part-001.txt` to match `%03d` output format.
+- `inputs/fmt_text.sh`, `inputs/de-dupe.sh`: part-file guards updated to `%03d` format (`part-001.txt`).
 
 ## 2026-07-25
 ### Changed
-- `inputs/fmt_text.sh`: added split logic — files over 100 lines split into overlapping segments; short files reflowed in place. Output named `basename-part-NN.txt`; script skips those on re-run to prevent double-processing.
-- `inputs/de-dupe.sh`: handles part files — checks basename against `processed/` to catch duplicates regardless of whether source was previously whole or split.
-- `prompts/process-input-files.md`: step 2b leads with 100-line segments for plain text; H2/H3 only for markdown. Step 3 clarifies part files are one logical unit — process and move together.
-- `AGENTS.md`: reverted redundant embedding model note (already in `config.yaml`).
+- `inputs/fmt_text.sh`: files over 100 lines split into overlapping segments; output named `basename-part-NNN.txt`; re-run safe (skips already-split files).
+- `inputs/de-dupe.sh`: part-file aware — checks basename against `processed/` for both whole and split forms.
+- `prompts/process-input-files.md`: step 2b leads with 100-line segments; step 3 clarifies part files are one logical unit.
+- `AGENTS.md`: reverted redundant embedding model note (lives in `config.yaml`).
 
 ## 2026-07-23
 ### Added
-- `index_notes.md`: GraphRAG / graph DB consideration — why not adopted, when to revisit, Kuzu as lowest-friction path if needed.
-- `config.yaml`: note that incremental reindex re-embeds entire changed files, not just edited sections — relevant to large model choice on CPU.
-- `AGENTS.md`: same incremental reindex cost note in Config section.
-
-## 2026-07-20 (3)
-### Added
-- `kb_common.py`: `safe_kb_path()` — rejects path traversal lexically
-  instead of via `resolve()`/`is_relative_to()`, so symlinked files under
-  `kb/` aren't falsely flagged as outside the root.
-### Changed
-- `kb_app.py`: `get_connections()` and `page()` routes use `safe_kb_path`;
-  old resolve-based containment check removed.
-- `page.html`: dark mode CSS fixes — inline code color and border; table,
-  thead, tr backgrounds; th/td text color all use CSS variables.
-
-## 2026-07-20 (2)
-### Added
-- `config.yaml`: `follow_symlinks` boolean (default `false`) — enables
-  indexing symlinked directories inside `kb/`; fixes Python 3.12+ breakage
-  where `Path.glob("**")` stopped following symlinks.
-- `kb_common.py`: `iter_kb_files(cfg)` shared traversal helper via
-  `os.walk(followlinks=)`; replaces three separate glob loops.
-- `connections.py`: `_get_all_chunks()` paginates ChromaDB fetches to avoid
-  SQLite variable-cap failures on large KBs.
-### Changed
-- `connections.py`: float32 → float64 + `np.errstate` to suppress spurious
-  Apple Silicon Accelerate BLAS warnings; assertion guards real failures.
-- `kb_index.py`, `kb_search.py`, `kb_app.py`: file discovery replaced with
-  `iter_kb_files(cfg)`.
-- `base.html`: `.kb-main` max-width `1400px` → `min(94vw, 1800px)`.
+- `index_notes.md`: GraphRAG consideration — why not adopted, when to revisit, Kuzu as lowest-friction path.
+- `config.yaml`: note that incremental reindex re-embeds entire changed files — relevant to model choice on CPU.
 
 ## 2026-07-20
 ### Added
-- `WORKFLOW.md`: new doc explaining the day-to-day ingestion use case —
-  collecting blogs, transcripts, talks, papers, and tip threads; preparing
-  inputs; picking the right prompt; what the agent does (inventory, scope
-  filter, dedup, approval gate); reindexing; searching. Aimed at new GitHub
-  visitors who want to understand how the system is actually used.
-- `CONTENT-STYLE.md`: added `## Language Standard` section (elevated from
-  below Blockquotes; now includes mechanism framing, "No wasted words,"
-  sharpened read-aloud test, "Name sources directly"); added `## Prose Rhythm`
-  section (Sowell + Sagan compression, short-to-medium sentences, efficient
-  but not terse, no dilution); upgraded Blockquotes (location guidance,
-  one-to-two-sentence max); removed weaker Sentence Structure subsection
-  (content absorbed into Language Standard and Prose Rhythm).
+- `config.yaml`: `follow_symlinks` boolean — enables indexing symlinked directories; fixes Python 3.12 breakage.
+- `kb_common.py`: `iter_kb_files(cfg)` shared traversal helper; `safe_kb_path()` lexical path-traversal check (symlink-safe).
+- `connections.py`: paginated ChromaDB fetches to avoid SQLite variable-cap failures on large KBs.
+- `tools/templates/page.html`: dark mode CSS fixes for code, tables, and borders.
 ### Changed
-- `README.md`: Getting Started now links WORKFLOW.md alongside QUICKSTART.md;
-  Layout tree includes WORKFLOW.md entry.
+- `kb_index.py`, `kb_search.py`, `kb_app.py`: file discovery replaced with `iter_kb_files(cfg)`.
+- `base.html`: wider max-width.
 
-## 2026-07-19 (5)
-### Changed
-- `README.md`: clarified optional vs required in First-time setup (connections
-  step now noted as Flask-only) and Layout tree (`[optional]` labels on
-  flask_config.yaml, communication-levels.md, kb_query.py, kb_app.py,
-  connections.py/db, and their wrappers; added about.md and dense prompt).
-
-## 2026-07-19 (4)
-### Changed
-- `LICENSE`: replaced MIT with CC BY-NC 4.0 — free for non-commercial use,
-  attribution required for derivative works.
-- `README.md`: added `## License` section pointing to CC BY-NC 4.0.
-
-## 2026-07-19 (3)
+## 2026-07-20
 ### Added
-- `about.md`: scaffold file at repo root — the per-repo scope definition,
-  generated once by the agent at KB init time (or written manually); both
-  input processing prompts read it for on-topic/off-scope decisions.
-- `prompts/process-input-files-dense.md`: new prompt variant for sentence-level
-  dense input (interview summaries, compressed bullet notes, headingless text);
-  ported and genericized from derivative repo; references `about.md` for scope.
-### Changed
-- `AGENTS.md`: added `## Initializing a new KB` section documenting the
-  one-time setup sequence, including the generate-about.md step.
-- `prompts/process-input-files.md`: `## Scope` placeholder replaced with
-  reference to `about.md`; added step 2d2 (per-point scope filter); updated
-  step 2k status list to include `off-scope`.
-- `README.md`: added "First-time setup" subsection (seed content → index →
-  connections → generate about.md) and input-processing prompt comparison table.
-- `ROADMAP.md`: removed "fem-kb" name reference from documentation backlog item.
-
-## 2026-07-19 (2)
-### Fixed
-- `README.md`: removed stale "backlinks" reference from page viewer feature
-  table — backlinks sidebar was removed when edges became symmetric.
-### Changed
-- `ROADMAP.md`: marked KB Q&A docs item complete — README already covers
-  Ollama setup, model selection, and example invocations.
+- `WORKFLOW.md`: day-to-day ingestion workflow — collecting sources, preparing inputs, using prompts, reindexing.
+- `CONTENT-STYLE.md`: Language Standard and Prose Rhythm sections.
 
 ## 2026-07-19
 ### Added
-- `.claude/commands/fix-register.md`: slash command to scan and fix second-person
-  register violations across `kb/` — ported from derivative repo, genericized.
-- `.claude/commands/audit-citation.md`: slash command to audit unattributed
-  research/study claims via WebSearch — useful for any evidence-heavy KB.
+- `about.md`: per-repo scope definition; read by both input-processing prompts for on-topic/off-scope decisions.
+- `prompts/process-input-files-dense.md`: variant for sentence-level dense input (interview summaries, headingless text).
+- `.claude/commands/fix-register.md`, `audit-citation.md`: slash commands for register scan and citation audit.
 ### Changed
-- `.claude/commands/kb-audit.md`: replaced stale See Also link checks with a
-  stale See Also section detector and a connections.db orphan check; large-file
-  check updated to remove the "See Also entries" reference in the output guidance.
-
-## 2026-07-18 (15)
-### Changed
-- `config.yaml`: default embedding model set to `bge-small-en-v1.5`; added
-  comments documenting the small/large trade-off and rebuild requirement.
-- `README.md`, `AGENTS.md`: removed hardcoded model name references; now
-  point to `config.yaml` for model choice with small/large guidance.
-
-## 2026-07-18 (14)
-### Removed
-- `FLASK-APP-PLAN.md`: deleted stale "Agent Instructions" section — all work
-  it described (connections.db, AGENTS.md updates, See Also removal) is done.
-- `tools/templates/page.html`: removed Backlinks sidebar section — edges are
-  symmetric so incoming was always empty, making the section pointless.
-- Removed all `## See Also` authoring instructions from prompts and
-  CONTENT-STYLE.md across template and all derivative repos; graph edges are
-  DB-driven and need no manual curation.
-### Changed
-- `ROADMAP.md`: removed "broken See Also links" from `tools/validate` item
-  (no longer applicable); added sidebar scroll bug entry (marked complete).
-- `prompts/organize-kb-files.md`: post-move step no longer references See Also
-  links — just update index/navigation files and reindex.
-- `prompts/process-input-files.md`: dropped "See Also conventions" from the
-  Conventions pointer to CONTENT-STYLE.md.
-### Fixed
-- `tools/templates/page.html`: sidebar now scrolls independently on long
-  documents (`overflow-y: auto` + `max-height: calc(100vh - 72px - 1rem)`).
-
-## 2026-07-18 (13)
-### Changed
-- `AGENTS.md`: added `tools/connections` to tool listing; reindexing section
-  now requires both `tools/index --incremental` and `tools/connections` after
-  edits; added `connections.db` section explaining agents must not write
-  `## See Also` sections — edges are computed automatically; updated Config
-  and Content conventions references.
-- `CONTENT-STYLE.md`: removed `## See Also` convention block; updated
-  file-splitting guidance to use reindex + connections rebuild instead.
-- `README.md`: startup flow now shows three steps (index → connections →
-  serve); feature table updated to reference `connections.db` instead of
-  See Also links; `connections.py` and `connections` wrapper added to Layout.
-
-## 2026-07-18 (12)
-### Added
-- `tools/connections.py` and `tools/connections` wrapper copied to all
-  derivative repos; `connections_top_n` and `connections_min_score` added
-  to each repo's `config.yaml`.
-
-## 2026-07-18 (11)
-### Added
-- `tools/connections.py`: builds `connections.db` (SQLite) from ChromaDB
-  embeddings — per-file mean embedding re-normalized, pairwise cosine
-  similarity, symmetrized top-N edges above min-score threshold written to DB.
-  `--show <file>` flag prints nearest neighbors for debugging.
-- `tools/connections`: bash wrapper (matches `tools/index` / `tools/search` pattern).
-- `config.yaml`: `connections_top_n` (default 5) and `connections_min_score`
-  (default 0.5) — controls edges per file and similarity floor.
-### Changed
-- `tools/kb_app.py`: graph edges, page sidebar connections, and file connection
-  counts now read from `connections.db` via `_db_connect()`. Removed
-  `_parse_see_also()` and `_SEE_ALSO_RE` entirely — See Also section parsing
-  is no longer used anywhere in the app. Falls back gracefully (empty edges /
-  empty connections) when `connections.db` hasn't been built yet.
-
-## 2026-07-18 (10)
-### Changed
-- `FLASK-APP-PLAN.md`: promoted `connections.db` / `connections.py` from
-  "v2 future" to current design — graph edges now come exclusively from
-  ChromaDB semantic nearest-neighbor, not `## See Also` section parsing.
-  Added `Tool: connections.py` spec section (algorithm, schema, config,
-  CLI). Added `Agent Instructions` section specifying required AGENTS.md
-  and CONTENT-STYLE.md changes, the two-step `index → connections` workflow,
-  and the one-time `kb_strip_see_also.py` cleanup for derivative repos.
-  Removed all v1/v2 framing; updated startup flow, architecture diagram,
-  page viewer layout, and "Not in scope" list accordingly.
-
-## 2026-07-18 (9)
-### Added
-- `tools/kb_app.py`: `_iter_kb_files()` — unified file discovery respecting
-  `file_patterns` (whitelist) and `skip_files` (blacklist) from `config.yaml`,
-  matching `kb_index.py` logic. Applied to graph data, file sidebar, and
-  backlink scanning — skipped files no longer appear as isolated graph nodes.
-- `tools/templates/graph.html`: "⊡ Fit" button overlaid on graph — fits all
-  nodes into the viewport with a 0.4× minimum scale floor; dblclick also fits.
-### Changed
-- `tools/kb_app.py`: all three `rglob("*.md")` call sites replaced with
-  `_iter_kb_files()` — graph, sidebar, and connections now all respect the
-  same file discovery config. Eliminates isolated orphan nodes from skipped
-  navigation files (e.g. glossary.md) that were blowing out the graph bounds.
-- All derivative repos now run identical code; per-repo differences are
-  entirely config-driven (`config.yaml` + `flask_config.yaml`).
-
-## 2026-07-18 (8)
-### Added
-- `tools/kb_index.py`: whitelist/blacklist file discovery — `file_patterns`
-  (glob whitelist, defaults to `**/*.md`) and `skip_files` (blacklist, fnmatch)
-  in `config.yaml`. Replaces custom file-discovery code in derivative repos;
-  all repos now use the same indexer, configured per-repo via `config.yaml`.
-- `tools/kb_index.py`: progress indicators — live `[x/y]` file counter during
-  chunking and `x/y chunks embedded` counter during embedding, both using `\r`
-  in-place updates.
-- `tools/kb_index.py`: filter `See Also` sections from index — heading-level
-  chunks whose final heading is `See Also` are skipped before embedding.
-- `config.yaml`: documented `file_patterns` and `skip_files` params with examples.
-### Changed
-- `tools/kb_query.py`: list prompt tightened — removed "stop when done" clause
-  that was causing early termination; `max_tokens_list` raised to 1500 as the
-  natural ceiling. Added `concisely` back to factual prompt.
-- `flask_config.yaml`: `top_k` 12→15, `max_context_chars` 6000→20000,
-  `max_tokens_list` 768→1500 across all repos.
-
-## 2026-07-18 (7)
-### Added
-- `tools/kb_query.py`: dual token budgets — `max_tokens` (384) for factual
-  answers and `max_tokens_list` (768) for list/enumeration answers, auto-selected
-  via `_is_list_query()` regex. CLI `--max-tokens` still overrides both.
-- `tools/kb_query.py`: soft-reads `flask_config.yaml` at startup for LLM
-  defaults (`api_url`, `model`, `top_k`, `max_tokens`, `max_tokens_list`) —
-  CLI tool now stays in sync with Flask app config without manual duplication.
-  Falls back to hardcoded defaults if the file is absent.
-- `flask_config.yaml`: added `max_tokens_list: 768` param.
-### Changed
-- `tools/kb_app.py`: `rag_query()` now auto-selects token budget via
-  `_is_list_query()` — list questions get more room to enumerate all items.
-- `flask_config.yaml`: `max_tokens` reduced from 512 → 384 (factual answers
-  don't need the extra headroom; list answers use `max_tokens_list` instead).
-
-## 2026-07-18 (6)
-### Removed
-- `tools/templates/graph.html`: removed "Requires a running Ollama instance…"
-  note from Ask your KB panel — noise for users who already have it configured.
-
-## 2026-07-18 (5)
-### Added
-- `tools/templates/graph.html`: file filter input below sidebar header — type
-  to narrow the file list by name or title client-side; no server round-trip.
-  Article-aware alphabetical sort (`the`/`a`/`an` stripped from sort key) on
-  all file lists.
-- `tools/templates/graph.html`: three keyboard shortcuts — `s` focuses content
-  search, `a` opens and focuses Ask your KB, `f` focuses file filter. Shortcuts
-  fire only when no input/textarea is active.
-- `tools/templates/graph.html`: Ask your KB panel moved above the graph and
-  collapsed by default; shortcut hint `(a)` shown in the summary.
-- `tools/kb_app.py`: `_LinkRewriter` Markdown treeprocessor — rewrites
-  `[text](foo.md)` links and backtick-wrapped `.md` filenames to `/page/` routes
-  so intra-KB links are clickable in the page viewer. Fixed `getparent()` lxml
-  incompatibility (stdlib ElementTree has no such method) using a parent map
-  and index-based replacement.
-
-### Changed
-- `tools/templates/base.html`: content search placeholder updated to
-  `Content search… (s)`; `s` replaces `/` as the keyboard shortcut (removed
-  `/` alias for consistency with the `a`/`f` letter-key convention).
-
-## 2026-07-18 (4)
-### Added
-- `tools/kb_app.py`: `_ensure_instance_id()` — generates a UUID4 on first
-  startup and appends `instance_id: <uuid>` to `flask_config.yaml`; subsequent
-  starts read the persisted value. Passed to all templates via
-  `app.jinja_env.globals`.
-- `tools/templates/page.html`, `graph.html`: localStorage key for recent pages
-  changed from `kb-recent` to `kb-recent-<instance_id>` — isolates each KB
-  instance's visit history so two KBs on the same port no longer bleed
-  recently-visited entries into each other.
-
-## 2026-07-18 (3)
-### Added
-- `tools/serve`: thin bash wrapper for `kb_app.py` — resolves repo root from its
-  own path so it works from any directory; matches the `tools/index` /
-  `tools/search` / `tools/query` pattern. Usage: `tools/serve`,
-  `tools/serve --port 8080`, `tools/serve --config my.yaml`.
-- `flask_config.yaml`: comment on `host` explaining that `0.0.0.0` binds all
-  interfaces (makes the app accessible from other machines on the network).
-- README.md: updated all `kb_app.py` invocation examples to use `tools/serve`;
-  added `tools/serve` to wrapper scripts description with usage examples.
-
-## 2026-07-18 (2)
-### Added
-- `tools/templates/stats.html`: new `/stats` page — `d3.pack()` word cloud of
-  top terms across all indexed chunks, circle size proportional to frequency;
-  ranked sidebar list with frequency bars; clicking any term or bubble fires
-  semantic search via the nav bar. Accessible via "stats" link in the graph
-  file sidebar header.
-- `tools/kb_app.py`: `get_top_terms()` — scans all chunk text via
-  `collection.get()`, counts with `Counter`, filters `_STOPWORDS` plus optional
-  user-configured `stats_stopwords` from `flask_config.yaml`. New routes:
-  `/stats` and `/api/stats/terms`.
-- `tools/kb_app.py`: `_STOPWORDS` list — ~100 common English function words,
-  adverbs, and determiners. Added missing entries: `than`, `even`, `every`,
-  `much`, `never`, `roughly`.
-- `flask_config.yaml`: `stats_stopwords` key (commented out with examples) —
-  lets users filter domain-specific high-frequency/low-signal words from the
-  word cloud without touching Python.
-- `tools/templates/base.html`: dark mode toggle button in nav bar — toggles
-  `.dark` on `<body>`, persists preference to `localStorage`; server-set
-  default (`theme` in `flask_config.yaml`) applies on first visit.
-- `tools/templates/page.html`: TOC sidebar section — Contents panel above
-  Related/Backlinks, generated from `md.toc` (python-markdown `toc` extension);
-  only shown when the document has headings. Recent pages saved to
-  `localStorage` on every page visit.
-- `tools/templates/graph.html`: Recent pages section at top of file sidebar,
-  loaded from `localStorage`. Graph neighborhood highlight on node hover — dims
-  non-adjacent nodes and edges to reveal connection structure on dense graphs.
-  "stats" link in file sidebar header.
-- README.md: rewrote Flask feature table to cover all current features
-  (stats page, file sidebar, recent pages, TOC panel, dark mode toggle, graph
-  neighborhood highlight, search snippet/scroll behavior). Added config options
-  table. Added `stats_stopwords` documentation.
+- `AGENTS.md`: added KB init sequence; updated connections.db section; agents must not write `## See Also` (edges are computed).
+- `prompts/process-input-files.md`: scope now reads from `about.md`; per-point scope filter added.
+- `LICENSE`: MIT → CC BY-NC 4.0.
+- `README.md`: First-time setup subsection; prompt comparison table; optional/required labels in layout.
 
 ## 2026-07-18
 ### Added
-- `tools/templates/graph.html`: left file sidebar (220px) listing all KB files
-  grouped by directory (top-level / projects / resources), loaded from
-  `/api/files`; replaces the "Files" nav link that pointed at raw JSON.
-  Two-column grid layout (sidebar + graph/Q&A right column).
-- `tools/templates/page.html`: exact phrase highlight on arrival from search —
-  TreeWalker wraps matched text in `<mark>` elements and smooth-scrolls to the
-  first hit. Fallback when the phrase isn't literally present: subtly highlights
-  the entire matched section (amber tint + left border accent on the heading)
-  using the `#anchor` already in the URL — so semantic matches that don't
-  contain the exact query string still get a clear visual indicator.
-- `tools/templates/base.html`: search dropdown now shows 3-line snippet of the
-  matching chunk (not a single truncated line); result URLs include `?q=` param
-  so the page can highlight on arrival; `slugify()` aligned with python-markdown
-  `toc` extension to ensure anchor links land on the right heading.
-- ROADMAP.md: six new Later → Features items — dark mode toggle, TOC sidebar
-  panel on page view, recent pages in file sidebar, top terms word cloud
-  (`d3.pack()`, click-to-search), UMAP semantic scatter (heavier dep, cache
-  recommended), graph neighborhood highlight on hover.
-
+- `tools/connections.py`, `tools/connections`: builds `connections.db` (SQLite) from ChromaDB embeddings — pairwise cosine similarity, top-N edges per file.
+- `tools/serve`: bash wrapper for `kb_app.py`.
+- `tools/templates/stats.html`: `/stats` word cloud — top terms across all indexed chunks, click-to-search.
+- `tools/kb_app.py`: full Flask web interface — graph, page viewer, semantic search, KB Q&A, stats, dark mode, file sidebar, keyboard shortcuts, recent pages.
+- `tools/kb_query.py`: dual token budgets (factual vs. list); reads defaults from `flask_config.yaml`.
+- `tools/kb_index.py`: whitelist/blacklist file discovery (`file_patterns`, `skip_files` in `config.yaml`); progress indicators; filters `See Also` sections from index.
+- `kb_common.py`: `safe_kb_path()` for path-traversal protection in Flask routes.
+- `flask_config.yaml`: `stats_stopwords`, dark mode default, KB Q&A config.
 ### Changed
-- `tools/templates/base.html`: removed nav links div (Graph / Files) — graph
-  is the home page, file browsing moved to the graph sidebar.
-- `tools/templates/graph.html`: `||` → `??` for D3 `charge_strength` and
-  `link_distance` config fallbacks — `||` would override a valid `0` value.
-
-## 2026-07-17 (5)
-### Added
-- README.md: "Flask Web Interface" section — setup steps, feature table
-  (graph/page viewer/search/KB Q&A), config options, Ollama setup, and
-  proxy compatibility note. Added `flask_config.yaml` and `tools/templates/`
-  to the Layout section; added `tools/kb_app.py` to the tools listing.
-
-### Changed
-- ROADMAP.md: Flask app item marked complete under Later → Features.
-
-## 2026-07-17 (4)
+- Graph edges source changed from `## See Also` parsing to `connections.db` — all `## See Also` authoring instructions removed from prompts and style guide.
+- `config.yaml`: default model set to `bge-small-en-v1.5`; model choice docs point to config.
 ### Fixed
-- `tools/kb_app.py`: path containment check changed from `startswith` to
-  `Path.is_relative_to()` in both `page()` and `get_connections()` — the
-  string prefix check could allow paths from a directory whose name shares
-  a prefix with `kb_root` (e.g. `/home/user/kb-extra/...`).
-- `tools/kb_app.py`: `get_connections()` now resolves raw See Also hrefs to
-  `kb_root`-relative paths before returning them. Previously, relative links
-  like `../projects/foo.md` would produce broken `/page/../projects/foo.md`
-  URLs in the page sidebar; now they resolve correctly to `/page/projects/foo.md`.
-- `tools/kb_app.py`: moved `import markdown as mdlib` from inside the `page()`
-  route function to module top.
-- `tools/templates/graph.html`: replaced `||` with `??` (nullish coalescing)
-  for D3 `charge_strength` and `link_distance` config fallbacks — `||` treats
-  `0` as falsy and overrides a valid user-set value of 0.
-
-## 2026-07-17 (3)
-### Added
-- `tools/kb_app.py`: Flask web interface implementing all routes from
-  `FLASK-APP-PLAN.md` — graph visualization (`/`), page viewer
-  (`/page/<path>`), semantic search (`/api/search`), KB Q&A (`/api/ask`),
-  file listing (`/api/files`), connections (`/api/connections/<path>`).
-  Reuses `build_prompt()` and `query_llm()` from `kb_query.py`;
-  `load_config()`, `get_embedding_model()`, `get_collection()` from
-  `kb_common.py`. Embedding model and Chroma collection loaded once at
-  startup (not per-request). Path containment check on `/page/` prevents
-  directory traversal. Graceful degradation on LLM errors.
-- `tools/templates/base.html`: shared layout — Foundation 6.9.0 CDN,
-  Tailwind v3 color palette as static CSS custom properties (no Tailwind
-  CDN), debounced search bar (300ms, `/` shortcut, `Esc` to close), dark
-  theme support via `body.dark`.
-- `tools/templates/graph.html`: D3.js v7 force-directed graph — nodes
-  colored by directory (projects/resources/top-level), degree-scaled node
-  sizes, zoom/pan/drag, double-click to reset, edge-click to highlight
-  connected nodes, collapsible KB Q&A panel below graph.
-- `tools/templates/page.html`: two-column markdown viewer — sidebar with
-  outgoing (See Also) and incoming (backlinks) connections, rendered
-  markdown via Python `markdown` library with codehilite/fenced_code/
-  tables/toc extensions, breadcrumb navigation.
-- `requirements.txt`: added `flask`, `markdown`, `pygments`.
-
-## 2026-07-17 (2)
-### Added
-- `kb/resources/.gitkeep`: creates the `kb/resources/` directory in the
-  template so the Projects/Resources split feels complete out of the box.
-- README.md Layout: added `html_to_text.py` entry (was missing alongside
-  the other tools).
-- `prompts/process-input-files.md`: replaced HTML comment `## Scope`
-  placeholder with visible guidance text — rendered markdown now shows the
-  instruction rather than hiding it in a comment.
-- ROADMAP.md: marked all three Now → Docs items complete.
+- Path containment check: `startswith` → `Path.is_relative_to()` in Flask routes.
+- `||` → `??` for D3 config fallbacks (treats `0` correctly).
+- Sidebar scrolls independently on long pages.
 
 ## 2026-07-17
 ### Added
-- `CONTENT-STYLE.md`: new `## Language Standard` section — concrete-over-abstract
-  rule, adjacent abstract noun test, define-on-first-use, read-aloud test,
-  jargon pattern-detection table, and sentence structure rules. Ported from
-  a companion project's style guide; domain-specific content excluded.
-- `communication-levels.md`: QuASAP 7-level audience scale with two generic
-  target-level templates (Level 4 / Level 5) as a starting point for KBs
-  that produce audience-targeted content. Domain-specific content removed;
-  users replace the target levels to match their format and audience.
-- README.md: note pointing to `communication-levels.md` in Getting Started
-  step 1; added to Layout section.
-- FLASK-APP-PLAN.md: proxy compatibility note — any OpenAI-compatible proxy
-  (LiteLLM, OpenRouter, etc.) works via `api_url` config; covers Bedrock,
-  Anthropic, Azure OpenAI without code changes.
-- `tools/kb_query.py`: updated `OLLAMA_URL` comment to mention proxy support.
-
-### Changed
-- ROADMAP.md: marked CONTENT-STYLE.md language standard item complete;
-  updated dedup workflow item to reference `index_notes.md` (plan file
-  deleted); removed external project path references from all entries.
-- CHANGELOG.md: removed external project path reference from earlier entry.
-
-## 2026-07-15 (2)
-### Added
-- `index_notes.md`: consolidated dedup workflow notes from
-  `dedup-improvement-plan.md` — what was implemented, what was deferred
-  and why, and why `kb_pipeline.sh`'s similarity thresholds don't transfer
-  to this KB's section-granularity embeddings.
-
-### Removed
-- `dedup-improvement-plan.md`: implementation specs are now live in
-  `prompts/process-input-files.md`; durable rationale moved to
-  `index_notes.md`.
+- `tools/kb_query.py`, `tools/query`: KB Q&A — retrieves top-k chunks, synthesizes answer via local LLM (Ollama or any OpenAI-compatible endpoint).
+- `CONTENT-STYLE.md`: Language Standard section (concrete-over-abstract, jargon detection table).
+- `communication-levels.md`: QuASAP 7-level audience scale with generic target-level templates.
+- `FLASK-APP-PLAN.md`: design spec for the Flask web interface.
 
 ## 2026-07-15
-### Changed
-- FLASK-APP-PLAN.md: resolved ambiguities and tightened v1 scope
-  - v1 is explicitly See-Also-only; `connections.db`/`connections.py`
-    moved to v2 (not yet built) and added to "Not in scope (v1)"
-  - KB Q&A panel folded into graph page — `ask.html` removed, no
-    separate `/ask` route needed
-  - `/api/connections` fallback behavior specified for when connections.db
-    is absent (outgoing from See Also, incoming via file scan)
-  - `pygments` added to dependencies (required by markdown's codehilite)
-  - Tailwind CDN replaced with static CSS custom properties block —
-    hex values extracted from Tailwind v3 palette, inlined in base.html
-  - Startup flow simplified: `connections.py init` step removed
-
 ### Added
-- ROADMAP.md: added "Adapt CONTENT-STYLE.md writing quality principles"
-  under Later → Docs — tracks porting universal language principles from a
-  companion project's style guide into the template's content style guide.
+- `index_notes.md`: dedup workflow notes — what was implemented, what was deferred and why.
+### Removed
+- `dedup-improvement-plan.md`: content absorbed into `prompts/process-input-files.md` and `index_notes.md`.
 
 ## 2026-07-06
 ### Added
-- `tools/kb_query.py`: KB Q&A tool — retrieves top-k KB chunks via semantic
-  search and synthesizes an answer using any OpenAI-compatible LLM endpoint
-  (Ollama ≥ 0.1.24 by default). Default model `phi4-mini` (best reasoning/speed
-  on CPU); `gemma2:2b` and `llama3.2:3b` included as commented-out alternatives.
-- `tools/query`: thin bash wrapper for `kb_query.py`, resolves repo root from
-  its own path so it works from any directory (matches `tools/index` /
-  `tools/search` pattern).
-- README.md: documented `tools/query` usage with example invocations, Ollama
-  version requirement, and all three wrappers in the Layout section.
+- `tools/kb_query.py`, `tools/query`: initial KB Q&A tool.
