@@ -1,3 +1,7 @@
+## 2026-08-08
+### Changed
+- `CONTENT-STYLE.md`: added Asides and insertions rule to Prose Rhythm; fixed broken Mechanisms sentence; blockquote max raised to four sentences.
+
 ## 2026-07-31 (3)
 ### Added
 - `prompts/adopt-markdown-files.md`: new prompt for adopting human-authored `.md` files copied into `kb/` — filename audit, internal overlap scan, PARA placement, light style flags.

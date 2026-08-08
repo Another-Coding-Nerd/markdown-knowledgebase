@@ -99,7 +99,17 @@ stylistic choice.
 
 **The 8th-grade test (the third leg).** Sowell gives compression. Sagan gives clarity. Neither alone gets you to the sentence that stops a conversation. The third check: would a smart person with no academic training say it the same way — or would they say it better? If they'd say it better, they're right and the precise version is wrong. This is not dumbing down; it's finding the version a plain speaker would naturally reach for. If that version loses nothing, it wins. Flag nominalized verbs ("reads as," "registers as," "functions as"), paired abstract nouns, and anything that requires a mental pause to parse — those are the tells that the plain version hasn't been found yet.
 
-**Mechanisms, not just patterns.** State what happens and why it produces what it produces. "The system failed" is a pattern. "The system failed because the retry logic assumed idempotency and the upstream handler wasn't" is a mechanism. The second version is no longer and harder to forget.
+**Mechanisms, not just patterns.** State what happens and why it produces what it produces. "The system failed" is a pattern. "The system failed because the retry logic assumed idempotency and the upstream handler wasn't" is a mechanism. The second version is longer, and harder to forget.
+
+**Asides and insertions.** An aside belongs inside a sentence only if it is essential to the claim — or is a brief inline gloss defining the preceding term (see "Name the thing, then unpack it"). For everything else, test: remove it. If the sentence still makes complete sense, give the aside its own sentence.
+
+**Accumulation vs. progression.** A list of concrete details can move a sentence forward when each one lands separately. But a list nested inside a sentence with multiple asides stalls momentum. Short declaratives accumulate. Long sentences with multiple insertions stall.
+
+**Stalled:** *"The system degraded slowly, and the team, having exhausted the obvious fixes, alerts, and workarounds available to them, started questioning the architecture itself."*
+
+**Moving:** *"The system degraded slowly. The team had exhausted the obvious fixes — alerts, workarounds, quick patches. So they started questioning the architecture."*
+
+When several concrete details need conveying, break them into declaratives rather than packing them into one complex structure.
 
 ## Filenames
 
@@ -119,7 +129,7 @@ if it adds something the prose doesn't — a memorable distillation, a quote,
 vivid framing. Remove ones that just restate surrounding prose in different
 words.
 
-One to two sentences maximum. A blockquote that runs to a paragraph is just
+Up to four sentences maximum. A blockquote that runs to a paragraph is just
 prose with extra formatting — flatten it. The function of a blockquote is to
 land one thing cleanly; length works against that.
 
