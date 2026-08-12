@@ -127,6 +127,16 @@ Lower-priority or larger-scope efforts.
 - [ ] Tagging or metadata system beyond file/directory structure (e.g. YAML
   front matter fields that `kb_index.py` indexes and `kb_search.py` can
   filter on)
+- [ ] **Keyword/exact search** — `tools/grep` wrapper that searches `kb/**/*.md`
+  and formats output (file, heading path, snippet) the same way as
+  `kb_search.py`; fills the gap when semantic search is the wrong tool for
+  known exact terms or phrases
+- [ ] **Broken internal link checker** — `tools/check-links` scans all `kb/`
+  markdown for `[...](*.md)` targets and reports ones that don't resolve;
+  catches link rot from file renames/splits before it accumulates
+- [ ] **Backlinks** — "what files explicitly link to this file?" flag on
+  `connections.py --backlinks <file>`; more actionable than semantic neighbors
+  when reorganizing or splitting a file
 - [ ] Integration with Obsidian — detect and preserve Obsidian-style links
   (`[[wikilinks]]`) during chunking, or convert them to standard markdown
   links
