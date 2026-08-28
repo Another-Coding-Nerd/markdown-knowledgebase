@@ -127,6 +127,11 @@ Lower-priority or larger-scope efforts.
 - [ ] Tagging or metadata system beyond file/directory structure (e.g. YAML
   front matter fields that `kb_index.py` indexes and `kb_search.py` can
   filter on)
+- [ ] **`/reindex` endpoint in Flask app** — `POST` triggers incremental reindex,
+  `DELETE` triggers full rebuild; both run `kb_index.py` then `connections.py`
+  as a subprocess. `GET /reindex/stream` is an SSE endpoint that streams
+  stdout line-by-line to the browser (a `<pre>` log panel with auto-scroll).
+  Prevents concurrent runs with a lock; nav link added to base template.
 - [ ] **Keyword/exact search** — `tools/grep` wrapper that searches `kb/**/*.md`
   and formats output (file, heading path, snippet) the same way as
   `kb_search.py`; fills the gap when semantic search is the wrong tool for

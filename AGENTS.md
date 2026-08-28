@@ -175,6 +175,10 @@ Use a plain `tools/kb_index.py` (no flag) for a full rebuild — e.g. after
 changing `config.yaml` (chunk size, embedding model) or if the index is
 suspected to be out of sync with `kb/`.
 
+**To reset completely** (corrupt index, changed embedding model): delete
+`.kb-index/` and `connections.db`, then run `tools/index` and
+`tools/connections` fresh.
+
 `kb_search.py` prints a `[stale index]` warning (to stderr) if any `kb/**/*.md`
 file has been modified more recently than the last index build — if you see
 that warning mid-session, mention it and suggest reindexing before relying

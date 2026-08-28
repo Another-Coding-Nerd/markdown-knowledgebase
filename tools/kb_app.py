@@ -172,7 +172,7 @@ def get_graph_data() -> dict:
         nid = _rel(f)
         node_map[nid] = {
             "id": nid,
-            "title": _file_title(f),
+            "title": f.stem.replace("-", " ").replace("_", " ").title(),
             "color": _node_color(nid),
             "size": 0,
         }
@@ -294,7 +294,7 @@ def list_kb_files() -> dict:
         nid = _rel(f)
         files.append({
             "name": f.name,
-            "title": _file_title(f),
+            "title": f.stem.replace("-", " ").replace("_", " ").title(),
             "path": nid,
             "size": stat.st_size,
             "last_modified": datetime.fromtimestamp(stat.st_mtime).isoformat(timespec="seconds"),
