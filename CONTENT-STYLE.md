@@ -20,16 +20,6 @@ Pick one voice and apply it consistently across `kb/`:
 - **Hedging**: for claims broader than the evidence, use "tends to," "often,"
   or "in most cases" — but don't hedge every sentence, only where the claim
   is genuinely contested or general.
-- **The Carlin Rule (sensationalism vs. euphemism)**: judge the word
-  against what the evidence establishes — not a fixed word list, and not
-  how comfortable the word feels. **Sensationalized**: claims more than
-  the evidence supports (certainty, scale, intent) — use the term the
-  evidence backs. **Euphemized**: drops part of the claim ("kill" →
-  "neutralize," "lied" → "engaged in disinformation") or pads it with
-  comfort-jargon that adds no precision ("shell shock" → "battle
-  fatigue" → "operational exhaustion," "toilet paper" → "bathroom
-  tissue") — use the plain, direct word either way. Same word, right in
-  one sentence, wrong in another: judge the claim, not the word.
 
 ## Language Standard
 
@@ -46,11 +36,6 @@ removing a word, phrase, or sentence doesn't change what's being said, remove
 it. This is different from being terse — the goal is that every word is
 pulling weight, not that sentences are short.
 
-**Define technical terms on first use.** When a specialist term is
-unavoidable, follow it immediately with a plain explanation — "the default
-mode network — active when the mind is idle." After that, the term may be
-reused without redefining it.
-
 **Read it out loud — with the right test.** Stumbling is one signal. The
 sharper test: would a reader pause to re-read? If yes, the sentence failed.
 That includes academic phrasing, but also ambiguity, missing context, and
@@ -60,6 +45,18 @@ claim can be made in plainer words without losing precision, use them.
 **Name sources directly.** Avoid bare "research shows" or "studies suggest"
 — name the study, author, year, or named phenomenon. If no named source
 exists, reframe as observation rather than assertion.
+
+**The Carlin Rule (sensationalism vs. euphemism)** — named for George
+Carlin's routine on euphemism creep. Judge the word against what the
+evidence establishes — not a fixed word list, and not how comfortable the
+word feels. **Sensationalized**: claims more than the evidence supports
+(certainty, scale, intent) — use the term the evidence backs.
+**Euphemized**: drops part of the claim ("kill" → "neutralize," "lied" →
+"engaged in disinformation") or pads it with comfort-jargon that adds no
+precision ("shell shock" → "battle fatigue" → "operational exhaustion,"
+"toilet paper" → "bathroom tissue") — use the plain, direct word either
+way. Same word, right in one sentence, wrong in another: judge the claim,
+not the word.
 
 ### Jargon — Pattern-Based Detection
 
@@ -99,7 +96,7 @@ behind jargon. The reader is capable of following a precise argument — they
 just haven't been given the vocabulary yet. Write accordingly: no
 condescension in either direction.
 
-**Name the thing, then unpack it.** If a phenomenon has a name, use it — then immediately explain it in plain terms. Don't avoid technical language; land it on arrival. "Intermittent reinforcement — rewards that arrive unpredictably, like a slot machine" is one sentence. After that, the term is available without redefinition.
+**Name the thing, then unpack it.** If a phenomenon has a name, use it — then immediately explain it in plain terms. Don't avoid technical language; land it on arrival. "Intermittent reinforcement — rewards that arrive unpredictably, like a slot machine" is one sentence. "The default mode network — active when the mind is idle" is another. After that, the term is available without redefinition.
 
 **Find the plain English version that loses nothing.** Not an approximation
 — the actual idea, in words a non-specialist can parse on first read. If
