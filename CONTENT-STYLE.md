@@ -20,6 +20,16 @@ Pick one voice and apply it consistently across `kb/`:
 - **Hedging**: for claims broader than the evidence, use "tends to," "often,"
   or "in most cases" — but don't hedge every sentence, only where the claim
   is genuinely contested or general.
+- **The Carlin Rule (sensationalism vs. euphemism)**: judge the word
+  against what the evidence establishes — not a fixed word list, and not
+  how comfortable the word feels. **Sensationalized**: claims more than
+  the evidence supports (certainty, scale, intent) — use the term the
+  evidence backs. **Euphemized**: drops part of the claim ("kill" →
+  "neutralize," "lied" → "engaged in disinformation") or pads it with
+  comfort-jargon that adds no precision ("shell shock" → "battle
+  fatigue" → "operational exhaustion," "toilet paper" → "bathroom
+  tissue") — use the plain, direct word either way. Same word, right in
+  one sentence, wrong in another: judge the claim, not the word.
 
 ## Language Standard
 
