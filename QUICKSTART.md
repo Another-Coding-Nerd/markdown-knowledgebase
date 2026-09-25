@@ -31,6 +31,7 @@
    |-------------|--------------|
    | Articles, essays, structured notes | "Process inputs using prompts/process-input-files.md" |
    | Compressed summaries, bullet-point digests | "Process inputs using prompts/process-input-files-dense.md" |
+   | Human-authored `.md` files copied into `kb/` | "Process inputs using prompts/adopt-markdown-files.md" |
 
    The agent inventories every point, cross-checks against existing KB content,
    and presents a full list for your approval before writing anything.
