@@ -67,6 +67,17 @@ Medium-priority enhancements.
 
 ### Documentation
 
+- [ ] **End-to-end walkthrough with screenshots** — a thorough tutorial doc
+  (separate from QUICKSTART/WORKFLOW) covering a real session from start to
+  finish: clone the repo → open Claude Code → ingest 2–3 sample docs
+  (including a de-duplication and a rephrasing example) → run incremental
+  reindex → CLI semantic search (`tools/search`) → section diagnostics
+  (`tools/stats`) → start the web server → walk every UI feature (graph with
+  neighborhood hover, rendered page view, `/stats` word cloud + click-to-search,
+  dark mode toggle, keyboard shortcuts `s`/`a`/`f`) → Ollama Ask your KB
+  end-to-end. Each step gets a screen cap. Goal: a new user can follow it
+  without reading AGENTS.md first.
+
 - [ ] Document the "Notes" pattern for capturing tried-and-failed approaches
   (see `index_notes.md` for the first example). Add guidance in the template
   so users know to record dead ends with reasoning — prevents repeating
