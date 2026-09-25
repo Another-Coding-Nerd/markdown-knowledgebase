@@ -105,9 +105,18 @@ Drop files in `inputs/`, then tell the agent which prompt to run.
 .venv/bin/python tools/kb_search.py "some query" "another query" --top-k 5
 ```
 
-`tools/index`, `tools/search`, `tools/query`, and `tools/serve` are thin
-wrapper scripts — shorter to type, and they resolve the repo root from their
-own path so they work from any directory.
+`tools/index`, `tools/search`, `tools/query`, `tools/serve`, `tools/stats`,
+and `tools/connections` are thin wrapper scripts — shorter to type, and they
+resolve the repo root from their own path so they work from any directory.
+
+```bash
+# Section-length diagnostics (flags SHORT/LONG leaf sections)
+tools/stats kb/<file>.md
+tools/stats kb/<file>.md --short 4 --long 25
+
+# Inspect nearest neighbors for a file (requires connections.db)
+tools/connections --show <filename>
+```
 
 ```bash
 tools/serve                  # start the web UI (http://localhost:5000)
