@@ -51,8 +51,63 @@ Both steps every time — the connections graph feeds off the index.
 tools/search "query"
 ```
 
+Pass multiple quoted queries in one call to compare results across topics.
 Or ask the agent — it uses the same semantic search internally and can
 synthesize an answer from the relevant KB chunks.
+
+## Browsing the KB in a browser
+
+```bash
+tools/serve           # default port
+tools/serve --port 8080
+```
+
+Starts the Flask UI at `http://localhost:5000` (or the port you specify).
+Features: file list, rendered markdown per file, semantic graph (nodes =
+files, edges = similarity from `connections.db`), and an LLM-backed
+question-answer interface over the indexed KB. Requires the index and
+connections DB to be current before launching.
+
+## Inspecting graph edges
+
+```bash
+tools/connections --show <filename>
+```
+
+Prints the top-N nearest neighbors for a file and their similarity scores —
+useful for spotting which files are semantically close before reorganizing or
+merging content.
+
+## Diagnosing section length
+
+```bash
+tools/stats kb/<file>.md
+tools/stats kb/<file>.md --short 4 --long 25
+```
+
+Flags SHORT (≤N lines) and LONG (≥N lines) leaf sections — sections with no
+child headings. Use it when reviewing a file for sections that may need
+expansion or trimming. Thresholds default to 4/25 and are adjustable.
+
+## Periodic quality review
+
+```
+"Review kb/ using prompts/process-knowledgebase-files.md"
+```
+
+Checks consistency, register, redundancy, and structure across existing KB
+files. Run when the KB has grown enough that drift between files is likely.
+
+## Reorganizing into Projects / Resources
+
+```
+"Organize kb/ files using prompts/organize-kb-files.md"
+```
+
+Sorts existing flat `kb/` files into `kb/projects/` (bounded efforts with a
+finish line) and `kb/resources/` (reference material). See `AGENTS.md` for
+the two-part test (specific goal + active timeframe = project; otherwise
+resource).
 
 ## What you end up with
 
