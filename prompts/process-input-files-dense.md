@@ -23,8 +23,17 @@ to describe the KB's scope before continuing — do not proceed without it.
 ## Workflow
 
 1. Check `inputs/` for any files not already in `inputs/processed/` or
-   `inputs/off-topic/`. (`inputs/fmt_text.sh` can be run first to reflow raw
-   `.txt` files to 100 columns.)
+   `inputs/off-topic/`. **Before inventorying anything**, run both ingest
+   scripts from inside the `inputs/` directory:
+   ```
+   cd inputs/ && bash fmt_text.sh && bash de-dupe.sh
+   ```
+   `fmt_text.sh` reflows `.txt` files to 100 columns and **splits files over
+   100 lines** into overlapping 100-line part files (`basename-part-001.txt`,
+   etc.). `de-dupe.sh` removes files already present in `inputs/processed/`.
+   Inventory the resulting files — not the originals. Both scripts must be
+   invoked from inside `inputs/` (they glob `*.txt` in the current directory
+   and ignore any file-path argument).
    a. If any `.html` files are present, or any `.txt` files contain pasted
       HTML markup rather than plain text, convert them to clean text first:
       `python3 tools/html_to_text.py --write <file>` (the script also
@@ -42,6 +51,15 @@ to describe the KB's scope before continuing — do not proceed without it.
       a single entry; do not consolidate points that are merely on the same
       topic. Do not evaluate, filter, or write KB content until the full
       inventory across all passes is complete.
+
+      Each of the following counts as a separate inventory item regardless
+      of how close together they appear: a named phenomenon or pattern, a
+      specific mechanism or cause-effect chain, a statistic or data point, a
+      behavioral observation, a counter-argument or nuance that modifies
+      another claim, a framing distinction (e.g. "X is not Y, it is Z").
+      After completing all passes, do one final re-read of the full file
+      specifically hunting for sub-claims that were collapsed into a headline
+      item — the second pass catches what the first pass merged.
 
       The failure mode to prevent in dense files: conflating two distinct
       claims because they appear adjacent and share a subject. A sentence
