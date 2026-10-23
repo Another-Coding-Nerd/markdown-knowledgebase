@@ -8,18 +8,24 @@ you are running, then continue with steps c–m below.
 
    c. Cross-check each inventory item against the existing KB via
       `tools/kb_search.py "<point>"` — see `AGENTS.md` for the scoring
-      guidance. Do not read every file in `kb/`.
+      guidance. Do not read every file in `kb/`. **Before running the search**,
+      reduce each candidate point to a single plain declarative sentence stating
+      the mechanism — stripped of examples, metaphors, delivery framing, and the
+      source's own vocabulary. Search on that sentence, not on the source's
+      phrasing. The verdict is on the mechanism, not the packaging.
    d. For each item, determine: already covered / partially covered
       (formulation worth adding) / genuinely new. Where the cross-check
       surfaces a related section, apply a fact-vs-wording test before
       deciding covered vs. partial: is this item the *same fact, mechanism,
-      example, or figure* as what's already there, just reworded (different
-      synonym, year, or phrasing for the same claim) — or a *different* one
-      (a new statistic, a named mechanism not previously discussed, a
+      example, or figure* as what's already there — or a *different* one (a
+      new statistic, a named mechanism not previously discussed, a
       contradicting claim, an example illustrating a different facet)? Same
-      fact reworded → **covered**, skip it even if the wording differs.
-      Different fact on the same topic → **partial**, naming the specific
-      detail to add.
+      mechanism → **covered**, skip it even if the source's phrasing was
+      fresh or vivid. Different mechanism → **partial** or **new**, regardless
+      of how crude or dramatic the source's register was — a new mechanism
+      that arrives in poor or sensationalist packaging still counts as new once
+      stripped (see step 2i for how to handle the reframing). The test is
+      symmetric: direction matters more than delivery.
    e. **Scope filter** — for each item classified as new or partial, apply
       the scope definition from `about.md` as a one-sentence test. Items
       that are authentic but outside scope are marked **off-scope** in the
@@ -33,12 +39,15 @@ you are running, then continue with steps c–m below.
    h. Mostly-overlapping content with unique elements: the unique material
       is the yield — check whether it can supplement an existing file rather
       than creating a new file or skipping entirely.
-   i. Bad-frame content: if the source's core argument is reductive, crude,
-      or off-register, assess whether the frame can be stripped while
-      preserving analytically sound content embedded within it. Test: does
-      the information stand independently of the frame? If yes, treat the
-      salvageable content as a targeted supplement to an existing file and
-      note the reframing in the recommendation.
+   i. Bad-frame content: if the source uses any frame that wraps or distorts
+      its underlying content — prescriptive/coaching voice, motivational
+      framing, pop-psych register, reductive or crude argument — assess
+      whether the frame can be stripped while preserving analytically sound
+      content embedded within it. Do not route bad-frame content to 2g
+      (off-topic) before applying this test. Test: does the information stand
+      independently of the frame? If yes, treat the salvageable content as a
+      targeted supplement to an existing file and note the reframing in the
+      recommendation.
    j. Duplicate content: auto-skip, move to `inputs/processed/`, note in the
       summary.
    k. New content: if this KB has adopted the Projects/Resources split (see
