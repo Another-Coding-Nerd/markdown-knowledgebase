@@ -26,6 +26,28 @@ you are running, then continue with steps c–m below.
       that arrives in poor or sensationalist packaging still counts as new once
       stripped (see step 2i for how to handle the reframing). The test is
       symmetric: direction matters more than delivery.
+
+      **The test is mechanism novelty, not citation presence.** Uncited
+      behavioral observations can be genuinely new if the mechanism is not
+      assembled anywhere in the KB. A fresh framing or vivid restatement of a
+      covered mechanism is **covered** — not new. A low search score is weak
+      evidence of absence (vocabulary mismatch between source and KB), not a
+      license to add.
+
+      **To mark an item new or partial, state the delta.** In one sentence,
+      name the specific mechanism, fact, or figure it adds that is not in the
+      named neighbor file/section. If you cannot articulate that delta after a
+      bounded read, classify it as **covered** — skip it. This applies to both
+      cited and uncited items.
+
+      **Resolve before presenting.** Do not put "possibly new," "probably new,"
+      or "uncertain" in the inventory table — those hedge a step you haven't
+      taken yet. If the score is ambiguous (~0.6–0.75), read the snippet; if
+      the snippet is still insufficient, read the specific section. Resolve to
+      covered / partial / new / off-scope first. (Step 2l's "flag anything
+      uncertain" applies to items that remain genuinely ambiguous *after* that
+      read — a small set that goes to the user with your lean; it does not
+      license skipping the read.)
    e. **Scope filter** — for each item classified as new or partial, apply
       the scope definition from `about.md` as a one-sentence test. Items
       that are authentic but outside scope are marked **off-scope** in the
