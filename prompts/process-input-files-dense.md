@@ -59,7 +59,13 @@ to describe the KB's scope before continuing — do not proceed without it.
       another claim, a framing distinction (e.g. "X is not Y, it is Z").
       After completing all passes, do one final re-read of the full file
       specifically hunting for sub-claims that were collapsed into a headline
-      item — the second pass catches what the first pass merged.
+      item — the second pass catches what the first pass merged. For each
+      claim that states an outcome or dependency ("X depends on Y", "Z
+      produces W"), also check whether the source describes the causal process
+      producing it. If so, record that mechanism as a separate claim: who
+      observes or does what, what signal or process is involved, and how it
+      contributes to the outcome. Don't leave the mechanism implicit in the
+      outcome statement, and don't infer one the source doesn't support.
 
       The failure mode to prevent in dense files: conflating two distinct
       claims because they appear adjacent and share a subject. A sentence

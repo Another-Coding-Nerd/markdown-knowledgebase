@@ -48,9 +48,15 @@ to describe the KB's scope before continuing — do not proceed without it.
       not Y, it is Z"). A single paragraph commonly contains 3–5 distinct
       items. After completing the first pass on a segment, re-read it once more
       specifically hunting for sub-claims not listed on the first pass — the
-      second pass catches what the first pass collapsed into a headline. Do not
-      evaluate, filter, or write KB content until the full inventory is
-      complete. The failure mode to prevent: identifying the two most obvious
+      second pass catches what the first pass collapsed into a headline. For
+      each claim that states an outcome or dependency ("X depends on Y", "Z
+      produces W"), also check whether the source describes the causal process
+      producing it. If so, record that mechanism as a separate claim: who
+      observes or does what, what signal or process is involved, and how it
+      contributes to the outcome. Don't leave the mechanism implicit in the
+      outcome statement, and don't infer one the source doesn't support.
+      Do not evaluate, filter, or write KB content until the full
+      inventory is complete. The failure mode to prevent: identifying the two most obvious
       points and treating them as the full yield — working section-by-section
       makes it harder to skip subtle points buried in a section whose headline
       point was already captured.

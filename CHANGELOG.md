@@ -1,3 +1,8 @@
+## 2026-10-26
+### Changed
+- `prompts/_inventory-shared-steps.md` (2c): stronger translation instruction — coined labels must be replaced by what they describe; added self-check test.
+- `prompts/process-input-files.md`, `process-input-files-dense.md` (2b): mechanism depth check — outcome/dependency claims must be checked for a separately statable causal process; grounding guard added.
+
 ## 2026-08-08
 ### Changed
 - `CONTENT-STYLE.md`: added Asides and insertions rule to Prose Rhythm; fixed broken Mechanisms sentence; blockquote max raised to four sentences.

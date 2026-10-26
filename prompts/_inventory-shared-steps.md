@@ -9,10 +9,13 @@ you are running, then continue with steps c–m below.
    c. Cross-check each inventory item against the existing KB via
       `tools/kb_search.py "<point>"` — see `AGENTS.md` for the scoring
       guidance. Do not read every file in `kb/`. **Before running the search**,
-      reduce each candidate point to a single plain declarative sentence stating
-      the mechanism — stripped of examples, metaphors, delivery framing, and the
-      source's own vocabulary. Search on that sentence, not on the source's
-      phrasing. The verdict is on the mechanism, not the packaging.
+      translate each candidate point into one plain declarative sentence about
+      the behavior or mechanism it describes. If the claim uses a coined term or
+      label, state what happens without using that term or the source's framing.
+      Preserve the actors and relationships; don't add meaning. **Self-check:**
+      would the sentence still make sense to someone who had never heard the
+      source's terminology? Search that sentence, not the source wording. The
+      verdict is on the mechanism, not the packaging.
    d. For each item, determine: already covered / partially covered
       (formulation worth adding) / genuinely new. Where the cross-check
       surfaces a related section, apply a fact-vs-wording test before
