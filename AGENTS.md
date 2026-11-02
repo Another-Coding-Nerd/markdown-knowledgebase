@@ -210,3 +210,44 @@ index location, and connections settings (`connections_top_n`,
 
 See `CONTENT-STYLE.md` for register, filename, bullet/blockquote, and
 file-size conventions for content in `kb/`.
+
+## When to create a synthesis/consolidation file
+
+The KB's semantic index makes distributed content findable. Before creating a
+file that pulls together content from multiple existing files, apply this
+decision tree in order — stop as soon as a test fails and fix nav instead:
+
+1. **Gap test** — Does the proposed file contain content with no home in any
+   existing file? Genuine new content (a topic not covered anywhere) passes.
+   A *connective argument* — where the relationship between existing pieces is
+   itself new content no source file makes — also passes. Pure navigation
+   convenience does not.
+
+2. **Reader test** — A reader wanting broad orientation is already served by
+   search and any navigation/index files this KB maintains. Fix nav for them.
+   Only proceed if a reader needs all pieces pre-integrated for downstream
+   work (writing, presenting, deciding) — a synthesis file does that
+   pre-integration work.
+
+3. **Search degradation test** — Every paragraph that paraphrases existing KB
+   content creates a near-duplicate embedding that splits search signal.
+   Estimate the paraphrase ratio (paraphrased content vs. new connective
+   analysis):
+   - >50% paraphrase → don't make the file
+   - <30% paraphrase → acceptable
+   - 30–50% → requires strong downstream-use justification
+
+4. **Depth test** — Synthesis files are shallower than source files by design.
+   Acceptable when the value is taxonomy and connection, with explicit inline
+   pointers to source files for depth. If the proposed file needs to be the
+   deepest treatment of any sub-topic it covers, expand the source file instead.
+
+**The rule in one sentence:** Make a synthesis file when there is genuine new
+connective content and a downstream use case needs the integrated argument —
+not for navigation convenience.
+
+**Scope a synthesis file tightly:**
+- One sentence per already-covered sub-topic + inline pointer to the source
+  file; no paraphrase blocks
+- New content gets full treatment; covered content gets a pointer
+- Target paraphrase ratio under 30%

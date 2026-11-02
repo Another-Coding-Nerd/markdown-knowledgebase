@@ -122,6 +122,8 @@ When several concrete details need conveying, break them into declaratives rathe
 
 - Kebab-case, no counts (`signs-of-x.md`, not `9-signs-of-x.md`) — counts
   drift as content changes.
+- Five words maximum. If the name needs more, the topic is too broad or the
+  name is describing rather than labeling.
 
 ## Bullets vs. Prose
 
@@ -161,4 +163,8 @@ land one thing cleanly; length works against that.
   from...").
 - Prefer extending an existing file over creating a new one for
   narrowly-scoped content — use `tools/kb_search.py` to find the best
-  existing home before creating a new file.
+  existing home before creating a new file. A new file is justified when
+  no existing file is a good topical fit AND the content yields at least
+  2–3 distinct sections on a coherent sub-topic. A single point or a
+  narrow cluster of related items goes into the nearest existing file
+  regardless of search scores.
