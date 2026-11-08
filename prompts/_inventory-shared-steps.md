@@ -61,18 +61,24 @@ you are running, then continue with steps c–m below.
       distinct items. If there's a mismatch, flag it.
    g. Off-topic content: if the entire file falls outside this KB's scope,
       auto-skip and move it to `inputs/off-topic/`. Note this in the summary.
+      Register, tone, and delivery framing are not scope — a file in coaching
+      voice or crude register is not off-topic by virtue of its frame. Complete
+      2b and apply 2i before skipping any file for register reasons.
    h. Mostly-overlapping content with unique elements: the unique material
       is the yield — check whether it can supplement an existing file rather
       than creating a new file or skipping entirely.
    i. Bad-frame content: if the source uses any frame that wraps or distorts
       its underlying content — prescriptive/coaching voice, motivational
-      framing, pop-psych register, reductive or crude argument — assess
-      whether the frame can be stripped while preserving analytically sound
-      content embedded within it. Do not route bad-frame content to 2g
-      (off-topic) before applying this test. Test: does the information stand
-      independently of the frame? If yes, treat the salvageable content as a
-      targeted supplement to an existing file and note the reframing in the
-      recommendation.
+      framing, pop-psych register, ideological register, reductive or crude
+      argument — assess whether the frame can be stripped while preserving
+      analytically sound content embedded within it. **This step operates on
+      the already-complete 2b inventory — it is not a pre-screen that replaces
+      or abbreviates 2b.** Do not route bad-frame content to 2g (off-topic)
+      before applying this test. Test: does the information stand independently
+      of the frame? If yes, treat the salvageable content as a targeted
+      supplement to an existing file and note the reframing in the
+      recommendation. If no, those items appear in the inventory table as
+      off-topic/no-yield — listed, not silently dropped.
    j. Duplicate content: auto-skip, move to `inputs/processed/`, note in the
       summary.
    k. New content: if this KB has adopted the Projects/Resources split (see

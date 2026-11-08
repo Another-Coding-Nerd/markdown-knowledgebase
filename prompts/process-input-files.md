@@ -41,7 +41,13 @@ to describe the KB's scope before continuing — do not proceed without it.
       paragraph breaks if shorter) for plain text files (the common case);
       per H2/H3 section only if the file is already markdown. Within each section/segment, enumerate every
       analytically distinct point/claim before evaluating any of them for
-      placement. Each of the following counts as a separate inventory item: a
+      placement. **Enumerate regardless of the source's delivery register** —
+      coaching voice, motivational framing, ideological register, or crude
+      argument do not abbreviate the inventory. A prescriptive or instructional
+      claim ("you must X," "always do Y") is recorded as its observable
+      mechanism ("doing X produces [the outcome the source claims]"). Frame
+      evaluation is step 2i's job, not 2b's — complete the full inventory
+      first. Each of the following counts as a separate inventory item: a
       named phenomenon or pattern, a specific mechanism or cause-effect chain,
       a statistic or data point, a behavioral observation, a counter-argument
       or nuance that modifies another claim, a framing distinction (e.g. "X is

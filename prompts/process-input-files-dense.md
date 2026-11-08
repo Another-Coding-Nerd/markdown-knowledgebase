@@ -46,11 +46,16 @@ to describe the KB's scope before continuing — do not proceed without it.
       have no headings or paragraph breaks to segment by; treat each sentence
       as a candidate inventory item. Work through the file in passes of
       ~20 sentences at a time. Within each pass, enumerate every distinct
-      claim before evaluating any of them. After completing all passes,
-      consolidate claims that are genuinely the same point stated twice into
-      a single entry; do not consolidate points that are merely on the same
-      topic. Do not evaluate, filter, or write KB content until the full
-      inventory across all passes is complete.
+      claim before evaluating any of them. **Enumerate regardless of the
+      source's delivery register** — coaching voice, motivational framing,
+      ideological register, or crude argument do not abbreviate the inventory.
+      A prescriptive or instructional claim ("you must X," "always do Y") is
+      recorded as its observable mechanism ("doing X produces [the outcome the
+      source claims]"). Frame evaluation is step 2i's job, not 2b's — complete
+      the full inventory first. After completing all passes, consolidate claims that are genuinely
+      the same point stated twice into a single entry; do not consolidate
+      points that are merely on the same topic. Do not evaluate, filter, or
+      write KB content until the full inventory across all passes is complete.
 
       Each of the following counts as a separate inventory item regardless
       of how close together they appear: a named phenomenon or pattern, a
